@@ -30,12 +30,7 @@ def configure (conf):
 	conf.setting_define ("WITH_AFFINE", 1)
 
 	conf.start_msg ("Will use LinearRelaxAffine class")
-	if not conf.options.WITH_OPTIM:
-		conf.end_msg ("no (need --with-optim)", color = "YELLOW")
-		excl = "src/**/numeric" # exclude everything from the src/numeric subdir
-	else:
-		conf.end_msg ("yes (--with optim is used)")
-		excl = ""
+	excl = ""
 
 	# add AFFINE plugin include directory
 	for f in conf.path.ant_glob ("src/**", dir = True, src = False, excl = excl):
