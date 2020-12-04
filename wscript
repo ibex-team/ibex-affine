@@ -64,4 +64,10 @@ def configure (conf):
 ####### build ########
 ######################
 def build (bld):
-	pass # nothing to do, everything is done in the main src/wscript script
+	# build optimizer04
+	bld.program (
+		target = "optimizer04",
+		use = [ "ibex" ],
+		source = bld.path.ant_glob ("src/bin/optimizer04.cpp"),
+		install_path = bld.env.BINDIR,
+	)
