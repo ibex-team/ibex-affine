@@ -16,13 +16,15 @@ list (APPEND SRC ${CMAKE_CURRENT_SOURCE_DIR}/arithmetic/ibex_Affine2_fAF2.cpp
 
 # Create the target for libibex-affine
 add_library (ibex-affine ${SRC})
-target_include_directories (ibex-affine PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}
-                                          ${CMAKE_CURRENT_SOURCE_DIR}/arithmetic
-                                          ${CMAKE_CURRENT_SOURCE_DIR}/function
-                                          ${CMAKE_CURRENT_SOURCE_DIR}/numeric)
+target_include_directories (ibex-affine PUBLIC
+                "$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/arithmetic>"
+                "$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/function>"
+                "$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/numeroc>"
+                "$<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}/ibex-affine>")
 target_link_libraries (ibex-affine PUBLIC Ibex::ibex)
 
 # installation of libibex-affine files
-list_filter_header (HDR ${SRC}) # Ibex should have installed this function
-install (TARGETS ibex-affine DESTINATION ${CMAKE_INSTALL_LIBDIR})
+ibex_list_filter_header (HDR ${SRC}) # Ibex should have installed this function
+install (TARGETS ibex-affine DESTINATION ${CMAKE_INSTALL_LIBDIR}
+                              EXPORT AffineExport)
 install (FILES ${HDR} DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/ibex-affine)
