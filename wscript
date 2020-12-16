@@ -7,6 +7,8 @@
 def options (opt):
 	opt.add_option ("--with-affine", action="store_true", dest="WITH_AFFINE",
 			help = "Use Affine Arithmetic plugin")
+			
+	opt.plugins["affine"] = "WITH_AFFINE"
 
 ######################
 ##### configure ######
@@ -30,6 +32,7 @@ def configure (conf):
 	conf.setting_define ("WITH_AFFINE", 1)
 
 	conf.start_msg ("Will use LinearRelaxAffine class")
+	conf.end_msg ("")
 	excl = ""
 
 	# add AFFINE plugin include directory
@@ -64,4 +67,4 @@ def configure (conf):
 ####### build ########
 ######################
 def build (bld):
-	pass # nothing to do, everything is done in the main src/wscript script
+    pass # nothing to do, everything is done in the main src/wscript script
