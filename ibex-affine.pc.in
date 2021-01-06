@@ -7,5 +7,5 @@ Description: @IBEX_AFFINE_DESCRIPTION@
 Url: @IBEX_AFFINE_URL@
 Version: @IBEX_AFFINE_VERSION@
 Cflags: -I${includedir}/ibex-affine
-Libs: -L${libdir} -libex-myplugin
+Libs: -L${libdir} -libex-affine
 Requires: ibex >= @IBEX_MIN_VERSION_REQ@
