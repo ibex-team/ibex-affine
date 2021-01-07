@@ -4,6 +4,11 @@ get_filename_component(_DIR "${CMAKE_CURRENT_LIST_FILE}" DIRECTORY)
 # Load main config file
 include(${_DIR}/@IBEX_AFFINE_TARGETS_CONFIG_FILE@)
 
+# set IBEX_DIR to help find Ibex (if not already set)
+if (NOT DEFINED ENV{IBEX_DIR})
+  set (ENV{IBEX_DIR} "@IBEX_DIR@")
+endif ()
+
 # Set some var to respect QUIET et REQUIRED when looking for dependencies
 if (${CMAKE_FIND_PACKAGE_NAME}_FIND_QUIETLY)
   set (_quiet_arg QUIET)
@@ -13,7 +18,7 @@ if (${CMAKE_FIND_PACKAGE_NAME}_FIND_REQUIRED)
 endif ()
 
 # Looking for Ibex
-find_package (Ibex ${_quiet_arg} ${_required_arg})
+find_package (IBEX @IBEX_MIN_VERSION_REQ@ ${_quiet_arg} ${_required_arg})
 if (NOT IBEX_FOUND)
   set(${CMAKE_FIND_PACKAGE_NAME}_NOT_FOUND_MESSAGE
                           "${CMAKE_FIND_PACKAGE_NAME} could not be found \
