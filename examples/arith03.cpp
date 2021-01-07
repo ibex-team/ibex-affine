@@ -9,11 +9,9 @@
 //============================================================================
 
 #include "ibex.h"
+#include "ibex_Affine.h"
+#include "ibex_AffineEval.h"
 #include <time.h>
-
-#ifndef _IBEX_WITH_AFFINE_
-#error "You need the plugin Affine to run this example."
-#endif
 
 using namespace std;
 using namespace ibex;
