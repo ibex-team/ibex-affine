@@ -16,6 +16,9 @@
 #include <math.h>
 #include <cassert>
 #include "ibex_Exception.h"
+#include "ibex_Array.h"
+#include "ibex_TemplateDomain.h"
+#include "ibex_Domain.h"
 
 
 #include "ibex_Affine2_fAF2.h"
@@ -33,8 +36,15 @@
 
 namespace ibex {
 
+template<class T>  class AffineVariableMain;
+template<class T>  class AffineVarMain;
+template<class T>  class AffineMain;
 template<class T> class AffineMainVector;
 template<class T> class AffineMainMatrix;
+
+
+//template<class T> class TestAffineBase;
+//template<class T> class TestAffineArih;
 
 /**
  * \ingroup arithmetic
@@ -52,24 +62,58 @@ typedef AF_fAF2  AF_Default;
 //typedef AF_No  AF_Default;
 typedef AF_fAFFullI AF_Other;
 
+
 typedef AffineMain<AF_Default> Affine2;
 typedef AffineMain<AF_Other>  Affine3;
 
+typedef AffineVarMain<AF_Default> Affine2Var;
+typedef AffineVarMain<AF_Other>  Affine3Var;
+
+
+//template<class T>
+//Array< TemplateDomain< AffineMain<T> > > convert_to_affinedomain(const Array<Domain>& d);
+//template<class T>
+//Array< TemplateDomain< AffineMain<T> > > convert_to_affinedomain(const Array<const Domain>& d);
+
+
+
+template<class T=AF_Default>
+class AffineVarMain : public AffineMain<T> {
+
+
+public:
+	/** \brief Set *this to itv.
+	 */
+	AffineVarMain& operator=(const Interval& itv);
+	AffineVarMain& operator=(const AffineMain<T>& itv);
+
+private:
+	friend class AffineMainVector<T>;
+	friend class AffineMainMatrix<T>;
+
+//    static int _count;
+
+    const int var;
+	/** \brief Create an affine form with n variables and  initialized val[0] with d. */
+//	explicit AffineVarMain(double d);
+
+
+	/** \brief Create an affine form with n variables and  initialized val[0] with  itv. */
+//	explicit AffineVarMain(const Interval& itv);
+
+	/** \brief Create an affine form with at most \size variables and  initialized the \var^th variable with  itv. */
+	AffineVarMain(int size, int var, const Interval& itv);
+};
 
 template<class T=AF_Default>
 class AffineMain {
-public:
 
-	typedef enum {
-		AF_Default, AF_Chebyshev, AF_MinRange
-	} Affine_Mode; // ...etc...
-
-
-	static void change_mode(Affine_Mode tt=AF_Default);
-
-private:
-
-
+protected:
+	friend class AffineVarMain<T>;
+//	friend class AffineMainVector<T>;
+//	friend class AffineMainMatrix<T>;
+//	friend 	Array< TemplateDomain< AffineMain > > convert_to_affinedomain<T>(const Array<Domain>& d);
+//	friend 	Array< TemplateDomain< AffineMain > > convert_to_affinedomain<T>(const Array<const Domain>& d);
 
 	/** \brief tolerance for default compact procedure  */
 	static const double AF_COMPAC_Tol;
@@ -89,26 +133,32 @@ private:
 	 * if the set is ]-oo, a] , _n = -4 and _err = ]-oo, a]
 	 *
 	 */
-
 	int _n; 		// dimension (size of val)-1  , ie number of variable
 
-	T _elt;			// core of the affine2 form
+	T _elt;			// core of the affine form
 
+	/** \brief Create an affine form with n variables and  initialized val[0] with d. */
+	//explicit AffineMain(double d);
+
+	/** \brief Create an affine form with n variables and  initialized the m^th variable with  itv. */
+	AffineMain(int size, int var, const Interval& itv);
+
+	/**
+	 * \brief Change the number of affine variables
+	 */
+	void resize(int n);
 
 public:
 
+	typedef enum {
+		AF_Default=0, AF_Chebyshev=1, AF_MinRange=2
+	} Affine_Mode; // ...etc...
+
+	/** \brief change the linearisation approximation of all the affine form: Chebyshev (by default), or Min-Range	 */
+	static void change_mode(Affine_Mode tt=AF_Default);
 
 	/** \brief Create an empty affine form. */
 	AffineMain();
-
-	/** \brief Create an affine form with n variables and  initialized val[0] with d. */
-	explicit AffineMain(double d);
-
-	/** \brief Create an affine form with n variables and  initialized val[0] with  itv. */
-	explicit AffineMain(const Interval& itv);
-
-	/** \brief Create an affine form with n variables and  initialized the m^th variable with  itv. */
-	AffineMain(int n, int m, const Interval& itv);
 
 	/** \brief Create an affine form with n variables, initialized with x  */
 	AffineMain(const AffineMain& x);
@@ -144,17 +194,17 @@ public:
 
 	/** \brief Set *this to itv.
 	 */
-	AffineMain& operator=(const Interval& itv);
+	virtual AffineMain& operator=(const Interval& itv);
 
 	/* Union and Intersection of two Affine2 form must not be implemented
 	 * That could produce to much confusion.
 	 */
 	/** \brief Intersection of *this and x.
 	 * \param x - the interval to compute the intersection with.*/
-	//	Affine2Main& operator&=(const Affine2Main& x);
+	//	AffineMain& operator&=(const AffineMain& x);
 	/** \brief Union of *this and I.
 	 * \param x - the interval to compute the hull with.*/
-	//	Affine2Main& operator|=(const Affine2Main& x);
+	//	AffineMain& operator|=(const AffineMain& x);
 
 	/**
 	 * \brief Add [-rad,+rad] to *this.
@@ -163,10 +213,52 @@ public:
 	 */
 	AffineMain& inflate(double radd);
 
-	/**
-	 * \brief Change the number
-	 */
-	//	void resize(int n);
+    /** \brief Lower bound.
+     *
+     * Return the lower bound of *this. */
+    double lb() const;
+
+    /** \brief Upper bound.
+     *
+     * Return the upper bound of *this. */
+    double ub() const;
+
+    /** \brief Midpoint.
+     *
+     * Returns the midpoint of *this.*/
+    double mid() const;
+
+    /**
+     * \brief Radius.
+     *
+     * Return the diameter of *this.
+     * By convention, 0 if *this is empty.*/
+    double rad() const;
+
+    /**
+     * \brief Diameter.
+     *
+     * Return the diameter of *this.
+     * By convention, 0 if *this is empty.*/
+    double diam() const;
+
+    /**
+     * \brief Mignitude.
+	 *
+     * Returns the mignitude of *this:
+     * <lu>
+     * <li> +(lower bound)  if *this > 0
+     * <li> -(upper bound) if *this < 0
+     * <li> 0 otherwise.
+     * </lu> */
+    double mig() const;
+
+    /**
+     * \brief Magnitude.
+	 *
+     * Returns the magnitude of *this:
+     * mag(*this)=max(|lower bound|, |upper bound|). */
+    double mag() const;
 
 	/**
 	 * \brief number of variable represented
@@ -208,11 +300,6 @@ public:
 	 * \note An empty affine form is always bounded.
 	 */
 	bool is_unbounded() const;
-
-	/**
-	 * \brief the middle of *this
-	 */
-	double mid() const;
 
 	/**
 	 * \brief reduce the number of noise variable if the value is inferior to \param tol
@@ -296,6 +383,8 @@ public:
 	typedef AffineMainVector<T> VECTOR;
 	typedef AffineMainMatrix<T> MATRIX;
 
+
+
 };
 
 // the following functions are
@@ -311,6 +400,23 @@ template<class T> inline void ___set_empty(AffineMain<T>& x)               { x.s
 template<class T>
 std::ostream& operator<<(std::ostream& os, const AffineMain<T>&  x);
 
+template<class T>
+inline double AffineMain<T>::lb() const { return this->itv().lb(); }
+
+template<class T>
+inline double AffineMain<T>::ub() const { return this->itv().ub(); }
+
+template<class T>
+inline double AffineMain<T>::rad() const { return this->itv().rad(); }
+
+template<class T>
+inline double AffineMain<T>::diam() const { return this->itv().diam(); }
+
+template<class T>
+inline double AffineMain<T>::mig() const { return this->itv().mig(); }
+
+template<class T>
+inline double AffineMain<T>::mag() const { return this->itv().mag(); }
 
 
 /** \brief Return (-x) */
@@ -833,7 +939,9 @@ inline AffineMain<T> operator/(const AffineMain<T>& x, double d){
 
 template<class T>
 inline AffineMain<T> operator/(double d, const AffineMain<T>& x){
-	return AffineMain<T>(d) *= (AffineMain<T>(x).Ainv(x.itv()));
+	AffineMain<T> out;
+	out = d;
+	return out *= (AffineMain<T>(x).Ainv(x.itv()));
 }
 
 template<class T>
@@ -1031,7 +1139,9 @@ inline AffineMain<T> chi(const Interval&  a,const AffineMain<T>&  b,const Affine
 	} else if (a.lb()>0) {
 		return AffineMain<T>(c);
 	} else {
-		return  AffineMain<T>(b|c);
+		AffineMain<T> out;
+		out = b|c;
+		return  out;
 	}
 }
 
@@ -1040,8 +1150,8 @@ inline std::ostream& operator<<(std::ostream& os, const AffineMain<T>& x) {
 	{
 		os << x.itv() << " : ";
 		if (x.is_actif()) {
-			os << x.val(0);
-			for (int i = 1; i <= x.size(); i++) {
+			os << x.mid();
+			for (int i = 0; i < x.size(); i++) {
 				os << " + " << x.val(i) << " eps_" << i;
 			}
 			os << " + " << x.err() << " [-1,1] ";
@@ -2093,16 +2203,27 @@ inline AffineMain<T>& AffineMain<T>::Aroot(int n, const Interval& itv) {
 	if (is_empty()) return *this;
 	else if (n==0)  return *this = Interval::one();
 	else if (n==1)  return *this;
-	else if (is_degenerated()) return *this = pow(Interval(mid()),1.0/n);
+	else if (is_degenerated()) {
+		return *this = pow(Interval(mid()),1.0/n);
+	}
 	else if (n<0) {
 		this->Aroot(-n,itv);
-		return *this->Ainv(root(itv,-n));
+		this->Ainv(root(itv,-n));
+		return *this;
 	}
-	else if (n % 2 == 0) return *this->Apow(Interval::one()/n,itv); // the negative part of x should be removed
-	else if (0 <= itv.lb()) return  *this->Apow(Interval::one()/n,itv);
+	else if (n % 2 == 0) {
+		this->Apow(Interval::one()/n,itv);
+		return *this; // the negative part of x should be removed
+	}
+	else if (0 <= itv.lb()) {
+		this->Apow(Interval::one()/n,itv);
+		return  *this;
+	}
 	else if (itv.ub() <= 0) {
+		this->Aneg();
 		this->Apow(Interval::one()/n,-itv);
-		return  *this->Aneg();
+		this->Aneg();
+		return  *this;
 	}
 	else {
 		// TODO do the root when x contains ZERO more properly

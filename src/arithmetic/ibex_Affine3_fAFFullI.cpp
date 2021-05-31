@@ -17,9 +17,18 @@ namespace ibex {
 
 double maTol = 2.5e-15;
 
-unsigned long int AF_fAFFullI::_counter = 1;
+unsigned long int AF_fAFFullI::_counter = 0;
 
 bool noise_null (const std::pair<int,double> value) { return (value.second >= 0)&&(value.second <= 0.0); }
+
+
+
+
+template<>
+AffineMain<AF_fAFFullI>::AffineMain() :
+_n		(-2		),
+_elt	(0.0, std::list<std::pair<int,double> >(), Interval(0.0))	{
+}
 
 template<>
 AffineMain<AF_fAFFullI>& AffineMain<AF_fAFFullI>::operator=(const Interval& x) {
@@ -68,24 +77,90 @@ AffineMain<AF_fAFFullI>& AffineMain<AF_fAFFullI>::operator=(const Interval& x) {
 }
 
 
-
-template<>
-AffineMain<AF_fAFFullI>::AffineMain() :
-_n		(-2		),
-_elt	(0.0, std::list<std::pair<int,double> >(), Interval(0.0))	{
-}
-
 template<>
 AffineMain<AF_fAFFullI>::AffineMain(int n, int m, const Interval& itv) :
 _n 		(1),
 _elt	(0.0, std::list<std::pair<int,double> >(), Interval(0.0))
 {
 	assert((n>=0) && (m>=0));
-	// std::cout << "not implemented" << std::endl;
 	*this = itv;
 }
 
 
+template<>
+AffineVarMain<AF_fAFFullI>& AffineVarMain<AF_fAFFullI>::operator=(const Interval& x) {
+	_elt._garbage = Interval(0.0); //
+	if (x.is_empty()) {
+		_n = -1;
+		_elt._center = 0.0;
+		// Note the empty Affine form is an empty list
+		if (!_elt._rays.empty()) {
+			_elt._rays.clear();
+		}
+	}
+	else if (x.ub()>= POS_INFINITY && x.lb()<= NEG_INFINITY ) {
+		_n = -2;
+		_elt._center = 0.0;
+		// Note the entire set in Affine form is an empty list
+		if (!_elt._rays.empty()) {
+			_elt._rays.clear();
+		}
+	}
+	else if (x.ub()>= POS_INFINITY ) {
+		_n = -3;
+		_elt._center = x.lb();
+		if (!_elt._rays.empty()) {
+			_elt._rays.clear();
+		}
+	}
+	else if (x.lb()<= NEG_INFINITY ) {
+		_n = -4;
+		_elt._center = x.ub();
+		if (!_elt._rays.empty()) {
+			_elt._rays.clear();
+		}
+	}
+	else  {
+		if (!_elt._rays.empty()) {
+			_elt._rays.clear();
+		}
+		_n = 1;
+		_elt._center = x.mid();
+		std::pair<int,double> p(var, x.rad());
+		_elt._rays.push_back(p);
+
+	}
+	return *this;
+}
+
+
+template<>
+AffineVarMain<AF_fAFFullI>::AffineVarMain(const Interval & itv) :
+		AffineMain<AF_fAFFullI>(),
+		var		(_count) {
+	*this = itv;
+	_count++;
+}
+
+template<>
+AffineVarMain<AF_fAFFullI>::AffineVarMain(double d) :
+		AffineMain<AF_fAFFullI>(),
+		var		(_count) {
+	*this = Interval(d);
+	_count++;
+}
+
+
+template<>
+AffineVarMain<AF_fAFFullI>::AffineVarMain(int size, int var1, const Interval& itv) :
+		AffineMain<AF_fAFFullI>(),
+		var		(var1) {
+	*this = itv;
+}
+
+
+
+/*
 template<>
 AffineMain<AF_fAFFullI>::AffineMain(const double d) :
 _n 		(1),
@@ -95,8 +170,10 @@ _elt	(0.0, std::list<std::pair<int,double> >(), Interval(0.0)) {
 	} else {
 		if (d>0) {
 			_n = -3;
+			_elt._center = d;
 		} else {
 			_n = -4;
+			_elt._center = d;
 		}
 	}
 }
@@ -108,7 +185,7 @@ _n 		(1),
 _elt	(0.0,std::list<std::pair<int,double> >(),Interval(0.0)) {
 	*this = itv;
 }
-
+*/
 
 template<>
 AffineMain<AF_fAFFullI>::AffineMain(const AffineMain<AF_fAFFullI>& x) :
@@ -128,7 +205,6 @@ _elt	(x._elt._center, std::list<std::pair<int,double> >(),x._elt._garbage) {
 template<>
 double AffineMain<AF_fAFFullI>::val(int i) const{
 	assert((0<=i) && (((unsigned int)i)<=AF_fAFFullI::_counter));
-	if (i == 0) return _elt._center;
 	if (!_elt._rays.empty()) {
 		std::list<std::pair<int,double> >::const_iterator iter = _elt._rays.begin();
 		for (; iter != _elt._rays.end(); ++iter) {
@@ -196,20 +272,48 @@ template<>
 std::ostream& operator<<(std::ostream& os, const AffineMain<AF_fAFFullI>& x) {
 	os << std::setprecision(15) << x.itv() << " : ";
 	if (x.is_actif()) {
-		os << x.val(0);
-		for (int i = 1; i <= x.size(); i++) {
+		os << x.mid();
+
+//		if (!x._elt._rays.empty()) {
+//			std::list<std::pair<int,double> >::const_iterator iter = x._elt._rays.begin();
+//			for (; iter != x._elt._rays.end(); ++iter) {
+//				double v = iter -> second;
+//				if (v!=0)
+//					os << std::setprecision(15) <<" + " << v  << " eps_" << iter -> first;
+//			}
+//		}
+
+		for (int i = 0; i < x.size(); i++) {
 			double v = x.val(i);
 			if (v!=0)
 			{
 				os << std::setprecision(15) <<" + " << v << " eps_" << i;
 			}
 		}
-		// Check that err() is a centered intervall
 		os << " + " << x.err() << "[-1,1]";
 	} else {
-		os << "Affine3 form not Activate ";
+		os << "Affine3 Form not activate ";
 	}
 	return os;
+}
+
+
+template<>
+AffineVarMain<AF_fAFFullI>& AffineVarMain<AF_fAFFullI>::operator=(const AffineMain<AF_fAFFullI>& x) {
+	if (this != &x) {
+		_n = x._n;
+		_elt._center = x._elt._center;
+		_elt._garbage = x._elt._garbage;
+		_elt._rays.clear();
+
+		if (!x._elt._rays.empty())	{
+			std::list<std::pair<int,double> >::const_iterator it = x._elt._rays.begin();
+			for (; it != x._elt._rays.end(); ++it) {
+				_elt._rays.push_back(std::pair<int,double>(it->first,it->second));
+			}
+		}
+	}
+	return *this;
 }
 
 
@@ -246,8 +350,10 @@ AffineMain<AF_fAFFullI>& AffineMain<AF_fAFFullI>::operator=(double d) {
 	} else {
 		if (d>0) {
 			_n = -3;
+			_elt._center = d;
 		} else {
 			_n = -4;
+			_elt._center = d;
 		}
 	}
 
@@ -529,7 +635,9 @@ AffineMain<AF_fAFFullI>& AffineMain<AF_fAFFullI>::operator*=(const Interval& y) 
 		*this = itv()*y;
 
 	} else {
-		*this *= AffineMain<AF_fAFFullI>(y);
+		 AffineMain<AF_fAFFullI> tmp;
+		 tmp = y;
+		*this *= tmp;
 	}
 	return *this;
 }
@@ -544,7 +652,9 @@ AffineMain<AF_fAFFullI>& AffineMain<AF_fAFFullI>::operator+=(const Interval& y) 
 
 	} else {
 		//std::cout << "+=(y)" << y << std::endl;
-		*this += AffineMain<AF_fAFFullI>(y);
+		 AffineMain<AF_fAFFullI> tmp;
+		 tmp = y;
+		*this += tmp;
 
 	}
 
@@ -611,5 +721,7 @@ void AffineMain<AF_fAFFullI>::compact(double tol){
 	return;
 }
 
+template<>
+void AffineMain<AF_fAFFullI>::resize(int n) { }
 
 }// end namespace ibex
