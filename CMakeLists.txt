@@ -5,6 +5,11 @@ set (IBEX_AFFINE_DESCRIPTION "Affine arithmetic for the Ibex library")
 set (IBEX_AFFINE_URL "https://github.com/ibex-team/ibex-affine")
 set (IBEX_MIN_VERSION_REQ 2.8.9.1)
 
+# If IBEX_DIR was given on the command-line and not in the environment, set it
+# as an environment variable. Enable the usage of 'cmake -DIBEX_DIR=<path> ...'
+if (NOT DEFINED ENV{IBEX_DIR} AND DEFINED IBEX_DIR)
+  set (ENV{IBEX_DIR} "${IBEX_DIR}")
+endif ()
 find_package (IBEX ${IBEX_MIN_VERSION_REQ} REQUIRED)
 message (STATUS "Found Ibex version ${IBEX_VERSION}")
 ibex_init_common () # Ibex should have installed this function
