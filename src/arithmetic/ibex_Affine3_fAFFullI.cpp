@@ -87,6 +87,9 @@ _elt	(0.0, std::list<std::pair<int,double> >(), Interval(0.0))
 }
 
 
+//===========================================================================================
+//===========================================================================================
+
 template<>
 AffineVarMain<AF_fAFFullI>& AffineVarMain<AF_fAFFullI>::operator=(const Interval& x) {
 	_elt._garbage = Interval(0.0); //
@@ -128,35 +131,60 @@ AffineVarMain<AF_fAFFullI>& AffineVarMain<AF_fAFFullI>::operator=(const Interval
 		_elt._center = x.mid();
 		std::pair<int,double> p(var, x.rad());
 		_elt._rays.push_back(p);
+		if (AF_fAFFullI::_counter <= var ) {AF_fAFFullI::_counter = var+1;}
 
 	}
 	return *this;
 }
 
 
-template<>
-AffineVarMain<AF_fAFFullI>::AffineVarMain(const Interval & itv) :
-		AffineMain<AF_fAFFullI>(),
-		var		(_count) {
-	*this = itv;
-	_count++;
-}
+//template<>
+//AffineVarMain<AF_fAFFullI>::AffineVarMain(const Interval & itv) :
+//		AffineMain<AF_fAFFullI>(),
+//		var		(_count) {
+//	*this = itv;
+//	_count++;
+//}
+//
+//template<>
+//AffineVarMain<AF_fAFFullI>::AffineVarMain(double d) :
+//		AffineMain<AF_fAFFullI>(),
+//		var		(_count) {
+//	*this = Interval(d);
+//	_count++;
+//}
+//
+//
+//template<>
+//AffineVarMain<AF_fAFFullI>::AffineVarMain(int size, int var1, const Interval& itv) :
+//		AffineMain<AF_fAFFullI>(),
+//		var		(var1) {
+//	*this = itv;
+//}
+//
+//
+//template<>
+//AffineVarMain<AF_fAFFullI>& AffineVarMain<AF_fAFFullI>::operator=(const AffineMain<AF_fAFFullI>& x) {
+//	if (this != &x) {
+//		_n = x._n;
+//		_elt._center = x._elt._center;
+//		_elt._garbage = x._elt._garbage;
+//		_elt._rays.clear();
+//
+//		if (!x._elt._rays.empty())	{
+//			std::list<std::pair<int,double> >::const_iterator it = x._elt._rays.begin();
+//			for (; it != x._elt._rays.end(); ++it) {
+//				_elt._rays.push_back(std::pair<int,double>(it->first,it->second));
+//			}
+//		}
+//	}
+//	return *this;
+//}
 
-template<>
-AffineVarMain<AF_fAFFullI>::AffineVarMain(double d) :
-		AffineMain<AF_fAFFullI>(),
-		var		(_count) {
-	*this = Interval(d);
-	_count++;
-}
 
+//===========================================================================================
+//===========================================================================================
 
-template<>
-AffineVarMain<AF_fAFFullI>::AffineVarMain(int size, int var1, const Interval& itv) :
-		AffineMain<AF_fAFFullI>(),
-		var		(var1) {
-	*this = itv;
-}
 
 
 
@@ -270,50 +298,31 @@ double AffineMain<AF_fAFFullI>::mid() const{
 
 template<>
 std::ostream& operator<<(std::ostream& os, const AffineMain<AF_fAFFullI>& x) {
-	os << std::setprecision(15) << x.itv() << " : ";
+	os << x.itv() << " : ";
 	if (x.is_actif()) {
 		os << x.mid();
 
-//		if (!x._elt._rays.empty()) {
-//			std::list<std::pair<int,double> >::const_iterator iter = x._elt._rays.begin();
-//			for (; iter != x._elt._rays.end(); ++iter) {
-//				double v = iter -> second;
-//				if (v!=0)
-//					os << std::setprecision(15) <<" + " << v  << " eps_" << iter -> first;
-//			}
-//		}
-
-		for (int i = 0; i < x.size(); i++) {
-			double v = x.val(i);
-			if (v!=0)
-			{
-				os << std::setprecision(15) <<" + " << v << " eps_" << i;
+		if (!x._elt._rays.empty()) {
+			std::list<std::pair<int,double> >::const_iterator iter = x._elt._rays.begin();
+			for (; iter != x._elt._rays.end(); ++iter) {
+				double v = iter -> second;
+				if (v!=0)
+					os << " + " << v  << " eps_" << iter -> first;
 			}
 		}
+
+//		for (int i = 0; i < x.size(); i++) {
+//			double v = x.val(i);
+//			if (v!=0)
+//			{
+//				os << std::setprecision(15) <<" + " << v << " eps_" << i;
+//			}
+//		}
 		os << " + " << x.err() << "[-1,1]";
 	} else {
 		os << "Affine3 Form not activate ";
 	}
 	return os;
-}
-
-
-template<>
-AffineVarMain<AF_fAFFullI>& AffineVarMain<AF_fAFFullI>::operator=(const AffineMain<AF_fAFFullI>& x) {
-	if (this != &x) {
-		_n = x._n;
-		_elt._center = x._elt._center;
-		_elt._garbage = x._elt._garbage;
-		_elt._rays.clear();
-
-		if (!x._elt._rays.empty())	{
-			std::list<std::pair<int,double> >::const_iterator it = x._elt._rays.begin();
-			for (; it != x._elt._rays.end(); ++it) {
-				_elt._rays.push_back(std::pair<int,double>(it->first,it->second));
-			}
-		}
-	}
-	return *this;
 }
 
 

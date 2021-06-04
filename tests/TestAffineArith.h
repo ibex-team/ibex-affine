@@ -1,11 +1,12 @@
 /* ============================================================================
  * I B E X - Affine2 Test
  * ============================================================================
+ * Copyright   : ENSTA Bretagne (FRANCE)
  * License     : This program can be distributed under the terms of the GNU LGPL.
- *               See the file COPYING.LESSER.
+ *               See the file LICENSE
  *
- * Author(s)   : Jordan Ninin
- * Created     : April 08, 2013
+ * Author(s)   : Jordan NININ
+ * Created     : Juin 20, 2021
  * ---------------------------------------------------------------------------- */
 
 
@@ -14,13 +15,10 @@
 
 #include <cppunit/TestFixture.h>
 #include <cppunit/extensions/HelperMacros.h>
-#include "ibex_Interval.h"
+#include "ibex.h"
 #include "ibex_Affine.h"
+#include "ibex_AffineEval.h"
 #include "utils.h"
-#include <string>
-#include <iostream>
-#include <iomanip>
-#include "ibex_Function.h"
 
 using namespace ibex;
 
@@ -41,99 +39,99 @@ public:
 	CPPUNIT_TEST(test11);
 	CPPUNIT_TEST(test12);
 	CPPUNIT_TEST(test13);
-	CPPUNIT_TEST(test14);
-	CPPUNIT_TEST(test15);
-	CPPUNIT_TEST(test16);
-	CPPUNIT_TEST(test17);
-	CPPUNIT_TEST(test18);
-	CPPUNIT_TEST(test19);
-	CPPUNIT_TEST(test20);
-	CPPUNIT_TEST(test21);
-	CPPUNIT_TEST(test22);
-	CPPUNIT_TEST(test23);
-	CPPUNIT_TEST(test24);
-	CPPUNIT_TEST(test25);
-	CPPUNIT_TEST(test26);
-	CPPUNIT_TEST(test27);
-	CPPUNIT_TEST(test28);
-	CPPUNIT_TEST(test29);
-	CPPUNIT_TEST(test30);
-	CPPUNIT_TEST(test31);
-	CPPUNIT_TEST(test32);
+//	CPPUNIT_TEST(test14);
+//	CPPUNIT_TEST(test15);
+//	CPPUNIT_TEST(test16);
+//	CPPUNIT_TEST(test17);
+//	CPPUNIT_TEST(test18);
+//	CPPUNIT_TEST(test19);
+//	CPPUNIT_TEST(test20);
+//	CPPUNIT_TEST(test21);
+//	CPPUNIT_TEST(test22);
+//	CPPUNIT_TEST(test23);
+//	CPPUNIT_TEST(test24);
+//	CPPUNIT_TEST(test25);
+//	CPPUNIT_TEST(test26);
+//	CPPUNIT_TEST(test27);
+//	CPPUNIT_TEST(test28);
+//	CPPUNIT_TEST(test29);
+//	CPPUNIT_TEST(test30);
+//	CPPUNIT_TEST(test31);
+//	CPPUNIT_TEST(test32);
 	CPPUNIT_TEST(test33);
-	CPPUNIT_TEST(test34);
-	CPPUNIT_TEST(test35);
-	CPPUNIT_TEST(test36);
-	CPPUNIT_TEST(test37);
-	CPPUNIT_TEST(test38);
-	CPPUNIT_TEST(test39);
-	//		CPPUNIT_TEST(test40);
-	//		CPPUNIT_TEST(test41);
-	//		CPPUNIT_TEST(test42);
-	//		CPPUNIT_TEST(test43);
-	//		CPPUNIT_TEST(test44);
-	//		CPPUNIT_TEST(test45);
-	//		CPPUNIT_TEST(test46);
-	//		CPPUNIT_TEST(test47);
-	//		CPPUNIT_TEST(test48);
-	CPPUNIT_TEST(test49);
-	CPPUNIT_TEST(test50);
-	CPPUNIT_TEST(test51);
-	CPPUNIT_TEST(test52);
-	CPPUNIT_TEST(test53);
-	CPPUNIT_TEST(test54);
-	CPPUNIT_TEST(test55);
-	CPPUNIT_TEST(test56);
-	CPPUNIT_TEST(test57);
-	CPPUNIT_TEST(test58);
-	CPPUNIT_TEST(test59);
-	CPPUNIT_TEST(test60);
-	CPPUNIT_TEST(test61);
-	CPPUNIT_TEST(test62);
-	CPPUNIT_TEST(test63);
-	CPPUNIT_TEST(test64);
-	CPPUNIT_TEST(test65);
-	CPPUNIT_TEST(test66);
-	CPPUNIT_TEST(test67);
-	CPPUNIT_TEST(test68);
-	CPPUNIT_TEST(test69);
-	CPPUNIT_TEST(test70);
-	CPPUNIT_TEST(test71);
-	CPPUNIT_TEST(test72);
-	CPPUNIT_TEST(test73);
-	CPPUNIT_TEST(test74);
-	CPPUNIT_TEST(test75);
-	CPPUNIT_TEST(test76);
-	CPPUNIT_TEST(test77);
-	CPPUNIT_TEST(test78);
-	CPPUNIT_TEST(test79);
-	CPPUNIT_TEST(test80);
-	CPPUNIT_TEST(test81);
-	CPPUNIT_TEST(test82);
-	CPPUNIT_TEST(test83);
-	CPPUNIT_TEST(test84);
-	CPPUNIT_TEST(test85);
-	CPPUNIT_TEST(test86);
-	CPPUNIT_TEST(test87);
-	CPPUNIT_TEST(test88);
-	CPPUNIT_TEST(test89);
-	CPPUNIT_TEST(test90);
-	CPPUNIT_TEST(test91);
-	CPPUNIT_TEST(test92);
-	CPPUNIT_TEST(test93);
-	CPPUNIT_TEST(test94);
-	CPPUNIT_TEST(test95);
-	CPPUNIT_TEST(test96);
-	CPPUNIT_TEST(test97);
-	CPPUNIT_TEST(test98);
-	CPPUNIT_TEST(test99);
-	CPPUNIT_TEST(test100);
-	CPPUNIT_TEST(test101);
+//	CPPUNIT_TEST(test34);
+//	CPPUNIT_TEST(test35);
+//	CPPUNIT_TEST(test36);
+//	CPPUNIT_TEST(test37);
+//	CPPUNIT_TEST(test38);
+//	CPPUNIT_TEST(test39);
+//	//		CPPUNIT_TEST(test40);
+//	//		CPPUNIT_TEST(test41);
+//	//		CPPUNIT_TEST(test42);
+//	//		CPPUNIT_TEST(test43);
+//	//		CPPUNIT_TEST(test44);
+//	//		CPPUNIT_TEST(test45);
+//	//		CPPUNIT_TEST(test46);
+//	//		CPPUNIT_TEST(test47);
+//	//		CPPUNIT_TEST(test48);
+//	CPPUNIT_TEST(test49);
+//	CPPUNIT_TEST(test50);
+//	CPPUNIT_TEST(test51);
+//	CPPUNIT_TEST(test52);
+//	CPPUNIT_TEST(test53);
+//	CPPUNIT_TEST(test54);
+//	CPPUNIT_TEST(test55);
+//	CPPUNIT_TEST(test56);
+//	CPPUNIT_TEST(test57);
+//	CPPUNIT_TEST(test58);
+//	CPPUNIT_TEST(test59);
+//	CPPUNIT_TEST(test60);
+//	CPPUNIT_TEST(test61);
+//	CPPUNIT_TEST(test62);
+//	CPPUNIT_TEST(test63);
+//	CPPUNIT_TEST(test64);
+//	CPPUNIT_TEST(test65);
+//	CPPUNIT_TEST(test66);
+//	CPPUNIT_TEST(test67);
+//	CPPUNIT_TEST(test68);
+//	CPPUNIT_TEST(test69);
+//	CPPUNIT_TEST(test70);
+//	CPPUNIT_TEST(test71);
+//	CPPUNIT_TEST(test72);
+//	CPPUNIT_TEST(test73);
+//	CPPUNIT_TEST(test74);
+//	CPPUNIT_TEST(test75);
+//	CPPUNIT_TEST(test76);
+//	CPPUNIT_TEST(test77);
+//	CPPUNIT_TEST(test78);
+//	CPPUNIT_TEST(test79);
+//	CPPUNIT_TEST(test80);
+//	CPPUNIT_TEST(test81);
+//	CPPUNIT_TEST(test82);
+//	CPPUNIT_TEST(test83);
+//	CPPUNIT_TEST(test84);
+//	CPPUNIT_TEST(test85);
+//	CPPUNIT_TEST(test86);
+//	CPPUNIT_TEST(test87);
+//	CPPUNIT_TEST(test88);
+//	CPPUNIT_TEST(test89);
+//	CPPUNIT_TEST(test90);
+//	CPPUNIT_TEST(test91);
+//	CPPUNIT_TEST(test92);
+//	CPPUNIT_TEST(test93);
+//	CPPUNIT_TEST(test94);
+//	CPPUNIT_TEST(test95);
+//	CPPUNIT_TEST(test96);
+//	CPPUNIT_TEST(test97);
+//	CPPUNIT_TEST(test98);
+//	CPPUNIT_TEST(test99);
+//	CPPUNIT_TEST(test100);
+//	CPPUNIT_TEST(test101);
 	CPPUNIT_TEST_SUITE_END();
 
-	typedef enum { EQUALITY, INCLUSION, INCLUSION_TIGHT, INTERSECTION } comp_t;
 
-	bool compare_results (comp_t c, Interval r, AffineMain<T>  a) ;
+	bool compare_results (Interval r, AffineMain<T>  a) ;
+	bool compare_results2 (Interval r, AffineMain<T>  a) ;
 
 
 	void test01();
@@ -169,6 +167,8 @@ public:
 	void test31();
 	void test32();
 	void test33();
+	void test33_2();
+	void test33_3();
 	void test34();
 	void test35();
 	void test36();
@@ -240,7 +240,7 @@ public:
 };
 
 CPPUNIT_TEST_SUITE_REGISTRATION(TestAffineArith<AF_Default>);
-CPPUNIT_TEST_SUITE_REGISTRATION(TestAffineArith<AF_Other>);
+//CPPUNIT_TEST_SUITE_REGISTRATION(TestAffineArith<AF_Other>);
 
 #ifdef _IBEX_WITH_AFFINE_EXTENDED_
 

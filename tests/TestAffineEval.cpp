@@ -1,11 +1,12 @@
 /* ============================================================================
- * I B E X - Affine2 Test
+ * I B E X - Affine Evaluator Test
  * ============================================================================
+ * Copyright   : ENSTA Bretagne (FRANCE)
  * License     : This program can be distributed under the terms of the GNU LGPL.
- *               See the file COPYING.LESSER.
+ *               See the file LICENSE
  *
- * Author(s)   : Jordan Ninin
- * Created     : April 08, 2013
+ * Author(s)   : Jordan NININ
+ * Created     : Juin 20, 2021
  * ---------------------------------------------------------------------------- */
 
 #include "TestAffineEval.h"
@@ -53,9 +54,9 @@ void TestAffineEval<T>::test_pow2() {
 	CPPUNIT_ASSERT(check_af2(f,itv));
 	itv =Interval(NEG_INFINITY,2);
 	CPPUNIT_ASSERT(check_af2(f,itv));
-	itv =Interval::all_reals();
+	itv =Interval::ALL_REALS;
 	CPPUNIT_ASSERT(check_af2(f,itv));
-	itv =Interval::empty_set();
+	itv =Interval::EMPTY_SET;
 	CPPUNIT_ASSERT(check_af2(f,itv));
 	itv =Interval(-1,2);
 	CPPUNIT_ASSERT(check_af2(f,itv));
@@ -82,9 +83,9 @@ void TestAffineEval<T>::test_pow4() {
 	CPPUNIT_ASSERT(check_af2(f,itv));
 	itv =Interval(NEG_INFINITY,2);
 	CPPUNIT_ASSERT(check_af2(f,itv));
-	itv =Interval::all_reals();
+	itv =Interval::ALL_REALS;
 	CPPUNIT_ASSERT(check_af2(f,itv));
-	itv =Interval::empty_set();
+	itv =Interval::EMPTY_SET;
 	CPPUNIT_ASSERT(check_af2(f,itv));
 	itv =Interval(-1,2);
 	CPPUNIT_ASSERT(check_af2(f,itv));
@@ -113,9 +114,9 @@ void TestAffineEval<T>::test_pow5() {
 	CPPUNIT_ASSERT(check_af2(f,itv));
 	itv =Interval(NEG_INFINITY,2);
 	CPPUNIT_ASSERT(check_af2(f,itv));
-	itv =Interval::all_reals();
+	itv =Interval::ALL_REALS;
 	CPPUNIT_ASSERT(check_af2(f,itv));
-	itv =Interval::empty_set();
+	itv =Interval::EMPTY_SET;
 	CPPUNIT_ASSERT(check_af2(f,itv));
 	itv =Interval(-1,2);
 	CPPUNIT_ASSERT(check_af2(f,itv));
@@ -127,12 +128,12 @@ void TestAffineEval<T>::test_pow5() {
 	CPPUNIT_ASSERT(check_af2(f,itv));
 }
 
-/*
+
 template<class T>
-void TestAffine2<T>::test_root2() {
+void TestAffineEval<T>::test_root2() {
 	Variable x;
 	Interval itv;
-	Function f(x,root(x,2));
+	Function f(x,pow(x,1/2));
 	itv =Interval(1,2);
 	CPPUNIT_ASSERT(check_af2(f,itv));
 	itv =Interval(1,POS_INFINITY);
@@ -143,9 +144,9 @@ void TestAffine2<T>::test_root2() {
 	CPPUNIT_ASSERT(check_af2(f,itv));
 	itv =Interval(NEG_INFINITY,2);
 	CPPUNIT_ASSERT(check_af2(f,itv));
-	itv =Interval::all_reals();
+	itv =Interval::ALL_REALS;
 	CPPUNIT_ASSERT(check_af2(f,itv));
-	itv =Interval::empty_set();
+	itv =Interval::EMPTY_SET;
 	CPPUNIT_ASSERT(check_af2(f,itv));
 	itv =Interval(-1,2);
 	CPPUNIT_ASSERT(check_af2(f,itv));
@@ -158,10 +159,10 @@ void TestAffine2<T>::test_root2() {
 }
 
 template<class T>
-void TestAffine2<T>::test_root4() {
+void TestAffineEval<T>::test_root4() {
 	Variable x;
 	Interval itv;
-	Function f(x,root(x,4));
+	Function f(x,pow(x,1/4));
 	itv =Interval(1,2);
 	CPPUNIT_ASSERT(check_af2(f,itv));
 	itv =Interval(1,POS_INFINITY);
@@ -172,9 +173,9 @@ void TestAffine2<T>::test_root4() {
 	CPPUNIT_ASSERT(check_af2(f,itv));
 	itv =Interval(NEG_INFINITY,2);
 	CPPUNIT_ASSERT(check_af2(f,itv));
-	itv =Interval::all_reals();
+	itv =Interval::ALL_REALS;
 	CPPUNIT_ASSERT(check_af2(f,itv));
-	itv =Interval::empty_set();
+	itv =Interval::EMPTY_SET;
 	CPPUNIT_ASSERT(check_af2(f,itv));
 	itv =Interval(-1,2);
 	CPPUNIT_ASSERT(check_af2(f,itv));
@@ -189,10 +190,10 @@ void TestAffine2<T>::test_root4() {
 
 
 template<class T>
-void TestAffine2<T>::test_root5() {
+void TestAffineEval<T>::test_root5() {
 	Variable x;
 	Interval itv;
-	Function f(x,root(x,5));
+	Function f(x,pow(x,1/5));
 	itv =Interval(1,2);
 	CPPUNIT_ASSERT(check_af2(f,itv));
 	itv =Interval(1,POS_INFINITY);
@@ -203,9 +204,9 @@ void TestAffine2<T>::test_root5() {
 	CPPUNIT_ASSERT(check_af2(f,itv));
 	itv =Interval(NEG_INFINITY,2);
 	CPPUNIT_ASSERT(check_af2(f,itv));
-	itv =Interval::all_reals();
+	itv =Interval::ALL_REALS;
 	CPPUNIT_ASSERT(check_af2(f,itv));
-	itv =Interval::empty_set();
+	itv =Interval::EMPTY_SET;
 	CPPUNIT_ASSERT(check_af2(f,itv));
 	itv =Interval(-1,2);
 	CPPUNIT_ASSERT(check_af2(f,itv));
@@ -217,7 +218,7 @@ void TestAffine2<T>::test_root5() {
 	CPPUNIT_ASSERT(check_af2(f,itv));
 }
 
-*/
+
 
 template<class T>
 void TestAffineEval<T>::test_powINT1() {
@@ -234,9 +235,9 @@ void TestAffineEval<T>::test_powINT1() {
 	CPPUNIT_ASSERT(check_af2(f,itv));
 	itv =Interval(NEG_INFINITY,2);
 	CPPUNIT_ASSERT(check_af2(f,itv));
-	itv =Interval::all_reals();
+	itv =Interval::ALL_REALS;
 	CPPUNIT_ASSERT(check_af2(f,itv));
-	itv =Interval::empty_set();
+	itv =Interval::EMPTY_SET;
 	CPPUNIT_ASSERT(check_af2(f,itv));
 	itv =Interval(-1,2);
 	CPPUNIT_ASSERT(check_af2(f,itv));
@@ -263,9 +264,9 @@ void TestAffineEval<T>::test_powINT2() {
 	CPPUNIT_ASSERT(check_af2(f,itv));
 	itv =Interval(NEG_INFINITY,2);
 	CPPUNIT_ASSERT(check_af2(f,itv));
-	itv =Interval::all_reals();
+	itv =Interval::ALL_REALS;
 	CPPUNIT_ASSERT(check_af2(f,itv));
-	itv =Interval::empty_set();
+	itv =Interval::EMPTY_SET;
 	CPPUNIT_ASSERT(check_af2(f,itv));
 	itv =Interval(-1,2);
 	CPPUNIT_ASSERT(check_af2(f,itv));
@@ -293,9 +294,9 @@ void TestAffineEval<T>::test_sqrt() {
 	CPPUNIT_ASSERT(check_af2(f,itv));
 	itv =Interval(NEG_INFINITY,2);
 	CPPUNIT_ASSERT(check_af2(f,itv));
-	itv =Interval::all_reals();
+	itv =Interval::ALL_REALS;
 	CPPUNIT_ASSERT(check_af2(f,itv));
-	itv =Interval::empty_set();
+	itv =Interval::EMPTY_SET;
 	CPPUNIT_ASSERT(check_af2(f,itv));
 	itv =Interval(-1,2);
 	CPPUNIT_ASSERT(check_af2(f,itv));
@@ -322,9 +323,9 @@ void TestAffineEval<T>::test_exp() {
 	CPPUNIT_ASSERT(check_af2(f,itv));
 	itv =Interval(NEG_INFINITY,2);
 	CPPUNIT_ASSERT(check_af2(f,itv));
-	itv =Interval::all_reals();
+	itv =Interval::ALL_REALS;
 	CPPUNIT_ASSERT(check_af2(f,itv));
-	itv =Interval::empty_set();
+	itv =Interval::EMPTY_SET;
 	CPPUNIT_ASSERT(check_af2(f,itv));
 	itv =Interval(-1,2);
 	CPPUNIT_ASSERT(check_af2(f,itv));
@@ -361,9 +362,9 @@ void TestAffineEval<T>::test_log() {
 	CPPUNIT_ASSERT(check_af2(f,itv));
 	itv =Interval(NEG_INFINITY,2);
 	CPPUNIT_ASSERT(check_af2(f,itv));
-	itv =Interval::all_reals();
+	itv =Interval::ALL_REALS;
 	CPPUNIT_ASSERT(check_af2(f,itv));
-	itv =Interval::empty_set();
+	itv =Interval::EMPTY_SET;
 	CPPUNIT_ASSERT(check_af2(f,itv));
 	itv =Interval(-1,2);
 	CPPUNIT_ASSERT(check_af2(f,itv));
@@ -404,9 +405,9 @@ void TestAffineEval<T>::test_inv() {
 	CPPUNIT_ASSERT(check_af2(f,itv));
 	itv =Interval(NEG_INFINITY,2);
 	CPPUNIT_ASSERT(check_af2(f,itv));
-	itv =Interval::all_reals();
+	itv =Interval::ALL_REALS;
 	CPPUNIT_ASSERT(check_af2(f,itv));
-	itv =Interval::empty_set();
+	itv =Interval::EMPTY_SET;
 	CPPUNIT_ASSERT(check_af2(f,itv));
 	itv =Interval(-1,2);
 	CPPUNIT_ASSERT(check_af2(f,itv));
@@ -441,9 +442,9 @@ void TestAffineEval<T>::test_cos() {
 	CPPUNIT_ASSERT(check_af2(f,itv));
 	itv =Interval(NEG_INFINITY,2);
 	CPPUNIT_ASSERT(check_af2(f,itv));
-	itv =Interval::all_reals();
+	itv =Interval::ALL_REALS;
 	CPPUNIT_ASSERT(check_af2(f,itv));
-	itv =Interval::empty_set();
+	itv =Interval::EMPTY_SET;
 	CPPUNIT_ASSERT(check_af2(f,itv));
 	itv =Interval(-1,2);
 	CPPUNIT_ASSERT(check_af2(f,itv));
@@ -459,58 +460,58 @@ void TestAffineEval<T>::test_cos() {
 	CPPUNIT_ASSERT(check_af2(f,itv));
 
 
-	itv =Interval::pi();
+	itv =Interval::PI;
 	CPPUNIT_ASSERT(check_af2(f,itv));
 	for (int i =-20;i<34;i++) {
-		itv =Interval(i*Interval::pi().lb()/16,(i+1)*Interval::pi().ub()/16);
+		itv =Interval(i*Interval::PI.lb()/16,(i+1)*Interval::PI.ub()/16);
 		CPPUNIT_ASSERT(check_af2(f,itv));
 	}
 	for (int i =-20;i<18;i++) {
-		itv =Interval(i*Interval::pi().lb()/8,(i+1)*Interval::pi().ub()/8);
+		itv =Interval(i*Interval::PI.lb()/8,(i+1)*Interval::PI.ub()/8);
 		CPPUNIT_ASSERT(check_af2(f,itv));
 	}
 	for (int i =-20;i<10;i++) {
-		itv =Interval(i*Interval::pi().lb()/4,(i+1)*Interval::pi().ub()/4);
+		itv =Interval(i*Interval::PI.lb()/4,(i+1)*Interval::PI.ub()/4);
 		CPPUNIT_ASSERT(check_af2(f,itv));
 	}
 	for (int i =-20;i<15;i++) {
-		itv =Interval(i*Interval::pi().lb()/6,(i+1)*Interval::pi().ub()/6);
+		itv =Interval(i*Interval::PI.lb()/6,(i+1)*Interval::PI.ub()/6);
 		CPPUNIT_ASSERT(check_af2(f,itv));
 	}
 	for (int i =-20;i<20;i++) {
-		itv =Interval(i*Interval::pi().lb()/8,(i+3)*Interval::pi().ub()/8);
+		itv =Interval(i*Interval::PI.lb()/8,(i+3)*Interval::PI.ub()/8);
 		CPPUNIT_ASSERT(check_af2(f,itv));
 	}
 	for (int i =-20;i<20;i++) {
-		itv =Interval(i*Interval::pi().lb()/8,(i+2)*Interval::pi().ub()/8);
+		itv =Interval(i*Interval::PI.lb()/8,(i+2)*Interval::PI.ub()/8);
 		CPPUNIT_ASSERT(check_af2(f,itv));
 	}
 	for (int i =-20;i<40;i++) {
-		itv =Interval(i*Interval::pi().lb()/16,(i+4)*Interval::pi().ub()/16);
+		itv =Interval(i*Interval::PI.lb()/16,(i+4)*Interval::PI.ub()/16);
 		CPPUNIT_ASSERT(check_af2(f,itv));
 	}
 	for (int i =-20;i<20;i++) {
-		itv =Interval(i*Interval::pi().lb()/16,(i+3)*Interval::pi().ub()/16);
+		itv =Interval(i*Interval::PI.lb()/16,(i+3)*Interval::PI.ub()/16);
 		CPPUNIT_ASSERT(check_af2(f,itv));
 	}
 	for (int i =-20;i<40;i++) {
-		itv =Interval(i*Interval::pi().lb()/16,(i+4)*Interval::pi().ub()/16);
+		itv =Interval(i*Interval::PI.lb()/16,(i+4)*Interval::PI.ub()/16);
 		CPPUNIT_ASSERT(check_af2(f,itv));
 	}
 	for (int i =-20;i<30;i++) {
-		itv =Interval(i*Interval::pi().lb()/8,(i+7)*Interval::pi().ub()/8);
+		itv =Interval(i*Interval::PI.lb()/8,(i+7)*Interval::PI.ub()/8);
 		CPPUNIT_ASSERT(check_af2(f,itv));
 	}
 	for (int i =-20;i<34;i++) {
-		itv =Interval(0.1+i*Interval::pi().lb()/16,(i+1)*Interval::pi().ub()/16);
+		itv =Interval(0.1+i*Interval::PI.lb()/16,(i+1)*Interval::PI.ub()/16);
 		CPPUNIT_ASSERT(check_af2(f,itv));
 	}
 	for (int i =-20;i<18;i++) {
-		itv =Interval(0.1+i*Interval::pi().lb()/8,(i+1)*Interval::pi().ub()/8);
+		itv =Interval(0.1+i*Interval::PI.lb()/8,(i+1)*Interval::PI.ub()/8);
 		CPPUNIT_ASSERT(check_af2(f,itv));
 	}
 	for (int i =-20;i<10;i++) {
-		itv =Interval(0.1+i*Interval::pi().lb()/4,(i+1)*Interval::pi().ub()/4);
+		itv =Interval(0.1+i*Interval::PI.lb()/4,(i+1)*Interval::PI.ub()/4);
 		CPPUNIT_ASSERT(check_af2(f,itv));
 	}
 
@@ -531,9 +532,9 @@ void TestAffineEval<T>::test_sin() {
 	CPPUNIT_ASSERT(check_af2(f,itv));
 	itv =Interval(NEG_INFINITY,2);
 	CPPUNIT_ASSERT(check_af2(f,itv));
-	itv =Interval::all_reals();
+	itv =Interval::ALL_REALS;
 	CPPUNIT_ASSERT(check_af2(f,itv));
-	itv =Interval::empty_set();
+	itv =Interval::EMPTY_SET;
 	CPPUNIT_ASSERT(check_af2(f,itv));
 	itv =Interval(-1,2);
 	CPPUNIT_ASSERT(check_af2(f,itv));
@@ -545,58 +546,58 @@ void TestAffineEval<T>::test_sin() {
 	CPPUNIT_ASSERT(check_af2(f,itv));
 
 
-	itv =Interval::pi();
+	itv =Interval::PI;
 	CPPUNIT_ASSERT(check_af2(f,itv));
 	for (int i =-20;i<34;i++) {
-		itv =Interval(i*Interval::pi().lb()/16,(i+1)*Interval::pi().ub()/16);
+		itv =Interval(i*Interval::PI.lb()/16,(i+1)*Interval::PI.ub()/16);
 		CPPUNIT_ASSERT(check_af2(f,itv));
 	}
 	for (int i =-20;i<18;i++) {
-		itv =Interval(i*Interval::pi().lb()/8,(i+1)*Interval::pi().ub()/8);
+		itv =Interval(i*Interval::PI.lb()/8,(i+1)*Interval::PI.ub()/8);
 		CPPUNIT_ASSERT(check_af2(f,itv));
 	}
 	for (int i =-20;i<10;i++) {
-		itv =Interval(i*Interval::pi().lb()/4,(i+1)*Interval::pi().ub()/4);
+		itv =Interval(i*Interval::PI.lb()/4,(i+1)*Interval::PI.ub()/4);
 		CPPUNIT_ASSERT(check_af2(f,itv));
 	}
 	for (int i =-20;i<15;i++) {
-		itv =Interval(i*Interval::pi().lb()/6,(i+1)*Interval::pi().ub()/6);
+		itv =Interval(i*Interval::PI.lb()/6,(i+1)*Interval::PI.ub()/6);
 		CPPUNIT_ASSERT(check_af2(f,itv));
 	}
 	for (int i =-20;i<20;i++) {
-		itv =Interval(i*Interval::pi().lb()/8,(i+3)*Interval::pi().ub()/8);
+		itv =Interval(i*Interval::PI.lb()/8,(i+3)*Interval::PI.ub()/8);
 		CPPUNIT_ASSERT(check_af2(f,itv));
 	}
 	for (int i =-20;i<20;i++) {
-		itv =Interval(i*Interval::pi().lb()/8,(i+2)*Interval::pi().ub()/8);
+		itv =Interval(i*Interval::PI.lb()/8,(i+2)*Interval::PI.ub()/8);
 		CPPUNIT_ASSERT(check_af2(f,itv));
 	}
 	for (int i =-20;i<40;i++) {
-		itv =Interval(i*Interval::pi().lb()/16,(i+4)*Interval::pi().ub()/16);
+		itv =Interval(i*Interval::PI.lb()/16,(i+4)*Interval::PI.ub()/16);
 		CPPUNIT_ASSERT(check_af2(f,itv));
 	}
 	for (int i =-20;i<20;i++) {
-		itv =Interval(i*Interval::pi().lb()/16,(i+3)*Interval::pi().ub()/16);
+		itv =Interval(i*Interval::PI.lb()/16,(i+3)*Interval::PI.ub()/16);
 		CPPUNIT_ASSERT(check_af2(f,itv));
 	}
 	for (int i =-20;i<40;i++) {
-		itv =Interval(i*Interval::pi().lb()/16,(i+4)*Interval::pi().ub()/16);
+		itv =Interval(i*Interval::PI.lb()/16,(i+4)*Interval::PI.ub()/16);
 		CPPUNIT_ASSERT(check_af2(f,itv));
 	}
 	for (int i =-20;i<30;i++) {
-		itv =Interval(i*Interval::pi().lb()/8,(i+7)*Interval::pi().ub()/8);
+		itv =Interval(i*Interval::PI.lb()/8,(i+7)*Interval::PI.ub()/8);
 		CPPUNIT_ASSERT(check_af2(f,itv));
 	}
 	for (int i =-20;i<34;i++) {
-		itv =Interval(0.1+i*Interval::pi().lb()/16,(i+1)*Interval::pi().ub()/16);
+		itv =Interval(0.1+i*Interval::PI.lb()/16,(i+1)*Interval::PI.ub()/16);
 		CPPUNIT_ASSERT(check_af2(f,itv));
 	}
 	for (int i =-20;i<18;i++) {
-		itv =Interval(0.1+i*Interval::pi().lb()/8,(i+1)*Interval::pi().ub()/8);
+		itv =Interval(0.1+i*Interval::PI.lb()/8,(i+1)*Interval::PI.ub()/8);
 		CPPUNIT_ASSERT(check_af2(f,itv));
 	}
 	for (int i =-20;i<10;i++) {
-		itv =Interval(0.1+i*Interval::pi().lb()/4,(i+1)*Interval::pi().ub()/4);
+		itv =Interval(0.1+i*Interval::PI.lb()/4,(i+1)*Interval::PI.ub()/4);
 		CPPUNIT_ASSERT(check_af2(f,itv));
 	}
 
@@ -618,9 +619,9 @@ void TestAffineEval<T>::test_tan() {
 	CPPUNIT_ASSERT(check_af2(f,itv));
 	itv =Interval(NEG_INFINITY,2);
 	CPPUNIT_ASSERT(check_af2(f,itv));
-	itv =Interval::all_reals();
+	itv =Interval::ALL_REALS;
 	CPPUNIT_ASSERT(check_af2(f,itv));
-	itv =Interval::empty_set();
+	itv =Interval::EMPTY_SET;
 	CPPUNIT_ASSERT(check_af2(f,itv));
 	itv =Interval(-1,2);
 	CPPUNIT_ASSERT(check_af2(f,itv));
@@ -631,58 +632,58 @@ void TestAffineEval<T>::test_tan() {
 	itv =Interval(1,200000);
 	CPPUNIT_ASSERT(check_af2(f,itv));
 
-	itv =Interval::pi();
+	itv =Interval::PI;
 	CPPUNIT_ASSERT(check_af2(f,itv));
 	for (int i =-20;i<34;i++) {
-		itv =Interval(i*Interval::pi().lb()/16,(i+1)*Interval::pi().ub()/16);
+		itv =Interval(i*Interval::PI.lb()/16,(i+1)*Interval::PI.ub()/16);
 		CPPUNIT_ASSERT(check_af2(f,itv));
 	}
 	for (int i =-20;i<18;i++) {
-		itv =Interval(i*Interval::pi().lb()/8,(i+1)*Interval::pi().ub()/8);
+		itv =Interval(i*Interval::PI.lb()/8,(i+1)*Interval::PI.ub()/8);
 		CPPUNIT_ASSERT(check_af2(f,itv));
 	}
 	for (int i =-20;i<10;i++) {
-		itv =Interval(i*Interval::pi().lb()/4,(i+1)*Interval::pi().ub()/4);
+		itv =Interval(i*Interval::PI.lb()/4,(i+1)*Interval::PI.ub()/4);
 		CPPUNIT_ASSERT(check_af2(f,itv));
 	}
 	for (int i =-20;i<15;i++) {
-		itv =Interval(i*Interval::pi().lb()/6,(i+1)*Interval::pi().ub()/6);
+		itv =Interval(i*Interval::PI.lb()/6,(i+1)*Interval::PI.ub()/6);
 		CPPUNIT_ASSERT(check_af2(f,itv));
 	}
 	for (int i =-20;i<20;i++) {
-		itv =Interval(i*Interval::pi().lb()/8,(i+3)*Interval::pi().ub()/8);
+		itv =Interval(i*Interval::PI.lb()/8,(i+3)*Interval::PI.ub()/8);
 		CPPUNIT_ASSERT(check_af2(f,itv));
 	}
 	for (int i =-20;i<20;i++) {
-		itv =Interval(i*Interval::pi().lb()/8,(i+2)*Interval::pi().ub()/8);
+		itv =Interval(i*Interval::PI.lb()/8,(i+2)*Interval::PI.ub()/8);
 		CPPUNIT_ASSERT(check_af2(f,itv));
 	}
 	for (int i =-20;i<40;i++) {
-		itv =Interval(i*Interval::pi().lb()/16,(i+4)*Interval::pi().ub()/16);
+		itv =Interval(i*Interval::PI.lb()/16,(i+4)*Interval::PI.ub()/16);
 		CPPUNIT_ASSERT(check_af2(f,itv));
 	}
 	for (int i =-20;i<20;i++) {
-		itv =Interval(i*Interval::pi().lb()/16,(i+3)*Interval::pi().ub()/16);
+		itv =Interval(i*Interval::PI.lb()/16,(i+3)*Interval::PI.ub()/16);
 		CPPUNIT_ASSERT(check_af2(f,itv));
 	}
 	for (int i =-20;i<40;i++) {
-		itv =Interval(i*Interval::pi().lb()/16,(i+4)*Interval::pi().ub()/16);
+		itv =Interval(i*Interval::PI.lb()/16,(i+4)*Interval::PI.ub()/16);
 		CPPUNIT_ASSERT(check_af2(f,itv));
 	}
 	for (int i =-20;i<30;i++) {
-		itv =Interval(i*Interval::pi().lb()/8,(i+7)*Interval::pi().ub()/8);
+		itv =Interval(i*Interval::PI.lb()/8,(i+7)*Interval::PI.ub()/8);
 		CPPUNIT_ASSERT(check_af2(f,itv));
 	}
 	for (int i =-20;i<34;i++) {
-		itv =Interval(0.1+i*Interval::pi().lb()/16,(i+1)*Interval::pi().ub()/16);
+		itv =Interval(0.1+i*Interval::PI.lb()/16,(i+1)*Interval::PI.ub()/16);
 		CPPUNIT_ASSERT(check_af2(f,itv));
 	}
 	for (int i =-20;i<18;i++) {
-		itv =Interval(0.1+i*Interval::pi().lb()/8,(i+1)*Interval::pi().ub()/8);
+		itv =Interval(0.1+i*Interval::PI.lb()/8,(i+1)*Interval::PI.ub()/8);
 		CPPUNIT_ASSERT(check_af2(f,itv));
 	}
 	for (int i =-20;i<10;i++) {
-		itv =Interval(0.1+i*Interval::pi().lb()/4,(i+1)*Interval::pi().ub()/4);
+		itv =Interval(0.1+i*Interval::PI.lb()/4,(i+1)*Interval::PI.ub()/4);
 		CPPUNIT_ASSERT(check_af2(f,itv));
 	}
 
@@ -703,9 +704,9 @@ void TestAffineEval<T>::test_abs() {
 	CPPUNIT_ASSERT(check_af2(f,itv));
 	itv =Interval(NEG_INFINITY,2);
 	CPPUNIT_ASSERT(check_af2(f,itv));
-	itv =Interval::all_reals();
+	itv =Interval::ALL_REALS;
 	CPPUNIT_ASSERT(check_af2(f,itv));
-	itv =Interval::empty_set();
+	itv =Interval::EMPTY_SET;
 	CPPUNIT_ASSERT(check_af2(f,itv));
 	itv =Interval(-1,2);
 	CPPUNIT_ASSERT(check_af2(f,itv));
@@ -737,9 +738,9 @@ void TestAffineEval<T>::test_acos() {
 	CPPUNIT_ASSERT(check_af2(f,itv));
 	itv =Interval(NEG_INFINITY,2);
 	CPPUNIT_ASSERT(check_af2(f,itv));
-	itv =Interval::all_reals();
+	itv =Interval::ALL_REALS;
 	CPPUNIT_ASSERT(check_af2(f,itv));
-	itv =Interval::empty_set();
+	itv =Interval::EMPTY_SET;
 	CPPUNIT_ASSERT(check_af2(f,itv));
 	itv =Interval(-1,2);
 	CPPUNIT_ASSERT(check_af2(f,itv));
@@ -761,58 +762,58 @@ void TestAffineEval<T>::test_acos() {
 	CPPUNIT_ASSERT(check_af2(f,itv));
 	itv =Interval(10000000,10000000.0001);
 
-	itv =Interval::pi();
+	itv =Interval::PI;
 	CPPUNIT_ASSERT(check_af2(f,itv));
 	for (int i =-20;i<34;i++) {
-		itv =Interval(i*Interval::pi().lb()/16,(i+1)*Interval::pi().ub()/16);
+		itv =Interval(i*Interval::PI.lb()/16,(i+1)*Interval::PI.ub()/16);
 		CPPUNIT_ASSERT(check_af2(f,itv));
 	}
 	for (int i =-20;i<18;i++) {
-		itv =Interval(i*Interval::pi().lb()/8,(i+1)*Interval::pi().ub()/8);
+		itv =Interval(i*Interval::PI.lb()/8,(i+1)*Interval::PI.ub()/8);
 		CPPUNIT_ASSERT(check_af2(f,itv));
 	}
 	for (int i =-20;i<10;i++) {
-		itv =Interval(i*Interval::pi().lb()/4,(i+1)*Interval::pi().ub()/4);
+		itv =Interval(i*Interval::PI.lb()/4,(i+1)*Interval::PI.ub()/4);
 		CPPUNIT_ASSERT(check_af2(f,itv));
 	}
 	for (int i =-20;i<15;i++) {
-		itv =Interval(i*Interval::pi().lb()/6,(i+1)*Interval::pi().ub()/6);
+		itv =Interval(i*Interval::PI.lb()/6,(i+1)*Interval::PI.ub()/6);
 		CPPUNIT_ASSERT(check_af2(f,itv));
 	}
 	for (int i =-20;i<20;i++) {
-		itv =Interval(i*Interval::pi().lb()/8,(i+3)*Interval::pi().ub()/8);
+		itv =Interval(i*Interval::PI.lb()/8,(i+3)*Interval::PI.ub()/8);
 		CPPUNIT_ASSERT(check_af2(f,itv));
 	}
 	for (int i =-20;i<20;i++) {
-		itv =Interval(i*Interval::pi().lb()/8,(i+2)*Interval::pi().ub()/8);
+		itv =Interval(i*Interval::PI.lb()/8,(i+2)*Interval::PI.ub()/8);
 		CPPUNIT_ASSERT(check_af2(f,itv));
 	}
 	for (int i =-20;i<40;i++) {
-		itv =Interval(i*Interval::pi().lb()/16,(i+4)*Interval::pi().ub()/16);
+		itv =Interval(i*Interval::PI.lb()/16,(i+4)*Interval::PI.ub()/16);
 		CPPUNIT_ASSERT(check_af2(f,itv));
 	}
 	for (int i =-20;i<20;i++) {
-		itv =Interval(i*Interval::pi().lb()/16,(i+3)*Interval::pi().ub()/16);
+		itv =Interval(i*Interval::PI.lb()/16,(i+3)*Interval::PI.ub()/16);
 		CPPUNIT_ASSERT(check_af2(f,itv));
 	}
 	for (int i =-20;i<40;i++) {
-		itv =Interval(i*Interval::pi().lb()/16,(i+4)*Interval::pi().ub()/16);
+		itv =Interval(i*Interval::PI.lb()/16,(i+4)*Interval::PI.ub()/16);
 		CPPUNIT_ASSERT(check_af2(f,itv));
 	}
 	for (int i =-20;i<30;i++) {
-		itv =Interval(i*Interval::pi().lb()/8,(i+7)*Interval::pi().ub()/8);
+		itv =Interval(i*Interval::PI.lb()/8,(i+7)*Interval::PI.ub()/8);
 		CPPUNIT_ASSERT(check_af2(f,itv));
 	}
 	for (int i =-20;i<34;i++) {
-		itv =Interval(0.1+i*Interval::pi().lb()/16,(i+1)*Interval::pi().ub()/16);
+		itv =Interval(0.1+i*Interval::PI.lb()/16,(i+1)*Interval::PI.ub()/16);
 		CPPUNIT_ASSERT(check_af2(f,itv));
 	}
 	for (int i =-20;i<18;i++) {
-		itv =Interval(0.1+i*Interval::pi().lb()/8,(i+1)*Interval::pi().ub()/8);
+		itv =Interval(0.1+i*Interval::PI.lb()/8,(i+1)*Interval::PI.ub()/8);
 		CPPUNIT_ASSERT(check_af2(f,itv));
 	}
 	for (int i =-20;i<10;i++) {
-		itv =Interval(0.1+i*Interval::pi().lb()/4,(i+1)*Interval::pi().ub()/4);
+		itv =Interval(0.1+i*Interval::PI.lb()/4,(i+1)*Interval::PI.ub()/4);
 		CPPUNIT_ASSERT(check_af2(f,itv));
 	}
 
@@ -833,9 +834,9 @@ void TestAffineEval<T>::test_asin() {
 	CPPUNIT_ASSERT(check_af2(f,itv));
 	itv =Interval(NEG_INFINITY,2);
 	CPPUNIT_ASSERT(check_af2(f,itv));
-	itv =Interval::all_reals();
+	itv =Interval::ALL_REALS;
 	CPPUNIT_ASSERT(check_af2(f,itv));
-	itv =Interval::empty_set();
+	itv =Interval::EMPTY_SET;
 	CPPUNIT_ASSERT(check_af2(f,itv));
 	itv =Interval(-1,2);
 	CPPUNIT_ASSERT(check_af2(f,itv));
@@ -857,58 +858,58 @@ void TestAffineEval<T>::test_asin() {
 	CPPUNIT_ASSERT(check_af2(f,itv));
 	itv =Interval(10000000,10000000.0001);
 
-	itv =Interval::pi();
+	itv =Interval::PI;
 	CPPUNIT_ASSERT(check_af2(f,itv));
 	for (int i =-20;i<34;i++) {
-		itv =Interval(i*Interval::pi().lb()/16,(i+1)*Interval::pi().ub()/16);
+		itv =Interval(i*Interval::PI.lb()/16,(i+1)*Interval::PI.ub()/16);
 		CPPUNIT_ASSERT(check_af2(f,itv));
 	}
 	for (int i =-20;i<18;i++) {
-		itv =Interval(i*Interval::pi().lb()/8,(i+1)*Interval::pi().ub()/8);
+		itv =Interval(i*Interval::PI.lb()/8,(i+1)*Interval::PI.ub()/8);
 		CPPUNIT_ASSERT(check_af2(f,itv));
 	}
 	for (int i =-20;i<10;i++) {
-		itv =Interval(i*Interval::pi().lb()/4,(i+1)*Interval::pi().ub()/4);
+		itv =Interval(i*Interval::PI.lb()/4,(i+1)*Interval::PI.ub()/4);
 		CPPUNIT_ASSERT(check_af2(f,itv));
 	}
 	for (int i =-20;i<15;i++) {
-		itv =Interval(i*Interval::pi().lb()/6,(i+1)*Interval::pi().ub()/6);
+		itv =Interval(i*Interval::PI.lb()/6,(i+1)*Interval::PI.ub()/6);
 		CPPUNIT_ASSERT(check_af2(f,itv));
 	}
 	for (int i =-20;i<20;i++) {
-		itv =Interval(i*Interval::pi().lb()/8,(i+3)*Interval::pi().ub()/8);
+		itv =Interval(i*Interval::PI.lb()/8,(i+3)*Interval::PI.ub()/8);
 		CPPUNIT_ASSERT(check_af2(f,itv));
 	}
 	for (int i =-20;i<20;i++) {
-		itv =Interval(i*Interval::pi().lb()/8,(i+2)*Interval::pi().ub()/8);
+		itv =Interval(i*Interval::PI.lb()/8,(i+2)*Interval::PI.ub()/8);
 		CPPUNIT_ASSERT(check_af2(f,itv));
 	}
 	for (int i =-20;i<40;i++) {
-		itv =Interval(i*Interval::pi().lb()/16,(i+4)*Interval::pi().ub()/16);
+		itv =Interval(i*Interval::PI.lb()/16,(i+4)*Interval::PI.ub()/16);
 		CPPUNIT_ASSERT(check_af2(f,itv));
 	}
 	for (int i =-20;i<20;i++) {
-		itv =Interval(i*Interval::pi().lb()/16,(i+3)*Interval::pi().ub()/16);
+		itv =Interval(i*Interval::PI.lb()/16,(i+3)*Interval::PI.ub()/16);
 		CPPUNIT_ASSERT(check_af2(f,itv));
 	}
 	for (int i =-20;i<40;i++) {
-		itv =Interval(i*Interval::pi().lb()/16,(i+4)*Interval::pi().ub()/16);
+		itv =Interval(i*Interval::PI.lb()/16,(i+4)*Interval::PI.ub()/16);
 		CPPUNIT_ASSERT(check_af2(f,itv));
 	}
 	for (int i =-20;i<30;i++) {
-		itv =Interval(i*Interval::pi().lb()/8,(i+7)*Interval::pi().ub()/8);
+		itv =Interval(i*Interval::PI.lb()/8,(i+7)*Interval::PI.ub()/8);
 		CPPUNIT_ASSERT(check_af2(f,itv));
 	}
 	for (int i =-20;i<34;i++) {
-		itv =Interval(0.1+i*Interval::pi().lb()/16,(i+1)*Interval::pi().ub()/16);
+		itv =Interval(0.1+i*Interval::PI.lb()/16,(i+1)*Interval::PI.ub()/16);
 		CPPUNIT_ASSERT(check_af2(f,itv));
 	}
 	for (int i =-20;i<18;i++) {
-		itv =Interval(0.1+i*Interval::pi().lb()/8,(i+1)*Interval::pi().ub()/8);
+		itv =Interval(0.1+i*Interval::PI.lb()/8,(i+1)*Interval::PI.ub()/8);
 		CPPUNIT_ASSERT(check_af2(f,itv));
 	}
 	for (int i =-20;i<10;i++) {
-		itv =Interval(0.1+i*Interval::pi().lb()/4,(i+1)*Interval::pi().ub()/4);
+		itv =Interval(0.1+i*Interval::PI.lb()/4,(i+1)*Interval::PI.ub()/4);
 		CPPUNIT_ASSERT(check_af2(f,itv));
 	}
 
@@ -929,9 +930,9 @@ void TestAffineEval<T>::test_atan() {
 	CPPUNIT_ASSERT(check_af2(f,itv));
 	itv =Interval(NEG_INFINITY,2);
 	CPPUNIT_ASSERT(check_af2(f,itv));
-	itv =Interval::all_reals();
+	itv =Interval::ALL_REALS;
 	CPPUNIT_ASSERT(check_af2(f,itv));
-	itv =Interval::empty_set();
+	itv =Interval::EMPTY_SET;
 	CPPUNIT_ASSERT(check_af2(f,itv));
 	itv =Interval(-1,2);
 	CPPUNIT_ASSERT(check_af2(f,itv));
@@ -947,58 +948,58 @@ void TestAffineEval<T>::test_atan() {
 	CPPUNIT_ASSERT(check_af2(f,itv));
 	itv =Interval(10000000,10000000.0001);
 
-	itv =Interval::pi();
+	itv =Interval::PI;
 	CPPUNIT_ASSERT(check_af2(f,itv));
 	for (int i =-20;i<34;i++) {
-		itv =Interval(i*Interval::pi().lb()/16,(i+1)*Interval::pi().ub()/16);
+		itv =Interval(i*Interval::PI.lb()/16,(i+1)*Interval::PI.ub()/16);
 		CPPUNIT_ASSERT(check_af2(f,itv));
 	}
 	for (int i =-20;i<18;i++) {
-		itv =Interval(i*Interval::pi().lb()/8,(i+1)*Interval::pi().ub()/8);
+		itv =Interval(i*Interval::PI.lb()/8,(i+1)*Interval::PI.ub()/8);
 		CPPUNIT_ASSERT(check_af2(f,itv));
 	}
 	for (int i =-20;i<10;i++) {
-		itv =Interval(i*Interval::pi().lb()/4,(i+1)*Interval::pi().ub()/4);
+		itv =Interval(i*Interval::PI.lb()/4,(i+1)*Interval::PI.ub()/4);
 		CPPUNIT_ASSERT(check_af2(f,itv));
 	}
 	for (int i =-20;i<15;i++) {
-		itv =Interval(i*Interval::pi().lb()/6,(i+1)*Interval::pi().ub()/6);
+		itv =Interval(i*Interval::PI.lb()/6,(i+1)*Interval::PI.ub()/6);
 		CPPUNIT_ASSERT(check_af2(f,itv));
 	}
 	for (int i =-20;i<20;i++) {
-		itv =Interval(i*Interval::pi().lb()/8,(i+3)*Interval::pi().ub()/8);
+		itv =Interval(i*Interval::PI.lb()/8,(i+3)*Interval::PI.ub()/8);
 		CPPUNIT_ASSERT(check_af2(f,itv));
 	}
 	for (int i =-20;i<20;i++) {
-		itv =Interval(i*Interval::pi().lb()/8,(i+2)*Interval::pi().ub()/8);
+		itv =Interval(i*Interval::PI.lb()/8,(i+2)*Interval::PI.ub()/8);
 		CPPUNIT_ASSERT(check_af2(f,itv));
 	}
 	for (int i =-20;i<40;i++) {
-		itv =Interval(i*Interval::pi().lb()/16,(i+4)*Interval::pi().ub()/16);
+		itv =Interval(i*Interval::PI.lb()/16,(i+4)*Interval::PI.ub()/16);
 		CPPUNIT_ASSERT(check_af2(f,itv));
 	}
 	for (int i =-20;i<20;i++) {
-		itv =Interval(i*Interval::pi().lb()/16,(i+3)*Interval::pi().ub()/16);
+		itv =Interval(i*Interval::PI.lb()/16,(i+3)*Interval::PI.ub()/16);
 		CPPUNIT_ASSERT(check_af2(f,itv));
 	}
 	for (int i =-20;i<40;i++) {
-		itv =Interval(i*Interval::pi().lb()/16,(i+4)*Interval::pi().ub()/16);
+		itv =Interval(i*Interval::PI.lb()/16,(i+4)*Interval::PI.ub()/16);
 		CPPUNIT_ASSERT(check_af2(f,itv));
 	}
 	for (int i =-20;i<30;i++) {
-		itv =Interval(i*Interval::pi().lb()/8,(i+7)*Interval::pi().ub()/8);
+		itv =Interval(i*Interval::PI.lb()/8,(i+7)*Interval::PI.ub()/8);
 		CPPUNIT_ASSERT(check_af2(f,itv));
 	}
 	for (int i =-20;i<34;i++) {
-		itv =Interval(0.1+i*Interval::pi().lb()/16,(i+1)*Interval::pi().ub()/16);
+		itv =Interval(0.1+i*Interval::PI.lb()/16,(i+1)*Interval::PI.ub()/16);
 		CPPUNIT_ASSERT(check_af2(f,itv));
 	}
 	for (int i =-20;i<18;i++) {
-		itv =Interval(0.1+i*Interval::pi().lb()/8,(i+1)*Interval::pi().ub()/8);
+		itv =Interval(0.1+i*Interval::PI.lb()/8,(i+1)*Interval::PI.ub()/8);
 		CPPUNIT_ASSERT(check_af2(f,itv));
 	}
 	for (int i =-20;i<10;i++) {
-		itv =Interval(0.1+i*Interval::pi().lb()/4,(i+1)*Interval::pi().ub()/4);
+		itv =Interval(0.1+i*Interval::PI.lb()/4,(i+1)*Interval::PI.ub()/4);
 		CPPUNIT_ASSERT(check_af2(f,itv));
 	}
 
@@ -1019,9 +1020,9 @@ void TestAffineEval<T>::test_cosh() {
 	CPPUNIT_ASSERT(check_af2(f,itv));
 	itv =Interval(NEG_INFINITY,2);
 	CPPUNIT_ASSERT(check_af2(f,itv));
-	itv =Interval::all_reals();
+	itv =Interval::ALL_REALS;
 	CPPUNIT_ASSERT(check_af2(f,itv));
-	itv =Interval::empty_set();
+	itv =Interval::EMPTY_SET;
 	CPPUNIT_ASSERT(check_af2(f,itv));
 	itv =Interval(-1,2);
 	CPPUNIT_ASSERT(check_af2(f,itv));
@@ -1053,9 +1054,9 @@ void TestAffineEval<T>::test_sinh() {
 	CPPUNIT_ASSERT(check_af2(f,itv));
 	itv =Interval(NEG_INFINITY,2);
 	CPPUNIT_ASSERT(check_af2(f,itv));
-	itv =Interval::all_reals();
+	itv =Interval::ALL_REALS;
 	CPPUNIT_ASSERT(check_af2(f,itv));
-	itv =Interval::empty_set();
+	itv =Interval::EMPTY_SET;
 	CPPUNIT_ASSERT(check_af2(f,itv));
 	itv =Interval(-1,2);
 	CPPUNIT_ASSERT(check_af2(f,itv));
@@ -1089,9 +1090,9 @@ void TestAffineEval<T>::test_tanh() {
 	CPPUNIT_ASSERT(check_af2(f,itv));
 	itv =Interval(NEG_INFINITY,2);
 	CPPUNIT_ASSERT(check_af2(f,itv));
-	itv =Interval::all_reals();
+	itv =Interval::ALL_REALS;
 	CPPUNIT_ASSERT(check_af2(f,itv));
-	itv =Interval::empty_set();
+	itv =Interval::EMPTY_SET;
 	CPPUNIT_ASSERT(check_af2(f,itv));
 	itv =Interval(-1,2);
 	CPPUNIT_ASSERT(check_af2(f,itv));
@@ -1124,7 +1125,7 @@ bool TestAffineEval<T>::check_af2 (Function& f, Interval& I){
 
 	AffineEval<T> eval_af(f);
 
-/*	if (!((I.is_unbounded())||(I.is_degenerated())||(!I.is_bisectable())||(I.is_empty()))){
+	if (!((I.is_unbounded())||(I.is_degenerated())||(!I.is_bisectable())||(I.is_empty()))){
 		for (double ii= I.lb(); ii<I.ub(); ii += I.diam()/n) {
 			itv2 =f.eval(IntervalVector(1,Interval(ii)));
 
@@ -1134,15 +1135,15 @@ bool TestAffineEval<T>::check_af2 (Function& f, Interval& I){
 
 			if (!(itv2.is_subset(faa.itv())))
 			{
-				std::cout  << " DEP = "<< ii<< "  "  << f<< std::endl;
-				std::cout  << " RES = "<< itv2 << " /// "<< itv << " ///// " << faa << std::endl;
+				//std::cout  << " DEP = "<< ii<< "  "  << f<< std::endl;
+				//std::cout  << " RES = "<< itv2 << " /// "<< itv << " ///// " << faa << std::endl;
 				//		std::cout  << " RES = "<< itv2 << " ///// " << faa << std::endl;
 
 				return false;
 			}
 		}
 	}
-*/
+
 
 	itv2 =f.eval(IntervalVector(1,I));
 
@@ -1152,9 +1153,9 @@ bool TestAffineEval<T>::check_af2 (Function& f, Interval& I){
 
 	if (!(itv2.is_subset(faa.itv())))
 	{
-//		std::cout  << " DEP = "<< I<< "  "  << f<< std::endl;
-//		std::cout  << " RES = "<< itv2 << " /// "<< itv << " ///// " << faa << std::endl;
-//		std::cout  << " RES = "<< itv2 << " ///// " << faa << std::endl;
+		std::cout  << " DEP = "<< I<< "  "  << f<< std::endl;
+		std::cout  << " RES = "<< itv2 << " /// "<< itv << " ///// " << faa << std::endl;
+		std::cout  << " RES = "<< itv2 << " ///// " << faa << std::endl;
 
 		return false;
 	}

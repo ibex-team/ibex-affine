@@ -14,6 +14,7 @@
 
 #include "ibex_Interval.h"
 #include <math.h>
+#include <ostream>
 #include <cassert>
 #include "ibex_Exception.h"
 #include "ibex_Array.h"
@@ -85,15 +86,16 @@ public:
 	/** \brief Set *this to itv.
 	 */
 	AffineVarMain& operator=(const Interval& itv);
-	AffineVarMain& operator=(const AffineMain<T>& itv);
+//	AffineVarMain& operator=(const AffineMain<T>& itv);
 
 private:
 	friend class AffineMainVector<T>;
-	friend class AffineMainMatrix<T>;
+//	friend class AffineMainMatrix<T>;
 
-//    static int _count;
 
     const int var;
+
+    AffineVarMain(const AffineVarMain<T>& x);
 	/** \brief Create an affine form with n variables and  initialized val[0] with d. */
 //	explicit AffineVarMain(double d);
 
@@ -105,16 +107,37 @@ private:
 	AffineVarMain(int size, int var, const Interval& itv);
 };
 
+
+
+template<class T>
+AffineVarMain<T>::AffineVarMain(int size, int var1, const Interval& itv) :
+		AffineMain<T>(size, var1, itv),
+		var		(var1) {
+}
+
+
+
+template<class T>
+AffineVarMain<T>::AffineVarMain(const AffineVarMain& x) :
+		AffineMain<T>(x.size(), x.var, x.itv()),
+		var		(x.var) {
+}
+
+//===============================================================================================
+
+
+
 template<class T=AF_Default>
 class AffineMain {
 
 protected:
-	friend class AffineVarMain<T>;
+//	friend class AffineVarMain<T>;
 //	friend class AffineMainVector<T>;
 //	friend class AffineMainMatrix<T>;
 //	friend 	Array< TemplateDomain< AffineMain > > convert_to_affinedomain<T>(const Array<Domain>& d);
 //	friend 	Array< TemplateDomain< AffineMain > > convert_to_affinedomain<T>(const Array<const Domain>& d);
-
+	template<class A>
+	friend std::ostream& operator<<(std::ostream& os, const AffineMain<A>& x);
 	/** \brief tolerance for default compact procedure  */
 	static const double AF_COMPAC_Tol;
 	static const double AF_EM;
@@ -125,14 +148,15 @@ protected:
 
 	/**
 	 * Code for the particular case:
-	 * if the affine form is actif, _n>1  and _n is the size of the affine form
-	 * if the set is degenerate, _n = 0 or itv().diam()< AF_EC
-	 * if the set is empty, _n = -1
-	 * if the set is ]-oo,+oo[, _n = -2 and _ err=]-oo,+oo[
-	 * if the set is [a, +oo[ , _n = -3 and _err = [a, +oo[
-	 * if the set is ]-oo, a] , _n = -4 and _err = ]-oo, a]
+	 * if the affine form is actif, _actif=1  and _n is the size of the affine form
+	 * if the set is degenerate, _actif = 0 and itv().diam()< AF_EC
+	 * if the set is empty, _actif = -1
+	 * if the set is ]-oo,+oo[, _actif = -2 and _err =]-oo,+oo[
+	 * if the set is [a, +oo[ , _actif = -3 and _err = [a, +oo[
+	 * if the set is ]-oo, a] , _actif = -4 and _err = ]-oo, a]
 	 *
 	 */
+	int _actif;
 	int _n; 		// dimension (size of val)-1  , ie number of variable
 
 	T _elt;			// core of the affine form
@@ -157,7 +181,7 @@ public:
 	/** \brief change the linearisation approximation of all the affine form: Chebyshev (by default), or Min-Range	 */
 	static void change_mode(Affine_Mode tt=AF_Default);
 
-	/** \brief Create an empty affine form. */
+	/** \brief Create an all_reals affine form (like Interval()). */
 	AffineMain();
 
 	/** \brief Create an affine form with n variables, initialized with x  */
@@ -196,7 +220,7 @@ public:
 	 */
 	virtual AffineMain& operator=(const Interval& itv);
 
-	/* Union and Intersection of two Affine2 form must not be implemented
+	/* Union and Intersection of two Affine form must not be implemented
 	 * That could produce to much confusion.
 	 */
 	/** \brief Intersection of *this and x.
@@ -782,23 +806,23 @@ inline int AffineMain<T>::size() const{
 
 template<class T>
 inline bool AffineMain<T>::is_actif() const{
-	//return _actif;
-	return (_n>-1);
+	return (_actif>-1);
 }
 
 template<class T>
 inline bool AffineMain<T>::is_empty() const{
-	return (_n==-1);
+	return (_actif==-1);
 }
 
 template<class T>
 inline bool AffineMain<T>::is_degenerated() const {
-	return (itv().diam() <	AF_EC);
+	//return (itv().diam() <	AF_EC);
+	return (_actif==0);
 }
 
 template<class T>
 inline bool AffineMain<T>::is_unbounded() const{
-	return ((-1>_n)&&(_n>-5));
+	return ((-1>_actif)&&(_actif>-5));
 }
 
 template<class T>
@@ -1390,7 +1414,7 @@ inline AffineMain<T>& AffineMain<T>::Acos(const Interval& itv){
 		*this = res_itv;
 	}  else  {
 	// General case
-		double alpha, beta, ddelta, t1, t2;
+		double alpha, beta, ddelta, t1 ;//, t2;
 		Interval dmm(0.0), TEMP1(0.0), TEMP2(0.0), band(0.0);
 		if (itv.diam()>=Interval::two_pi().lb()) {
 			*this = Interval(-1,1);
@@ -1471,7 +1495,7 @@ inline AffineMain<T>& AffineMain<T>::Asin(const Interval& itv){
 		*this = res_itv;
 	}  else  {
 	// General case
-		double alpha, beta, ddelta, t1, t2;
+		double alpha, beta, ddelta, t1;//, t2;
 		Interval dmm(0.0), TEMP1(0.0), TEMP2(0.0), band(0.0);
 		if (itv.diam()>=Interval::two_pi().lb()) {
 			*this = Interval(-1,1);
@@ -1552,7 +1576,7 @@ inline AffineMain<T>& AffineMain<T>::Atan(const Interval& itv){
 		*this = res_itv;
 	}  else  {
 	// General case
-		double alpha, beta, ddelta, t1, t2;
+		double alpha, beta, ddelta, t1;//, t2;
 		Interval dmm(0.0), TEMP1(0.0), TEMP2(0.0), band(0.0);
 		if (itv.diam()>=Interval::two_pi().lb()) {
 			*this = Interval(-1,1);
@@ -1638,7 +1662,7 @@ inline AffineMain<T>& AffineMain<T>::Aacos(const Interval& itv){
 		*this = res_itv;
 	}  else  {
 	// General case
-		double alpha, beta, ddelta, t1, t2;
+		double alpha, beta, ddelta, t1;//, t2;
 
 		//  pour _itv = [a,b]
 		// x0 = 1/sqrt(2)
@@ -1706,7 +1730,7 @@ inline AffineMain<T>& AffineMain<T>::Aasin(const Interval& itv){
 		*this = res_itv;
 	}  else  {
 	// General case
-		double alpha, beta, ddelta, t1, t2;
+		double alpha, beta, ddelta, t1;//, t2;
 
 		//  pour _itv = [a,b]
 		// x0 = 1/sqrt(2)
@@ -1776,7 +1800,7 @@ inline AffineMain<T>& AffineMain<T>::Aatan(const Interval& itv){
 		*this = res_itv;
 	}  else  {
 	// General case
-		double alpha, beta, ddelta, t1, t2;
+		double alpha, beta, ddelta, t1;//, t2;
 
 		//  pour _itv = [a,b]
 		// x0 = 1/sqrt(2)
@@ -1883,7 +1907,7 @@ inline AffineMain<T>& AffineMain<T>::Asinh(const Interval& itv){
 		*this = res_itv;
 	}  else  {
 	// General case
-		double alpha, beta, ddelta, t1, t2;
+		double alpha, beta, ddelta, t1;//, t2;
 		Interval  TEMP2(0.0);
 		//  pour _itv = [a,b]
 		// x0 = 1/sqrt(2)
@@ -1952,7 +1976,7 @@ inline AffineMain<T>& AffineMain<T>::Atanh(const Interval& itv){
 		*this = res_itv;
 	}  else  {
 	// General case
-		double alpha, beta, ddelta, t1, t2;
+		double alpha, beta, ddelta, t1;//, t2;
 		Interval  TEMP2(0.0);
 		// additional particular case}
 		//  pour _itv = [a,b]

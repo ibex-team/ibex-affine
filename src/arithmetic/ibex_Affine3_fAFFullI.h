@@ -16,6 +16,7 @@
 #include "ibex_Interval.h"
 
 #include <list>
+#include <ostream>
 
 namespace ibex {
 
@@ -25,13 +26,14 @@ template<class T>  class AffineVarMain;
   class AF_fAFFullI {
 
 
+  private:
     friend class AffineVarMain<AF_fAFFullI>;
     friend class AffineMain<AF_fAFFullI>;
-    //    friend std::ostream& operator<<(std::ostream& os, const Affine2Main<AF_fAFFullI>&  x);
+	template<class A>
+	friend std::ostream& operator<<(std::ostream& os, const AffineMain<A>& x);
 
     static unsigned long int _counter;
 
-  private:
     /**
      * Code for the particular case:
      * if the affine form is actif, _n>1  and _n is the size of the affine form
@@ -47,9 +49,9 @@ template<class T>  class AffineVarMain;
     Interval _garbage;
 
   
-  public:
     AF_fAFFullI (double center, std::list<std::pair<int,double> > rays, Interval garbage);
 
+  public:
     /** \brief  Delete the affine form */
     virtual ~AF_fAFFullI();
     

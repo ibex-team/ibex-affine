@@ -10,14 +10,26 @@
  * ---------------------------------------------------------------------------- */
 #include "ibex_Affine2_fAF2.h"
 #include "ibex_Affine.h"
+#include <iostream>
 
 
 namespace ibex {
 
 
+/**
+ * Code for the particular case:
+ * if the affine form is actif, _actif=1  and _n is the size of the affine form
+ * if the set is degenerate, _actif = 0 and itv().diam()< AF_EC
+ * if the set is empty, _actif = -1
+ * if the set is ]-oo,+oo[, _actif = -2 and _err = ]-oo,+oo[
+ * if the set is [a, +oo[ , _actif = -3 and _err = [a, +oo[
+ * if the set is ]-oo, a] , _actif = -4 and _err = ]-oo, a]
+ *
+ */
 template<>
 AffineMain<AF_fAF2>::AffineMain() :
-		 _n		(-2		),
+		 _actif (-2     ),
+		 _n		(0		),
 		 _elt	(NULL	,POS_INFINITY)	{
  }
 
@@ -26,7 +38,7 @@ template<>
 AffineMain<AF_fAF2>& AffineMain<AF_fAF2>::operator=(const Interval& x) {
 
 	if (x.is_empty()) {
-		_n = -1;
+		_actif = -1;
 		_elt._err = 0.0;
 		if (_elt._val != NULL) {
 			delete[] _elt._val;
@@ -65,7 +77,6 @@ AffineMain<AF_fAF2>& AffineMain<AF_fAF2>::operator=(const Interval& x) {
 
 
 
-
 template<>
 AffineMain<AF_fAF2>::AffineMain(int size, int var, const Interval& itv) :
 			_n 		(size),
@@ -85,6 +96,38 @@ AffineMain<AF_fAF2>::AffineMain(int size, int var, const Interval& itv) :
 		*this = itv;
 	}
 }
+
+
+
+
+template<>
+const Interval AffineMain<AF_fAF2>::itv() const {
+
+	if (is_actif()) {
+		Interval res(_elt._val[0]);
+		Interval pmOne(-1.0, 1.0);
+		for (int i = 1; i <= _n; i++){
+			res += (_elt._val[i] * pmOne);
+		}
+		res += _elt._err * pmOne;
+		return res;
+	} else if (_n==-1) {
+		return Interval::empty_set();
+	} else if (_n==-2) {
+		return Interval::all_reals();
+	} else if (_n==-3) {
+		return Interval(_elt._err,POS_INFINITY);
+	} else  {  //if (_n==-4)
+		return Interval(NEG_INFINITY,_elt._err);
+	}
+
+}
+
+
+//===========================================================================================
+//===========================================================================================
+
+
 
 
 template<>
@@ -124,8 +167,8 @@ AffineVarMain<AF_fAF2>& AffineVarMain<AF_fAF2>::operator=(const Interval& x) {
 			_elt._val[var+1]	= x.rad();
 		} else {
 			delete[] _elt._val;
-			_n = var;
-			_elt._val	= new double[var+1];
+			_n = var+1;
+			_elt._val	= new double[var+2];
 			_elt._val[0] = x.mid();
 			_elt._val[var+1]	= x.rad();
 		}
@@ -134,29 +177,56 @@ AffineVarMain<AF_fAF2>& AffineVarMain<AF_fAF2>::operator=(const Interval& x) {
 
 }
 
-/**
-template<>
-AffineVarMain<AF_fAF2>::AffineVarMain(const Interval & itv) :
-		AffineMain<AF_fAF2>(_count+1, _count, itv),
-		var		(_count) {
-	_count++;
-}
+//
+//template<>
+//AffineVarMain<AF_fAF2>& AffineVarMain<AF_fAF2>::operator=(const AffineVarMain<AF_fAF2>& x) {
+//	if (this != &x) {
+//		_elt._err = x._elt._err;
+//		if (x.is_actif()) {
+//			if (_n!=x.size()) {
+//				_n =x.size();
+//				if (_elt._val!=NULL) { delete[] _elt._val; }
+//				_elt._val = new double[_n+1];
+//			}
+//			if (_elt._val==NULL) _elt._val = new double[_n+1];
+//
+//			for (int i = 0; i <= x.size(); i++) {
+//				_elt._val[i] = x._elt._val[i];
+//			}
+//		} else {
+//			_n = x._n;
+//			if (_elt._val != NULL) {
+//				delete[] _elt._val;
+//				_elt._val = NULL;
+//			}
+//		}
+//	}
+//	return *this;
+//}
 
-template<>
-AffineVarMain<AF_fAF2>::AffineVarMain(double d) :
-		AffineMain<AF_fAF2>(_count+1, _count, Interval(d)),
-		var		(_count) {
-	_count++;
-}
-*/
+//template<>
+//AffineVarMain<AF_fAF2>::AffineVarMain(const Interval & itv) :
+//		AffineMain<AF_fAF2>(_count+1, _count, itv),
+//		var		(_count) {
+//	_count++;
+//}
+//
+//template<>
+//AffineVarMain<AF_fAF2>::AffineVarMain(double d) :
+//		AffineMain<AF_fAF2>(_count+1, _count, Interval(d)),
+//		var		(_count) {
+//	_count++;
+//}
 
 
-template<>
-AffineVarMain<AF_fAF2>::AffineVarMain(int size, int var1, const Interval& itv) :
-		AffineMain<AF_fAF2>(size, var1, itv),
-		var		(var1) {
-}
 
+
+
+
+
+
+//===========================================================================================
+//===========================================================================================
 
 
 /*
@@ -210,63 +280,12 @@ double AffineMain<AF_fAF2>::err() const{
 }
 
 
-
-template<>
-const Interval AffineMain<AF_fAF2>::itv() const {
-
-	if (is_actif()) {
-		Interval res(_elt._val[0]);
-		Interval pmOne(-1.0, 1.0);
-		for (int i = 1; i <= _n; i++){
-			res += (_elt._val[i] * pmOne);
-		}
-		res += _elt._err * pmOne;
-		return res;
-	} else if (_n==-1) {
-		return Interval::empty_set();
-	} else if (_n==-2) {
-		return Interval::all_reals();
-	} else if (_n==-3) {
-		return Interval(_elt._err,POS_INFINITY);
-	} else  {  //if (_n==-4)
-		return Interval(NEG_INFINITY,_elt._err);
-	}
-
-}
-
-
 template<>
 double AffineMain<AF_fAF2>::mid() const{
 	return (is_actif())? _elt._val[0] : itv().mid();
 }
 
 
-
-template<>
-AffineVarMain<AF_fAF2>& AffineVarMain<AF_fAF2>::operator=(const AffineMain<AF_fAF2>& x) {
-	if (this != &x) {
-		_elt._err = x._elt._err;
-		if (x.is_actif()) {
-			if (_n!=x.size()) {
-				_n =x.size();
-				if (_elt._val!=NULL) { delete[] _elt._val; }
-				_elt._val = new double[_n+1];
-			}
-			if (_elt._val==NULL) _elt._val = new double[_n+1];
-
-			for (int i = 0; i <= x.size(); i++) {
-				_elt._val[i] = x._elt._val[i];
-			}
-		} else {
-			_n = x._n;
-			if (_elt._val != NULL) {
-				delete[] _elt._val;
-				_elt._val = NULL;
-			}
-		}
-	}
-	return *this;
-}
 
 template<>
 AffineMain<AF_fAF2>& AffineMain<AF_fAF2>::operator=(const AffineMain<AF_fAF2>& x) {
@@ -531,53 +550,54 @@ AffineMain<AF_fAF2>& AffineMain<AF_fAF2>::inflate(double ddelta) {
 
 template<>
 AffineMain<AF_fAF2>& AffineMain<AF_fAF2>::operator*=(const AffineMain<AF_fAF2>& y) {
-	//std::cout << "IN  *= "<<std::endl<< *this << std::endl<<y << std::endl;
+	std::cout << "IN  *= "<<std::endl<< *this << std::endl<<y << std::endl;
 
 	if (is_actif() && (y.is_actif())) {
 
 		if (_n < y.size()) {
 			resize(y.size());
 		}
-//		if (_n==y.size()) {
-			double Sx, Sy, Sxy, Sz, ttt, sss, ppp, tmp, xVal0, eee;
-			double * xTmp;
+		//		if (_n==y.size()) {
+		double Sx, Sy, Sxy, Sz, ttt, sss, ppp, tmp, xVal0, eee;
+		double * xTmp;
 
-			xTmp = new double[_n + 1];
-			Sx=0.0; Sy=0.0; Sxy=0.0; Sz=0.0; ttt=0.0; sss=0.0; ppp=0.0; tmp=0.0; xVal0=0.0; eee=0.0;
+		xTmp = new double[_n + 1];
+		Sx=0.0; Sy=0.0; Sxy=0.0; Sz=0.0; ttt=0.0; sss=0.0; ppp=0.0; tmp=0.0; xVal0=0.0; eee=0.0;
 
-			for (int i = 1; i <= _n; i++) {
-				if (i<=y.size()) {
+		for (int i = 1; i <= _n; i++) {
+			ppp=0;
+			if (i<=y.size()) {
 				eee = _elt.twoProd(_elt._val[i],y._elt._val[i], &ppp);
 				ttt = (1+2*AF_EM)*(ttt+fabs(eee));
-				}
-				eee = _elt.twoSum(Sz,ppp, &tmp);
-				ttt = (1+2*AF_EM)*(ttt+fabs(eee));
-				Sz = tmp;
+		//	}
+			eee = _elt.twoSum(Sz,ppp, &tmp);
+			ttt = (1+2*AF_EM)*(ttt+fabs(eee));
+			Sz = tmp;
 
-				if (fabs(Sz) < AF_EC) {
-					sss = (1+2*AF_EM)*(sss+ fabs(Sz));
-					Sz = 0.0;
-				}
+			if (fabs(Sz) < AF_EC) {
+				sss = (1+2*AF_EM)*(sss+ fabs(Sz));
+				Sz = 0.0;
+			}
 
-				eee = _elt.twoSum(Sxy,fabs(ppp), &tmp);
-				ttt = (1+2*AF_EM)*(ttt+fabs(eee));
-				Sxy = tmp;
+			eee = _elt.twoSum(Sxy,fabs(ppp), &tmp);
+			ttt = (1+2*AF_EM)*(ttt+fabs(eee));
+			Sxy = tmp;
 
-				if (fabs(Sxy) < AF_EC) {
-					sss = (1+2*AF_EM)*(sss+ fabs(Sxy));
-					Sxy = 0.0;
-				}
+			if (fabs(Sxy) < AF_EC) {
+				sss = (1+2*AF_EM)*(sss+ fabs(Sxy));
+				Sxy = 0.0;
+			}
+		}
+			eee = _elt.twoSum(Sx,fabs(_elt._val[i]), &tmp);
+			ttt = (1+2*AF_EM)*(ttt+fabs(eee));
+			Sx = tmp;
 
-				eee = _elt.twoSum(Sx,fabs(_elt._val[i]), &tmp);
-				ttt = (1+2*AF_EM)*(ttt+fabs(eee));
-				Sx = tmp;
+			if (fabs(Sx) < AF_EC) {
+				sss = (1+2*AF_EM)*(sss+ fabs(Sx));
+				Sx = 0.0;
+			}
 
-				if (fabs(Sx) < AF_EC) {
-					sss = (1+2*AF_EM)*(sss+ fabs(Sx));
-					Sx = 0.0;
-				}
-
-				if (i<=y.size()) {
+			if (i<=y.size()) {
 				eee = _elt.twoSum(Sy,fabs(y._elt._val[i]), &tmp);
 				ttt = (1+2*AF_EM)*(ttt+fabs(eee));
 				Sy = tmp;
@@ -586,104 +606,95 @@ AffineMain<AF_fAF2>& AffineMain<AF_fAF2>::operator*=(const AffineMain<AF_fAF2>& 
 					sss = (1+2*AF_EM)*(sss+ fabs(Sy));
 					Sy = 0.0;
 				}
-				}
-
 			}
 
-			xVal0 = _elt._val[0];
-			// RES = X%T(0) * res
-			for (int i = 0; i <= _n; i++) {
-				eee = _elt.twoProd(_elt._val[i],y._elt._val[0], &ppp);
-				ttt = (1+2*AF_EM)*(ttt+fabs(eee));
-				_elt._val[i] = ppp;
+		}
 
-				if (fabs(_elt._val[i]) < AF_EC) {
-					sss = (1+2*AF_EM)*(sss+ fabs(_elt._val[i]));
-					_elt._val[i] = 0.0;
-				}
-			}
-
-			// Xtmp = X%T(0) * Y
-			xTmp[0] = 0.0;
-			for (int i = 1; i <= y.size(); i++) {
-				eee = _elt.twoProd(xVal0,y._elt._val[i], &ppp);
-				ttt = (1+2*AF_EM)*(ttt+fabs(eee));
-				xTmp[i] = ppp;
-
-				if (fabs(xTmp[i]) < AF_EC) {
-					sss = (1+2*AF_EM)*(sss+ fabs(xTmp[i]));
-					xTmp[i] = 0.0;
-				}
-
-			}
-
-			//RES =  RES + Xtmp = ( Y%(0) * X ) + ( X%T(0) * Y - X%T(0)*Y%(0) )
-			for (int i = 0; i <= y.size(); i++) {
-
-				eee = _elt.twoSum(_elt._val[i],xTmp[i], &tmp);
-				ttt = (1+2*AF_EM)*(ttt+fabs(eee));
-				_elt._val[i] = tmp;
-
-				if (fabs(_elt._val[i]) < AF_EC) {
-					sss = (1+2*AF_EM)*(sss+ fabs(_elt._val[i]));
-					_elt._val[i] = 0.0;
-				}
-
-			}
-
-			eee = _elt.twoProd(0.5,Sz, &ppp);
+		xVal0 = _elt._val[0];
+		// RES = X%T(0) * res
+		for (int i = 0; i <= _n; i++) {
+			eee = _elt.twoProd(_elt._val[i],y._elt._val[0], &ppp);
 			ttt = (1+2*AF_EM)*(ttt+fabs(eee));
+			_elt._val[i] = ppp;
 
-			eee = _elt.twoSum(_elt._val[0],ppp, &tmp);
+			if (fabs(_elt._val[i]) < AF_EC) {
+				sss = (1+2*AF_EM)*(sss+ fabs(_elt._val[i]));
+				_elt._val[i] = 0.0;
+			}
+		}
+
+		// Xtmp = X%T(0) * Y
+		xTmp[0] = 0.0;
+		for (int i = 1; i <= y.size(); i++) {
+			eee = _elt.twoProd(xVal0,y._elt._val[i], &ppp);
 			ttt = (1+2*AF_EM)*(ttt+fabs(eee));
-			_elt._val[0] = tmp;
+			xTmp[i] = ppp;
 
-			if (fabs(_elt._val[0]) < AF_EC) {
-				sss = (1+2*AF_EM)*(sss+ fabs(_elt._val[0]));
-				_elt._val[0] = 0.0;
+			if (fabs(xTmp[i]) < AF_EC) {
+				sss = (1+2*AF_EM)*(sss+ fabs(xTmp[i]));
+				xTmp[i] = 0.0;
 			}
 
-			eee = _elt.twoSum(_elt._err,Sx, &tmp);
+		}
+
+		//RES =  RES + Xtmp = ( Y%(0) * X ) + ( X%T(0) * Y - X%T(0)*Y%(0) )
+		for (int i = 0; i <= y.size(); i++) {
+
+			eee = _elt.twoSum(_elt._val[i],xTmp[i], &tmp);
 			ttt = (1+2*AF_EM)*(ttt+fabs(eee));
+			_elt._val[i] = tmp;
 
-			eee = _elt.twoSum(y._elt._err,Sy, &ppp);
-			ttt = (1+2*AF_EM)*(ttt+fabs(eee));
-
-
-			_elt._err = (1+ 2*AF_EM) * (
-					((1+ 2*AF_EM) *fabs(y._elt._val[0]) * _elt._err)  +
-					((1+ 2*AF_EM) *fabs(xVal0) * y._elt._err)  +
-					((1+ 2*AF_EM) *(tmp * ppp)) +
-					((1- 2*AF_EM) *(-0.5) *  Sxy)  +
-					//					(AF_EE * (AF_EM * ttt))  +
-					(AF_EE * (ttt))  +
-					(AF_EE * sss)
-			);
-
-
-			bool b = (_elt._err<POS_INFINITY);
-			for (int i=0;i<=_n;i++) {
-				b &= (fabs(_elt._val[i])<POS_INFINITY);
+			if (fabs(_elt._val[i]) < AF_EC) {
+				sss = (1+2*AF_EM)*(sss+ fabs(_elt._val[i]));
+				_elt._val[i] = 0.0;
 			}
-			if (!b) *this = Interval::all_reals();
 
-			delete[] xTmp;
+		}
 
-//		} else {
-//			if (_n>y.size()) {
-//				*this *= AffineMain<AF_fAF2>(size(),0,y.itv());
-//			} else {
-//				Interval tmp1 = this->itv();
-//				*this = y;
-//				*this *= AffineMain<AF_fAF2>(size(),0,tmp1);
-//			}
-//		}
+		eee = _elt.twoProd(0.5,Sz, &ppp);
+		ttt = (1+2*AF_EM)*(ttt+fabs(eee));
 
-	} else { // y or x is not a valid affine2 form. So we add y.itv() such as an interval
+		eee = _elt.twoSum(_elt._val[0],ppp, &tmp);
+		ttt = (1+2*AF_EM)*(ttt+fabs(eee));
+		_elt._val[0] = tmp;
+
+		if (fabs(_elt._val[0]) < AF_EC) {
+			sss = (1+2*AF_EM)*(sss+ fabs(_elt._val[0]));
+			_elt._val[0] = 0.0;
+		}
+
+		eee = _elt.twoSum(_elt._err,Sx, &tmp);
+		ttt = (1+2*AF_EM)*(ttt+fabs(eee));
+
+		eee = _elt.twoSum(y._elt._err,Sy, &ppp);
+		ttt = (1+2*AF_EM)*(ttt+fabs(eee));
+
+
+		_elt._err = (1+ 2*AF_EM) * (
+				((1+ 2*AF_EM) *fabs(y._elt._val[0]) * _elt._err)  +
+				((1+ 2*AF_EM) *fabs(xVal0) * y._elt._err)  +
+				((1+ 2*AF_EM) *(tmp * ppp)) +
+				((1- 2*AF_EM) *(-0.5) *  Sxy)  +
+				//					(AF_EE * (AF_EM * ttt))  +
+				(AF_EE * (ttt))  +
+				(AF_EE * sss)
+		);
+
+
+		bool b = (_elt._err<POS_INFINITY);
+		for (int i=0;i<=_n;i++) {
+			b &= (fabs(_elt._val[i])<POS_INFINITY);
+		}
+		if (!b) *this = Interval::all_reals();
+
+		delete[] xTmp;
+
+
+	} else { // y or x is not a valid affine form. So we add y.itv() such as an interval
 		*this = (itv() * y.itv());
 	}
 
-	//std::cout << "OUT *= "<<std::endl<< *this << std::endl;
+	std::cout << "OUT *= "<<std::endl<< *this << std::endl;
 	return *this;
 }
 

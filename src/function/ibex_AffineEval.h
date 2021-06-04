@@ -243,10 +243,10 @@ inline void AffineEval<T>::gen2_fwd(int x1, int x2, int y) {
 	const ExprGenericBinaryOp& e = (const ExprGenericBinaryOp&) f.node(y);
 	d[y]=e.eval(d[x1],d[x2]);
 	switch(e.dim.type()) {
-	case Dim::SCALAR :     af2[y].i()= AffineMain<T>(d[y].i()); break;
+	case Dim::SCALAR :     af2[y].i()= (d[y].i()); break;
 	case Dim::ROW_VECTOR :
-	case Dim::COL_VECTOR : af2[y].v()=AffineMainVector<T>(d[y].v()); break;
-	case Dim::MATRIX :     af2[y].m()=AffineMainMatrix<T>(d[y].m()); break;
+	case Dim::COL_VECTOR : af2[y].v()=(d[y].v()); break;
+	case Dim::MATRIX :     af2[y].m()=(d[y].m()); break;
 	}
 }
 
@@ -305,10 +305,10 @@ inline void AffineEval<T>::gen1_fwd(int x, int y) {
 	const ExprGenericUnaryOp& e = (const ExprGenericUnaryOp&) f.node(y);
 	d[y]=e.eval(d[x]);
 	switch(e.dim.type()) {
-	case Dim::SCALAR :     af2[y].i()= AffineMain<T>(d[y].i()); break;
+	case Dim::SCALAR :     af2[y].i()= (d[y].i()); break;
 	case Dim::ROW_VECTOR :
-	case Dim::COL_VECTOR : af2[y].v()=AffineMainVector<T>(d[y].v()); break;
-	case Dim::MATRIX :     af2[y].m()=AffineMainMatrix<T>(d[y].m()); break;
+	case Dim::COL_VECTOR : af2[y].v()=(d[y].v()); break;
+	case Dim::MATRIX :     af2[y].m()=(d[y].m()); break;
 	}
 }
 
