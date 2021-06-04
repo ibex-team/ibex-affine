@@ -8,7 +8,7 @@ if (CPPUNIT_FOUND)
   add_library (test_common utest.cpp utils.cpp utils.h)
   target_link_libraries (test_common PUBLIC ibex-affine)
 
-  set (TESTS_LIST TestAffineArith)# TestAffineEval TestAffineBase TestAffineVector )
+  set (TESTS_LIST TestAffineArith TestAffineEval TestAffineBase TestAffineVector )
 
   foreach (test ${TESTS_LIST})
     # /!\ The test and the target building the executable have the same name

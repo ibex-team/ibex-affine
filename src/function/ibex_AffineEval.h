@@ -184,7 +184,7 @@ inline void AffineEval<T>::forward(const Array<const Domain>& argD, const Array<
 template<class T>
 inline void AffineEval<T>::forward(const IntervalVector& box) {
 	d.write_arg_domains(box);
-	af2.write_arg_domains(AffineMainVector<T>(box));
+	af2.write_arg_domains(AffineVarMainVector<T>(box));
 
 	// TODO: should manage empty result! (see Eval.cpp)
 	f.forward<AffineEval<T> >(*this);

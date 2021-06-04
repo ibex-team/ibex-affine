@@ -41,15 +41,15 @@ typedef AffineMainVector<AF_Other> Affine3Vector;
 template<class T=AF_Default>
 class AffineMainVector {
 
-
-private:
+protected:
 	friend class AffineMainMatrix<T>;
-
 	AffineMainVector() : //_n(0),
 		_vec(0) { }
 
+
+
 //	int _n;             // dimension (size of vec)
-	Array<AffineVarMain<T> > _vec;	   // vector of elements
+	Array<AffineMain<T> > _vec;	   // vector of elements
 
 public:
 
@@ -63,19 +63,20 @@ public:
 	 * all the components initialized to Affine(\a n,i,\a x) }.
 	 * \pre n>0
 	 */
-	explicit AffineMainVector(int n, const Interval& x);
+//	explicit AffineMainVector(int n, const Interval& x);
 
 	/**
 	 * \brief  Create \a n AffineMainVector of dimension \a n with
 	 * all the components initialized to \a x.
 	 * \pre n>0
 	 */
-//	explicit AffineMainVector(int n, const AffineMain<T>& x);
+	explicit AffineMainVector(int n, const AffineMain<T>& x);
 
 	/**
 	 * \brief Create  a copy of \a x.
 	 */
 	AffineMainVector(const AffineMainVector& x);
+	explicit AffineMainVector(const AffineVarMainVector<T>& x);
 
 	/**
 	 * \brief Create \a n AffineMainVector  initialized by
@@ -83,7 +84,7 @@ public:
 	 * \param bounds an nx2 array of doubles
 	 * \pre n>0
 	 */
-	explicit AffineMainVector(int n, double  bounds[][2]);
+//	explicit AffineMainVector(int n, double  bounds[][2]);
 
 	/**
 	 * \brief Create \a x.size AffineMainVector of dimension \a x.size with
@@ -91,7 +92,7 @@ public:
 	 * if !(\a b) Affine(x[i])
 	 * else  Affine(x.size(), i,x[i])
 	 */
-	explicit AffineMainVector(const IntervalVector& x);
+//	explicit AffineMainVector(const IntervalVector& x);
 
 	/**
 	 * \brief Create the degenerated AffineMainVector x
@@ -112,7 +113,7 @@ public:
 	/**
 	 * \brief Delete this vector
 	 */
-	virtual ~AffineMainVector();
+	virtual ~AffineMainVector() { };
 
 	/**
 	 * \brief Return the ith Affine form
@@ -180,7 +181,7 @@ public:
 	 * (*this) is the empty Interval (however, in this case, the status of
 	 * (*this) remains "empty").
 	 */
-	void resize(int n2);
+	virtual void resize(int n2);
 
 	/**
 	 * \brief Return a subvector.
@@ -198,7 +199,7 @@ public:
 	 *
 	 * \pre (*this) must not be empty
 	 */
-	void put(int start_index, const AffineMainVector& subvec);
+	virtual void put(int start_index, const AffineMainVector& subvec);
 
 	/**
 	 * \brief Assign this AffineMainVector to x.
@@ -206,7 +207,7 @@ public:
 	 * \pre Dimensions of this and x must match.
 	 * \note Emptiness is overridden.
 	 */
-	AffineMainVector& operator=(const AffineMainVector& x);
+	virtual AffineMainVector& operator=(const AffineMainVector& x);
 	AffineMainVector& operator=(const IntervalVector& x);
 
 	/**
@@ -288,35 +289,35 @@ public:
 	/**
 	 * \brief (*this)+=x2.
 	 */
-	AffineMainVector& operator+=(const Vector& x2);
+	virtual AffineMainVector& operator+=(const Vector& x2);
 
 	/**
 	 * \brief (*this)+=x2.
 	 */
-	AffineMainVector& operator+=(const IntervalVector& x2);
-	AffineMainVector& operator+=(const AffineMainVector& x2);
+	virtual AffineMainVector& operator+=(const IntervalVector& x2);
+	virtual AffineMainVector& operator+=(const AffineMainVector& x2);
 
 	/**
 	 * \brief (*this)-=x2.
 	 */
-	AffineMainVector& operator-=(const Vector& x2);
+	virtual AffineMainVector& operator-=(const Vector& x2);
 
 	/**
 	 * \brief (*this)-=x2.
 	 */
-	AffineMainVector& operator-=(const IntervalVector& x2);
-	AffineMainVector& operator-=(const AffineMainVector& x2);
+	virtual AffineMainVector& operator-=(const IntervalVector& x2);
+	virtual AffineMainVector& operator-=(const AffineMainVector& x2);
 
 	/**
 	 * \brief x=d*x
 	 */
-	AffineMainVector& operator*=(double d);
+	virtual AffineMainVector& operator*=(double d);
 
 	/**
 	 * \brief (*this)=x1*(*this).
 	 */
-	AffineMainVector& operator*=(const Interval& x1);
-	AffineMainVector& operator*=(const AffineMain<T>& x1);
+	virtual AffineMainVector& operator*=(const Interval& x1);
+	virtual AffineMainVector& operator*=(const AffineMain<T>& x1);
 
 
 };
@@ -474,37 +475,37 @@ template<class T> inline void ___set_empty(AffineMainVector<T>& v)      { v.set_
 
 namespace ibex {
 
-//template<class T>
-//AffineMainVector<T>::AffineMainVector(int n, const AffineMain<T>& x) :
+template<class T>
+AffineMainVector<T>::AffineMainVector(int n, const AffineMain<T>& x) :
 //		_n(n),
-//		_vec(n) {
-//	assert(n>=1);
-//	for (int i = 0; i < n; i++) {
-//		_vec.set_ref(i,AffineMain<T>(x));
-//	}
-//}
+		_vec(n) {
+	assert(n>=1);
+	for (int i = 0; i < n; i++) {
+		_vec.set_ref(i, *new AffineMain<T>(x));
+	}
+}
 
 template<class T>
 AffineMainVector<T>::AffineMainVector(int n) :
 //		_n(n),
 		_vec(n) {
 	assert(n>=1);
-	for (int i = 0; i < n; i++){
-		_vec.set_ref(i,*new AffineVarMain<T>(n, i, Interval::all_reals()));
-	}
-}
-
-template<class T>
-AffineMainVector<T>::AffineMainVector(int n, const Interval& x) :
-//		_n(n),
-		_vec(n) {
-	assert(n>=1);
 	for (int i = 0; i < n; i++) {
-		_vec.set_ref(i,*new AffineVarMain<T>(n, i, x));
+		_vec.set_ref(i,*new AffineMain<T>());
 	}
-
 }
-
+//
+//template<class T>
+//AffineMainVector<T>::AffineMainVector(int n, const Interval& x) :
+////		_n(n),
+//		_vec(n) {
+//	assert(n>=1);
+//	for (int i = 0; i < n; i++) {
+//		_vec.set_ref(i,*new AffineMain<T>(n, i, x));
+//	}
+//
+//}
+//
 
 template<class T>
 AffineMainVector<T>::AffineMainVector(const AffineMainVector<T>& x) :
@@ -512,45 +513,55 @@ AffineMainVector<T>::AffineMainVector(const AffineMainVector<T>& x) :
 		_vec(x.size()) {
 
 	for (int i = 0; i < x.size(); i++){
-		_vec.set_ref(i,*new AffineVarMain<T>(x.size(),i,(x[i]).itv()));
+		_vec.set_ref(i,*new AffineMain<T>(x[i]));
 	}
 
 }
 
 template<class T>
-AffineMainVector<T>::AffineMainVector(int n, double bounds[][2]) :
-//		_n(n),
-		_vec(n) {
-	if (bounds == 0){ // probably, the user called AffineMainVector<T>(n,0) and 0 is interpreted as NULL!
-		for (int i = 0; i < n; i++){
-			_vec.set_ref(i,*new AffineVarMain<T>(n, i, Interval(0)));
-		}
-	}
-	else {
-		for (int i = 0; i < n; i++){
-			_vec.set_ref(i,*new AffineVarMain<T>(n, i, Interval(bounds[i][0], bounds[i][1])));
-		}
-
-	}
-}
-
-template<class T>
-AffineMainVector<T>::AffineMainVector(const IntervalVector& x) :
+AffineMainVector<T>::AffineMainVector(const AffineVarMainVector<T>& x) :
 //		_n(x.size()),
 		_vec(x.size()) {
-	for (int i = 0; i < x.size(); i++){
-		_vec.set_ref(i,*new AffineVarMain<T>(x.size(), i, x[i]));
-	}
-}
 
-template<class T>
-AffineMainVector<T>::AffineMainVector(const Vector& x) :
-//		_n(x.size()),
-		_vec(x.size()) {
 	for (int i = 0; i < x.size(); i++){
-		_vec.set_ref(i,*new AffineVarMain<T>(x.size(), i, Interval(x[i])));
+		_vec.set_ref(i,*new AffineMain<T>(x[i]));
 	}
+
 }
+//template<class T>
+//AffineMainVector<T>::AffineMainVector(int n, double bounds[][2]) :
+////		_n(n),
+//		_vec(n) {
+//	if (bounds == 0){ // probably, the user called AffineMainVector<T>(n,0) and 0 is interpreted as NULL!
+//		for (int i = 0; i < n; i++){
+//			_vec.set_ref(i,*new AffineMain<T>(n, i, Interval(0)));
+//		}
+//	}
+//	else {
+//		for (int i = 0; i < n; i++){
+//			_vec.set_ref(i,*new AffineMain<T>(n, i, Interval(bounds[i][0], bounds[i][1])));
+//		}
+//
+//	}
+//}
+//
+//template<class T>
+//AffineMainVector<T>::AffineMainVector(const IntervalVector& x) :
+////		_n(x.size()),
+//		_vec(x.size()) {
+//	for (int i = 0; i < x.size(); i++){
+//		_vec.set_ref(i,*new AffineMain<T>(x.size(), i, x[i]));
+//	}
+//}
+//
+//template<class T>
+//AffineMainVector<T>::AffineMainVector(const Vector& x) :
+////		_n(x.size()),
+//		_vec(x.size()) {
+//	for (int i = 0; i < x.size(); i++){
+//		_vec.set_ref(i,*new AffineMain<T>(x.size(), i, Interval(x[i])));
+//	}
+//}
 
 template<class T>
 void AffineMainVector<T>::init(const Interval& x) {
@@ -584,7 +595,7 @@ void AffineMainVector<T>::resize(int n) {
 		_vec.resize(n);
 		if (n>size()) {
 			for (int i=size(); i<n; i++){
-				_vec.set_ref(i,*new AffineVarMain<T>(n,i,Interval::all_reals()));
+				_vec.set_ref(i,*new AffineMain<T>());
 			}
 		}
 	}
@@ -816,10 +827,12 @@ inline AffineMainVector<T> AffineMainVector<T>::empty(int n) {
 	return AffineMainVector<T>(n, Interval::empty_set());
 }
 
-template<class T>
-inline AffineMainVector<T>::~AffineMainVector<T>() {
-//	delete[] _vec;
-}
+//template<class T>
+//inline AffineMainVector<T>::~AffineMainVector<T>() {
+//	for (int i=0; i<_vec.size(); i++) {
+//		delete _vec[i];
+//	}
+//}
 
 template<class T>
 inline void AffineMainVector<T>::set_empty() {

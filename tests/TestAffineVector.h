@@ -14,6 +14,7 @@
 
 #include <cppunit/TestFixture.h>
 #include <cppunit/extensions/HelperMacros.h>
+#include "ibex_Affine.h"
 #include "ibex_AffineVector.h"
 #include "utils.h"
 

@@ -555,7 +555,7 @@ AffineMainMatrix<T>::AffineMainMatrix(int nb_rows1, int nb_cols1, const AffineMa
 	_M = new AffineMainVector<T>[_nb_rows];
 	for (int i=0; i<_nb_rows; i++) {
 		_M[i].resize(_nb_cols);
-//	TODO	for (int j=0; j<_nb_cols; j++) _M[i]._vec[j]=x;
+		for (int j=0; j<_nb_cols; j++) _M[i]._vec[j]=x;
 	}
 }
 
@@ -582,7 +582,7 @@ AffineMainMatrix<T>::AffineMainMatrix(const AffineMainMatrix<T>& m) : _nb_rows(m
 
 	for (int i=0; i<_nb_rows; i++) {
 		_M[i].resize(_nb_cols);
-//TODO		for (int j=0; j<_nb_cols; j++) _M[i]._vec[j]=AffineMain<T>(m[i][j]);
+		for (int j=0; j<_nb_cols; j++) _M[i]._vec[j]=AffineMain<T>(m[i][j]);
 	}
 
 }
@@ -608,7 +608,7 @@ AffineMainMatrix<T>::AffineMainMatrix(const Matrix& m) : _nb_rows(m.nb_rows()), 
 	for (int i=0; i<_nb_rows; i++) {
 		_M[i].resize(_nb_cols);
 		for (int j=0; j<_nb_cols; j++) {
-// TODO			_M[i]._vec[j]=AffineMain<T>(m[i][j]);
+			_M[i]._vec[j]=AffineMain<T>(m[i][j]);
 		}
 	}
 }

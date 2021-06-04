@@ -39,6 +39,7 @@ namespace ibex {
 
 template<class T>  class AffineVariableMain;
 template<class T>  class AffineVarMain;
+template<class T>  class AffineVarMainVector;
 template<class T>  class AffineMain;
 template<class T> class AffineMainVector;
 template<class T> class AffineMainMatrix;
@@ -67,8 +68,8 @@ typedef AF_fAFFullI AF_Other;
 typedef AffineMain<AF_Default> Affine2;
 typedef AffineMain<AF_Other>  Affine3;
 
-typedef AffineVarMain<AF_Default> Affine2Var;
-typedef AffineVarMain<AF_Other>  Affine3Var;
+typedef AffineVarMainVector<AF_Default> Affine2Vars;
+typedef AffineVarMainVector<AF_Other>  Affine3Vars;
 
 
 //template<class T>
@@ -86,10 +87,10 @@ public:
 	/** \brief Set *this to itv.
 	 */
 	AffineVarMain& operator=(const Interval& itv);
-//	AffineVarMain& operator=(const AffineMain<T>& itv);
+	AffineVarMain& operator=(const AffineMain<T>& itv) {ibex_error(" AffineVarMain : operator=(const AffineMain x) non valid ");};
 
 private:
-	friend class AffineMainVector<T>;
+	friend class AffineVarMainVector<T>;
 //	friend class AffineMainMatrix<T>;
 
 
@@ -127,6 +128,193 @@ AffineVarMain<T>::AffineVarMain(const AffineVarMain& x) :
 
 
 
+
+
+template<class T=AF_Default>
+class AffineVarMainVector : public AffineMainVector<T> {
+
+
+private:
+
+	AffineVarMainVector() : //_n(0),
+		AffineMainVector<T>(0) { }
+
+//	Array<AffineVarMain<T> > _vec;	   // vector of elements
+
+public:
+
+	/** \brief  Create \a n Affine form . All the components are Affine([-oo,+oo])
+	 * \pre n>0
+	 */
+	explicit AffineVarMainVector(int n);
+
+	/**
+	 * \brief  Create an AffineVarMainVector of dimension \a n with
+	 * all the components initialized to Affine(\a n,i,\a x) }.
+	 * \pre n>0
+	 */
+	explicit AffineVarMainVector(int n, const Interval& x);
+
+	/**
+	 * \brief  Create \a n AffineVarMainVector of dimension \a n with
+	 * all the components initialized to \a x.
+	 * \pre n>0
+	 */
+//	explicit AffineVarMainVector(int n, const AffineMain<T>& x);
+
+	/**
+	 * \brief Create  a copy of \a x.
+	 */
+	AffineVarMainVector(const AffineVarMainVector& x);
+
+	/**
+	 * \brief Create \a n AffineVarMainVector  initialized by
+	 * AffineMain(\a n, i,Interval(bounds[i][0],bounds[i][1]) )
+	 * \param bounds an nx2 array of doubles
+	 * \pre n>0
+	 */
+	explicit AffineVarMainVector(int n, double  bounds[][2]);
+
+	/**
+	 * \brief Create \a x.size AffineVarMainVector of dimension \a x.size with
+	 * the [i] component initialized to
+	 * if !(\a b) Affine(x[i])
+	 * else  Affine(x.size(), i,x[i])
+	 */
+	explicit AffineVarMainVector(const IntervalVector& x);
+
+	/**
+	 * \brief Create the degenerated AffineVarMainVector x
+	 *
+	 */
+	explicit AffineVarMainVector(const Vector& x);
+
+
+	/**
+	 * \brief Delete this vector
+	 */
+//	virtual ~AffineVarMainVector();
+
+	/**
+	 * \brief Resize this AffineMainVector.
+	 *
+	 * If the size is increased, the existing components are not
+	 * modified and the new ones are set to (-inf,+inf), even if
+	 * (*this) is the empty Interval (however, in this case, the status of
+	 * (*this) remains "empty").
+	 */
+	void resize(int n2);
+
+private:
+	void put(int start_index, const AffineMainVector<T>& subvec) {ibex_error(" AffineVarMainVector : operator non valid");};
+	AffineVarMainVector& operator=(const AffineMainVector<T>& x) {ibex_error(" AffineVarMainVector : operator non valid");};
+	AffineVarMainVector& operator+=(const Vector& x2) {ibex_error(" AffineVarMainVector : operator non valid");};
+	AffineVarMainVector& operator+=(const IntervalVector& x2) {ibex_error(" AffineVarMainVector : operator non valid");};
+	AffineVarMainVector& operator+=(const AffineMainVector<T>& x2) {ibex_error(" AffineVarMainVector : operator non valid");};
+	AffineVarMainVector& operator-=(const Vector& x2) {ibex_error(" AffineVarMainVector : operator non valid");};
+	AffineVarMainVector& operator-=(const IntervalVector& x2) {ibex_error(" AffineVarMainVector : operator non valid");};
+	AffineVarMainVector& operator-=(const AffineMainVector<T>& x2) {ibex_error(" AffineVarMainVector : operator non valid");};
+	AffineVarMainVector& operator*=(double d) {ibex_error(" AffineVarMainVector : operator non valid");};
+	AffineVarMainVector& operator*=(const Interval& x1) {ibex_error(" AffineVarMainVector : operator non valid");};
+	AffineVarMainVector& operator*=(const AffineMain<T>& x1) {ibex_error(" AffineVarMainVector : operator non valid");};
+
+};
+
+
+
+
+//===============================================================================================
+
+//template<class T>
+//inline AffineVarMainVector<T>::~AffineVarMainVector<T>() {
+//	for (int i=0; i<_vec.size(); i++) {
+//		delete _vec[i];
+//	}
+//}
+
+template<class T>
+AffineVarMainVector<T>::AffineVarMainVector(int n)  {
+	this->_vec.resize(n);
+	assert(n>=1);
+	for (int i = 0; i < n; i++){
+		this->_vec.set_ref(i,*new AffineVarMain<T>(n, i, Interval::all_reals()));
+	}
+}
+
+template<class T>
+AffineVarMainVector<T>::AffineVarMainVector(int n, const Interval& x) {
+	assert(n>=1);
+	this->_vec.resize(n);
+	for (int i = 0; i < n; i++) {
+		this->_vec.set_ref(i,*new AffineVarMain<T>(n, i, x));
+	}
+
+}
+
+
+template<class T>
+AffineVarMainVector<T>::AffineVarMainVector(const AffineVarMainVector<T>& x) {
+	this->_vec.resize(x.size());
+	for (int i = 0; i < x.size(); i++){
+		this->_vec.set_ref(i,*new AffineVarMain<T>(x.size(),i,(x[i]).itv()));
+	}
+
+}
+
+template<class T>
+AffineVarMainVector<T>::AffineVarMainVector(int n, double bounds[][2])  {
+	this->_vec.resize(n);
+	if (bounds == 0){ // probably, the user called AffineVarMainVector<T>(n,0) and 0 is interpreted as NULL!
+		for (int i = 0; i < n; i++){
+			this->_vec.set_ref(i,*new AffineVarMain<T>(n, i, Interval(0)));
+		}
+	}
+	else {
+		for (int i = 0; i < n; i++){
+			this->_vec.set_ref(i,*new AffineVarMain<T>(n, i, Interval(bounds[i][0], bounds[i][1])));
+		}
+
+	}
+}
+
+template<class T>
+AffineVarMainVector<T>::AffineVarMainVector(const IntervalVector& x) {
+	this->_vec.resize(x.size());
+	for (int i = 0; i < x.size(); i++){
+		this->_vec.set_ref(i,*new AffineVarMain<T>(x.size(), i, x[i]));
+	}
+}
+
+template<class T>
+AffineVarMainVector<T>::AffineVarMainVector(const Vector& x) {
+	this->_vec.resize(x.size());
+	for (int i = 0; i < x.size(); i++){
+		this->_vec.set_ref(i,*new AffineVarMain<T>(x.size(), i, Interval(x[i])));
+	}
+}
+
+template<class T>
+void AffineVarMainVector<T>::resize(int n) {
+	assert(n>=1);
+	assert((this->_vec.is_empty() && this->_vec.size()==0) || (this->_vec.size()!=0 && !this->_vec.is_empty()));
+
+	if (n==this->size()) return;
+	else {
+		int old_size= this->size();
+		this->_vec.resize(n);
+		Interval tmp;
+		int i = 0;
+		for (; i < old_size; i++){
+			tmp = this->_vec[i].itv();
+			this->_vec.set_ref(i,*new AffineVarMain<T>(n, i, tmp));
+		}
+		for (; i < n; i++){
+			this->_vec.set_ref(i,*new AffineVarMain<T>(n, i, Interval::all_reals()));
+		}
+	}
+}
+
+
 template<class T=AF_Default>
 class AffineMain {
 
@@ -157,7 +345,7 @@ protected:
 	 *
 	 */
 	int _actif;
-	int _n; 		// dimension (size of val)-1  , ie number of variable
+	int _n; 		// dimension (size of _elt._val)-1  , ie number of variable
 
 	T _elt;			// core of the affine form
 

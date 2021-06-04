@@ -60,7 +60,7 @@ void  TestAffineBase<T>::check_affine_inclu(const AffineMain<T>& y_actual, const
 
 template<class T>
 void  TestAffineBase<T>::check_add(const Interval& x, const Interval& z, const Interval& y_expected) {
-	AffineMainVector<T> ax(2);
+	AffineVarMainVector<T> ax(2);
 	ax[0]=x;
 	ax[1]=z;
 	check_add(ax[0],ax[1],y_expected);
@@ -68,7 +68,7 @@ void  TestAffineBase<T>::check_add(const Interval& x, const Interval& z, const I
 
 template<class T>
 void  TestAffineBase<T>::check_add(const Interval& xi, double z, const Interval& y_expected) {
-	AffineMainVector<T> x(1,xi);
+	AffineVarMainVector<T> x(1,xi);
 	AffineMain<T>  y_actual=x[0]+z;
 	check_affine_eq(y_actual, y_expected);
 
@@ -234,14 +234,14 @@ void  TestAffineBase<T>::check_add_scal(const Interval& x, double z, const Inter
 
 template<class T>
 void  TestAffineBase<T>::check_add_scal(const Interval& x, const Interval& z, const Interval& y_expected) {
-	AffineMainVector<T> xa(1,x);
+	AffineVarMainVector<T> xa(1,x);
 	check_add(xa[0],z,y_expected);
 	check_add((-xa[0]),-z, -y_expected);
 }
 
 template<class T>
 void  TestAffineBase<T>::check_mul(const Interval& x, const Interval& z, const Interval& y_expected) {
-	AffineMainVector<T> ax(2);
+	AffineVarMainVector<T> ax(2);
 	ax[0]=x;
 	ax[1]=z;
 	check_mul(ax[0],ax[1],y_expected);
@@ -267,14 +267,14 @@ void  TestAffineBase<T>::check_mul(const AffineMain<T>& x, const AffineMain<T>& 
 
 template<class T>
 void  TestAffineBase<T>::check_mul_scal(const Interval& x, double z, const Interval& y_expected) {
-	AffineMainVector<T> xa(1,x);
+	AffineVarMainVector<T> xa(1,x);
 	check_affine_eq(xa[0]*z, y_expected);
 	check_affine_eq(z*xa[0], y_expected);
 }
 
 template<class T>
 void  TestAffineBase<T>::check_div(const Interval& x, const Interval& z, const Interval& y_expected) {
-	AffineMainVector<T> ax(2);
+	AffineVarMainVector<T> ax(2);
 	ax[0]=x;
 	ax[1]=z;
 	check_div(ax[0],ax[1],y_expected);
@@ -295,7 +295,7 @@ void  TestAffineBase<T>::check_div(const AffineMain<T>& x, const AffineMain<T>& 
 
 template<class T>
 void  TestAffineBase<T>::check_div_scal(const Interval& x, double z, const Interval& y_expected) {
-	AffineMainVector<T> xa(1,x);
+	AffineVarMainVector<T> xa(1,x);
 	AffineMain<T> y_actual=xa[0]/z;
 	check_affine_inclu(y_actual, y_expected);
 
@@ -308,19 +308,19 @@ void  TestAffineBase<T>::check_div_scal(const Interval& x, double z, const Inter
 
 template<class T>
 void  TestAffineBase<T>::minus01() {
-	AffineMainVector<T> ax(1, Interval(0,1));
+	AffineVarMainVector<T> ax(1, Interval(0,1));
 	check_affine_eq(-(ax[0]), Interval(-1,0)); }
 template<class T>
 void  TestAffineBase<T>::minus02() {
-	AffineMainVector<T> ax(1);
+	AffineVarMainVector<T> ax(1);
 	check_affine_eq(-(ax[0]), Interval::all_reals()); }
 template<class T>
 void  TestAffineBase<T>::minus03() {
-	AffineMainVector<T> ax(1, Interval::neg_reals());
+	AffineVarMainVector<T> ax(1, Interval::neg_reals());
 	check_affine_eq(-(ax[0]), Interval::pos_reals()); }
 template<class T>
 void  TestAffineBase<T>::minus04() {
-	AffineMainVector<T> ax(1, Interval(NEG_INFINITY,1));
+	AffineVarMainVector<T> ax(1, Interval(NEG_INFINITY,1));
 	check_affine_eq(-(ax[0]), Interval(-1,POS_INFINITY)); }
 template<class T>
 void  TestAffineBase<T>::add01() { check_add(Interval::empty_set(),      Interval(0,1),      Interval::empty_set()); }
@@ -451,27 +451,27 @@ void  TestAffineBase<T>::div17() { check_div_scal(Interval(1,2),          -1, 	 
 
 template<class T>
 void  TestAffineBase<T>::sqrt01() {
-	AffineMainVector<T> ax(1);
+	AffineVarMainVector<T> ax(1);
 	check_affine_inclu(sqrt(ax[0]), 	Interval::pos_reals()); }
 template<class T>
 void  TestAffineBase<T>::sqrt02() {
-	AffineMainVector<T> ax(1,Interval::neg_reals());
+	AffineVarMainVector<T> ax(1,Interval::neg_reals());
 	check_affine_inclu(sqrt(ax[0]), 	Interval::zero()); }
 template<class T>
 void  TestAffineBase<T>::sqrt03() {
-	AffineMainVector<T> ax(1,Interval(-9,4));
+	AffineVarMainVector<T> ax(1,Interval(-9,4));
 	check_affine_inclu(sqrt(ax[0]),     Interval(0,2)); }
 template<class T>
 void  TestAffineBase<T>::sqrt04() {
-	AffineMainVector<T> ax(1,Interval(4,9));
+	AffineVarMainVector<T> ax(1,Interval(4,9));
 	check_affine_inclu(sqrt(ax[0]),     Interval(2,3)); }
 template<class T>
 void  TestAffineBase<T>::sqrt05() {
-	AffineMainVector<T> ax(1,Interval(-9,-4));
+	AffineVarMainVector<T> ax(1,Interval(-9,-4));
 	check_affine_inclu(sqrt(ax[0]),     Interval::empty_set()); }
 template<class T>
 void  TestAffineBase<T>::sqrt06() {
-	AffineMainVector<T> ax(1,Interval(-9,POS_INFINITY));
+	AffineVarMainVector<T> ax(1,Interval(-9,POS_INFINITY));
 	check_affine_inclu(sqrt(ax[0]),     Interval::pos_reals()); }
 
 #define piL Interval::pi().lb()
@@ -483,7 +483,7 @@ void  TestAffineBase<T>::check_sinh(const Interval& x) {
 	double yl=xl==NEG_INFINITY? NEG_INFINITY : 0.5*(exp(xl)-exp(-xl));
 	double yu=xu==POS_INFINITY? POS_INFINITY : 0.5*(exp(xu)-exp(-xu));
 
-	AffineMainVector<T> ax(1,x);
+	AffineVarMainVector<T> ax(1,x);
 	check_affine_inclu(sinh(ax[0]), Interval(yl,yu));
 	check_affine_inclu(sinh(-ax[0]), Interval(-yu,-yl));
 }
@@ -523,7 +523,7 @@ void  TestAffineBase<T>::check_cosh(const Interval& x) {
 
 
 //	std::cout << x<<" : " << cosh(x)<< "|||  "<<y<<std::endl;
-	AffineMainVector<T> ax(1,x);
+	AffineVarMainVector<T> ax(1,x);
 	check_affine_inclu(cosh(ax[0]), y);
 	check_affine_inclu(cosh(-ax[0]), y);
 //	check(x,acosh(cosh(x)));
@@ -547,7 +547,7 @@ void  TestAffineBase<T>::cosh07() { check_cosh(Interval(4,5)); }
 template<class T>
 void  TestAffineBase<T>::check_trigo(const Interval& x, const Interval& sin_x_expected) {
 
-	AffineMainVector<T> ax(1,x);
+	AffineVarMainVector<T> ax(1,x);
 	check_affine_inclu(sin(ax[0]), sin_x_expected);
 	check_affine_inclu(sin(Interval::pi()-ax[0]), sin_x_expected);
 	check_affine_inclu(sin(ax[0]+Interval::two_pi()), sin_x_expected);
@@ -559,83 +559,83 @@ void  TestAffineBase<T>::check_trigo(const Interval& x, const Interval& sin_x_ex
 }
 template<class T>
 void  TestAffineBase<T>::log01() {
-	AffineMainVector<T> ax(1,Interval::empty_set());
+	AffineVarMainVector<T> ax(1,Interval::empty_set());
 	check_affine_inclu(log(ax[0]), Interval::empty_set()); }
 template<class T>
 void  TestAffineBase<T>::log02() {
-	AffineMainVector<T> ax(1,Interval::all_reals());
+	AffineVarMainVector<T> ax(1,Interval::all_reals());
 	check_affine_inclu(log(ax[0]), Interval::all_reals()); }
 template<class T>
 void  TestAffineBase<T>::log03() {
-	AffineMainVector<T> ax(1,Interval::pos_reals());
+	AffineVarMainVector<T> ax(1,Interval::pos_reals());
 	check_affine_inclu(log(ax[0]), Interval::all_reals()); }
 template<class T>
 void  TestAffineBase<T>::log04() {
-	AffineMainVector<T> ax(1,Interval::neg_reals());
+	AffineVarMainVector<T> ax(1,Interval::neg_reals());
 	check_affine_inclu(log(ax[0]),  Interval::empty_set()); /*Interval(NEG_INFINITY,-DBL_MAX));*/ }
 template<class T>
 void  TestAffineBase<T>::log05() {
-	AffineMainVector<T> ax(1,Interval(1,2));
+	AffineVarMainVector<T> ax(1,Interval(1,2));
 	check_affine_inclu(log(ax[0]),       Interval(0,::log(2))); }
 template<class T>
 void  TestAffineBase<T>::log06() {
-	AffineMainVector<T> ax(1,Interval(-1,1));
+	AffineVarMainVector<T> ax(1,Interval(-1,1));
 	check_affine_inclu(log(ax[0]),     Interval(NEG_INFINITY,0)); }
 template<class T>
 void  TestAffineBase<T>::log07() {
-	AffineMainVector<T> ax(1,Interval(0,ibex::next_float(0)));
+	AffineVarMainVector<T> ax(1,Interval(0,ibex::next_float(0)));
 	 CPPUNIT_ASSERT(log(ax[0]).itv().ub()> -744.5); }
 template<class T>
 void  TestAffineBase<T>::log08() {
-	AffineMainVector<T> ax(1,Interval(0,1));
+	AffineVarMainVector<T> ax(1,Interval(0,1));
 	check_affine_inclu(log(ax[0]),       Interval(NEG_INFINITY,0)); }
 template<class T>
 void  TestAffineBase<T>::log09() {
-	AffineMainVector<T> ax(1,Interval(1,POS_INFINITY));
+	AffineVarMainVector<T> ax(1,Interval(1,POS_INFINITY));
 	check_affine_inclu(log(ax[0]),  Interval::pos_reals()); }
 template<class T>
 void  TestAffineBase<T>::log10() {
-	AffineMainVector<T> ax(1,Interval(0));
+	AffineVarMainVector<T> ax(1,Interval(0));
 	check_affine_inclu(log(ax[0]), Interval::empty_set()); /* Interval(NEG_INFINITY,-DBL_MAX)); */ }
 template<class T>
 void  TestAffineBase<T>::log11() {
-	AffineMainVector<T> ax(1,Interval(-2,-1));
+	AffineVarMainVector<T> ax(1,Interval(-2,-1));
 	check_affine_inclu(log(ax[0]), Interval::empty_set()); }
 template<class T>
 void  TestAffineBase<T>::exp01() {
-	AffineMainVector<T> ax(1,Interval::empty_set());
+	AffineVarMainVector<T> ax(1,Interval::empty_set());
 	check_affine_inclu(exp(ax[0]), Interval::empty_set()); }
 template<class T>
 void  TestAffineBase<T>::exp02() {
-	AffineMainVector<T> ax(1,Interval::all_reals());
+	AffineVarMainVector<T> ax(1,Interval::all_reals());
 	check_affine_inclu(exp(ax[0]), Interval::pos_reals()); }
 template<class T>
 void  TestAffineBase<T>::exp03() {
-	AffineMainVector<T> ax(1,Interval::pos_reals());
+	AffineVarMainVector<T> ax(1,Interval::pos_reals());
 	check_affine_inclu(exp(ax[0]), Interval(1,POS_INFINITY)); }
 template<class T>
 void  TestAffineBase<T>::exp04() {
-	AffineMainVector<T> ax(1,Interval::neg_reals());
+	AffineVarMainVector<T> ax(1,Interval::neg_reals());
 	check_affine_inclu(exp(ax[0]),  Interval(0,1)); }
 template<class T>
 void  TestAffineBase<T>::exp05() {
-	AffineMainVector<T> ax(1,Interval(0,2));
+	AffineVarMainVector<T> ax(1,Interval(0,2));
 	check_affine_inclu(exp(ax[0]),    Interval(1,::exp(2))); }
 template<class T>
 void  TestAffineBase<T>::exp06() {
-	AffineMainVector<T> ax(1,Interval(-1,1));
+	AffineVarMainVector<T> ax(1,Interval(-1,1));
 	check_affine_inclu(exp(ax[0]),     Interval(::exp(-1),::exp(1))); }
 template<class T>
 void  TestAffineBase<T>::exp07() {
-	AffineMainVector<T> ax(1,Interval(1.e100,1.e111));
+	AffineVarMainVector<T> ax(1,Interval(1.e100,1.e111));
 	check_affine_inclu(exp(ax[0]), Interval(DBL_MAX,POS_INFINITY)); }
 template<class T>
 void  TestAffineBase<T>::exp08() {
-	AffineMainVector<T> ax(1,Interval(DBL_MAX,POS_INFINITY));
+	AffineVarMainVector<T> ax(1,Interval(DBL_MAX,POS_INFINITY));
 	check_affine_inclu(exp(ax[0]), Interval(DBL_MAX,POS_INFINITY)); }
 template<class T>
 void  TestAffineBase<T>::exp09() {
-	AffineMainVector<T> ax(1,Interval(0, DBL_MAX));
+	AffineVarMainVector<T> ax(1,Interval(0, DBL_MAX));
 	check_affine_inclu(exp(ax[0]), Interval(1,POS_INFINITY)); }
 template<class T>
 void  TestAffineBase<T>::sin01() { check_trigo(Interval::all_reals(), Interval(-1,1)); }
@@ -665,45 +665,45 @@ template<class T>
 void  TestAffineBase<T>::sin13() { check_trigo(Interval(5,2*piU+3), Interval(sin(5.0),1)); }
 template<class T>
 void  TestAffineBase<T>::tan01() {
-	AffineMainVector<T> ax(1,Interval::all_reals());
+	AffineVarMainVector<T> ax(1,Interval::all_reals());
 	check_affine_inclu(tan(ax[0]), Interval::all_reals()); }
 template<class T>
 void  TestAffineBase<T>::tan02() {
-	AffineMainVector<T> ax(1,(-Interval::pi()/4.0 | Interval::pi()/4.0));
+	AffineVarMainVector<T> ax(1,(-Interval::pi()/4.0 | Interval::pi()/4.0));
 	check_affine_inclu(tan(ax[0]), Interval(-1,1)); }
 template<class T>
 void  TestAffineBase<T>::tan03() {	// tan(pi/4,pi/2)=[1,+oo)
-	AffineMainVector<T> x(1,Interval(piL/4.0,(1-1e-10)*piL/2.0)); // upper bound of x is close to pi/2
+	AffineVarMainVector<T> x(1,Interval(piL/4.0,(1-1e-10)*piL/2.0)); // upper bound of x is close to pi/2
 	AffineMain<T>  y=tan(x[0]);
 	CPPUNIT_ASSERT(y.itv().lb()<=1.0);
 	CPPUNIT_ASSERT(y.itv().ub()>1000); // upper bound of tan(x) is close to +oo
 }
 template<class T>
 void  TestAffineBase<T>::tan04() {	// tan(-pi/2,pi/4)=(-oo,1]
-	AffineMainVector<T> ax(1,Interval(-(1-1e-10)*piL/2.0,piL/4.0));
+	AffineVarMainVector<T> ax(1,Interval(-(1-1e-10)*piL/2.0,piL/4.0));
 	Interval y= (tan( ax[0] )).itv();
 	CPPUNIT_ASSERT(y.lb()<-1000); // lower bound is close to -oo
 	CPPUNIT_ASSERT(y.ub()>=1.0);
 }
 template<class T>
 void  TestAffineBase<T>::tan05() {
-	AffineMainVector<T> ax(1,Interval::pi()/2.0);
+	AffineVarMainVector<T> ax(1,Interval::pi()/2.0);
 	check_affine_inclu(tan(ax[0]),Interval::all_reals());
 }
 template<class T>
 void  TestAffineBase<T>::tan06() {
-	AffineMainVector<T> ax(1,Interval::pi());
+	AffineVarMainVector<T> ax(1,Interval::pi());
 	check_affine_inclu(tan(-ax[0]),Interval::all_reals());
 }
 template<class T>
 void  TestAffineBase<T>::tan07() {
-	AffineMainVector<T> ax(1,(3*Interval::pi()/4.0 | 5*Interval::pi()/4.0));
+	AffineVarMainVector<T> ax(1,(3*Interval::pi()/4.0 | 5*Interval::pi()/4.0));
 	check_affine_inclu(tan(ax[0]), Interval(-1,1));
 }
 
 template<class T>
 void  TestAffineBase<T>::check_pow(const Interval& x, int p, const Interval& y_expected) {
-	AffineMainVector<T> ax(1,x);
+	AffineVarMainVector<T> ax(1,x);
 	check_affine_inclu(pow(ax[0],p),y_expected);
 	check_affine_inclu(pow(-ax[0],p),(p%2==0)? y_expected : -y_expected);
 }
@@ -735,22 +735,22 @@ template<class T>
 void  TestAffineBase<T>::pow13() { check_pow(Interval(-10,10), -2, Interval(1.0/100,POS_INFINITY)); }
 template<class T>
 void  TestAffineBase<T>::root01() {
-	AffineMainVector<T> ax(1, Interval(0,1));
+	AffineVarMainVector<T> ax(1, Interval(0,1));
 	check_affine_inclu(root(ax[0],-1), Interval(1.0,POS_INFINITY));
 }
 template<class T>
 void  TestAffineBase<T>::root02() {
-	AffineMainVector<T> ax(1, Interval(-27,-8));
+	AffineVarMainVector<T> ax(1, Interval(-27,-8));
 	check_affine_inclu(root(ax[0], 3),Interval(-3,-2),1e-10);
 }
 template<class T>
 void  TestAffineBase<T>::root03() {
-	AffineMainVector<T> ax(1, Interval(-4,1));
+	AffineVarMainVector<T> ax(1, Interval(-4,1));
 	check_affine_inclu(root(ax[0],2), Interval(0,1));
 }
 template<class T>
 void  TestAffineBase<T>::root04() {
-	AffineMainVector<T> ax(1, Interval(-8,1));
+	AffineVarMainVector<T> ax(1, Interval(-8,1));
 	check_affine_inclu(root(ax[0],3), Interval(-2,1));
 }
 
@@ -758,6 +758,6 @@ void  TestAffineBase<T>::root04() {
 template<class T>
 void  TestAffineBase<T>::tan_issue248() {
 	//Interval itv = Interval(-Interval::pi().lb()/2,3*Interval::pi().ub()/8);
-	AffineMainVector<T> aff(1,Interval(-1.57079632679489678, 1.1780972450961728626));
+	AffineVarMainVector<T> aff(1,Interval(-1.57079632679489678, 1.1780972450961728626));
 	CPPUNIT_ASSERT(!(tan(aff[0]).is_empty()));
 }
