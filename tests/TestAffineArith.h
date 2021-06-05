@@ -57,8 +57,11 @@ public:
 	CPPUNIT_TEST(test29);
 	CPPUNIT_TEST(test30);
 	CPPUNIT_TEST(test31);
+	CPPUNIT_TEST(test31_1);
 	CPPUNIT_TEST(test32);
 	CPPUNIT_TEST(test33);
+	CPPUNIT_TEST(test33_2);
+	CPPUNIT_TEST(test33_3);
 	CPPUNIT_TEST(test34);
 	CPPUNIT_TEST(test35);
 	CPPUNIT_TEST(test36);
@@ -127,11 +130,14 @@ public:
 	CPPUNIT_TEST(test99);
 	CPPUNIT_TEST(test100);
 	CPPUNIT_TEST(test101);
+	CPPUNIT_TEST(test102);
 	CPPUNIT_TEST_SUITE_END();
 
 
 	bool compare_results (Interval r, AffineMain<T>  a) ;
+	bool compare_results_inclusion (Interval r, AffineMain<T>  a) ;
 	bool compare_results2 (Interval r, AffineMain<T>  a) ;
+	bool compare_results3 (Interval r, AffineMain<T>  a) ;
 
 
 	void test01();
@@ -165,6 +171,7 @@ public:
 	void test29();
 	void test30();
 	void test31();
+	void test31_1();
 	void test32();
 	void test33();
 	void test33_2();
@@ -237,10 +244,11 @@ public:
 	void test99();
 	void test100();
 	void test101();
+	void test102();
 };
 
 CPPUNIT_TEST_SUITE_REGISTRATION(TestAffineArith<AF_Default>);
-//CPPUNIT_TEST_SUITE_REGISTRATION(TestAffineArith<AF_Other>);
+CPPUNIT_TEST_SUITE_REGISTRATION(TestAffineArith<AF_Other>);
 
 #ifdef _IBEX_WITH_AFFINE_EXTENDED_
 

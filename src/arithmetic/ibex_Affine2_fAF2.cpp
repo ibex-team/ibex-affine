@@ -110,7 +110,7 @@ const Interval AffineMain<AF_fAF2>::itv() const {
 	if (is_actif()) {
 		Interval res(_elt._val[0]);
 		Interval pmOne(-1.0, 1.0);
-		for (int i = 1; i <= _n; i++){
+		for (int i = 1; i <= size(); i++){
 			res += (_elt._val[i] * pmOne);
 		}
 		res += _elt._err * pmOne;
@@ -314,7 +314,7 @@ AffineMain<AF_fAF2>& AffineMain<AF_fAF2>::operator=(const AffineMain<AF_fAF2>& x
 				if (_elt._val!=NULL) { delete[] _elt._val; }
 				_elt._val = new double[size()+1];
 			}
-			else if (_elt._val==NULL) {
+			if (_elt._val==NULL) {
 				_elt._val = new double[size()+1];
 			}
 

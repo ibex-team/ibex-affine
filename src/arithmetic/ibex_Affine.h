@@ -43,6 +43,7 @@ template<class T>  class AffineVarMainVector;
 template<class T>  class AffineMain;
 template<class T> class AffineMainVector;
 template<class T> class AffineMainMatrix;
+template<class T> class AffineEval;
 
 
 //template<class T> class TestAffineBase;
@@ -87,7 +88,6 @@ public:
 	/** \brief Set *this to itv.
 	 */
 	AffineVarMain& operator=(const Interval& itv);
-	AffineVarMain& operator=(const AffineMain<T>& itv) {ibex_error(" AffineVarMain : operator=(const AffineMain x) non valid ");};
 
 private:
 	friend class AffineVarMainVector<T>;
@@ -106,6 +106,46 @@ private:
 
 	/** \brief Create an affine form with at most \size variables and  initialized the \var^th variable with  itv. */
 	AffineVarMain(int size, int var, const Interval& itv);
+
+	AffineVarMain& operator=(const AffineMain<T>& x) {ibex_error(" AffineVarMain : operator= non valid");};
+	AffineVarMain& operator+=(const Vector& x2) {ibex_error(" AffineVarMain : operator+= non valid");};
+	AffineVarMain& operator+=(const Interval& x2) {ibex_error(" AffineVarMain : operator+= non valid");};
+	AffineVarMain& operator+=(const AffineMain<T>& x2) {ibex_error(" AffineVarMain : operator+= non valid");};
+	AffineVarMain& operator-=(const Vector& x2) {ibex_error(" AffineVarMain : operator-= non valid");};
+	AffineVarMain& operator-=(const Interval& x2) {ibex_error(" AffineVarMain : operator-= non valid");};
+	AffineVarMain& operator-=(const AffineMain<T>& x2) {ibex_error(" AffineVarMain : operator-= non valid");};
+	AffineVarMain& operator*=(double d) {ibex_error(" AffineVarMain : operator*= non valid");};
+	AffineVarMain& operator*=(const Interval& x1) {ibex_error(" AffineVarMain : operator*= non valid");};
+	AffineVarMain& operator*=(const AffineMain<T>& x1) {ibex_error(" AffineVarMain : operator*= non valid");};
+
+	AffineVarMain& Asqr(const Interval& itv)  {ibex_error(" AffineVarMain : operator Asqr non valid");};
+	AffineVarMain&  Aneg()  {ibex_error(" AffineVarMain : operator Aneg non valid");};
+	AffineVarMain&  Ainv(const Interval& itv)  {ibex_error(" AffineVarMain : operator Ainv non valid");};
+	AffineVarMain&  Asqrt(const Interval& itv)  {ibex_error(" AffineVarMain : operator non Asqrt valid");};
+	AffineVarMain&  Aexp(const Interval& itv)  {ibex_error(" AffineVarMain : operator Aexp non valid");};
+	AffineVarMain&  Alog(const Interval& itv)  {ibex_error(" AffineVarMain : operator Alog non valid");};
+	AffineVarMain&  Apow(int n, const Interval& itv)  {ibex_error(" AffineVarMain : operator Apow non valid");};
+	AffineVarMain&  Apow(double d, const Interval& itv)  {ibex_error(" AffineVarMain : operator Apow non valid");};
+	AffineVarMain&  Apow(const Interval &y, const Interval& itvx)  {ibex_error(" AffineVarMain : operator Apow non valid");};
+	AffineVarMain&  Aroot(int n, const Interval& itv)  {ibex_error(" AffineVarMain : operator Aroot non valid");};
+	AffineVarMain&  Acos(const Interval& itv)  {ibex_error(" AffineVarMain : operator Acos non valid");};
+	AffineVarMain&  Asin(const Interval& itv)  {ibex_error(" AffineVarMain : operator Asin non valid");};
+	AffineVarMain&  Atan(const Interval& itv)  {ibex_error(" AffineVarMain : operator Atan non valid");};
+	AffineVarMain&  Aacos(const Interval& itv)  {ibex_error(" AffineVarMain : operator Aacos non valid");};
+	AffineVarMain&  Aasin(const Interval& itv)  {ibex_error(" AffineVarMain : operator Aasin non valid");};
+	AffineVarMain&  Aatan(const Interval& itv)  {ibex_error(" AffineVarMain : operator Aatan non valid");};
+	AffineVarMain&  Acosh(const Interval& itv)  {ibex_error(" AffineVarMain : operator Acosh non valid");};
+	AffineVarMain&  Asinh(const Interval& itv)  {ibex_error(" AffineVarMain : operator Asinh non valid");};
+	AffineVarMain&  Atanh(const Interval& itv)  {ibex_error(" AffineVarMain : operator Atanh non valid");};
+	AffineVarMain&  Aabs(const Interval& itv)  {ibex_error(" AffineVarMain : operator Aabs non valid");};
+	AffineVarMain&  Ainv_CH(const Interval& itv)  {ibex_error(" AffineVarMain : operator Ainv_CH non valid");};
+	AffineVarMain&  Asqrt_CH(const Interval& itv)  {ibex_error(" AffineVarMain : operator Asqrt_CH non valid");};
+	AffineVarMain&  Aexp_CH(const Interval& itv)  {ibex_error(" AffineVarMain : operator Aexp_CH non valid");};
+	AffineVarMain&  Alog_CH(const Interval& itv)  {ibex_error(" AffineVarMain : operator Alog_CH non valid");};
+	AffineVarMain&  Ainv_MR(const Interval& itv)  {ibex_error(" AffineVarMain : operator Ainv_CH non valid");};
+	AffineVarMain&  Asqrt_MR(const Interval& itv)  {ibex_error(" AffineVarMain : operator Asqrt_MR non valid");};
+	AffineVarMain&  Aexp_MR(const Interval& itv)  {ibex_error(" AffineVarMain : operator Aexp_MR non valid");};
+	AffineVarMain&  Alog_MR(const Interval& itv)  {ibex_error(" AffineVarMain : operator Alog_MR non valid");};
 };
 
 
@@ -217,6 +257,9 @@ private:
 	AffineVarMainVector& operator*=(double d) {ibex_error(" AffineVarMainVector : operator non valid");};
 	AffineVarMainVector& operator*=(const Interval& x1) {ibex_error(" AffineVarMainVector : operator non valid");};
 	AffineVarMainVector& operator*=(const AffineMain<T>& x1) {ibex_error(" AffineVarMainVector : operator non valid");};
+	AffineVarMainVector& operator/=(double d) {ibex_error(" AffineVarMainVector : operator non valid");};
+	AffineVarMainVector& operator/=(const Interval& x1) {ibex_error(" AffineVarMainVector : operator non valid");};
+	AffineVarMainVector& operator/=(const AffineMain<T>& x1) {ibex_error(" AffineVarMainVector : operator non valid");};
 
 };
 
@@ -398,7 +441,7 @@ public:
 
 	/** \brief Set *this to x.
 	 */
-	AffineMain& operator=(const AffineMain& x);
+	virtual AffineMain& operator=(const AffineMain& x);
 
 	/** \brief Set *this to d.
 	 */
@@ -519,83 +562,212 @@ public:
 	void compact(double tol);
 	void compact();
 
+    /**
+     * \brief True iff this interval is a subset of \a x.
+     *
+     * \note Always return true if *this is empty.
+     */
+    bool is_subset(const Interval& x) const;
+
+    /**
+     * \brief True iff this interval is a subset of \a x and not \a x itself.
+     *
+     * \note In particular, (-oo,oo) is not a strict subset of (-oo,oo)
+     * and the empty set is not a strict subset of the empty set although
+     * in both cases, the first is inside the interior of the second.
+     */
+    bool is_strict_subset(const Interval& x) const;
+
+    /**
+     * \brief True iff this interval is in the interior of \a x.
+     *
+    * \note In particular, (-oo,oo) is in the interior of (-oo,oo)
+     * and the empty set is in the interior of the empty set.
+     * \note Always return true if *this is empty.
+     */
+    bool is_interior_subset(const Interval& x) const;
+
+    /**
+     * \brief True iff this interval is in the relative interior of \a x.
+     *
+     * When x is degenerated, the relative interior of x is x itself
+     * (it is not an open set). Otherwise, the relative interior of x
+     * is the interior (in the usual meaning).
+     */
+    bool is_relative_interior_subset(const Interval& x) const;
+
+    /**
+     * \brief True iff this interval is in the interior of \a x and different from x.
+     *
+     * \note In particular, (-oo,oo) is not "strictly" in the interior of (-oo,oo)
+     * and the empty set is not "strictly" in the interior of the empty set.
+     */
+    bool is_strict_interior_subset(const Interval& x) const;
+
+    /**
+     * \brief True iff this interval is a superset of \a x.
+     *
+     * \note Always return true if x is empty.
+     */
+    bool is_superset(const Interval& x) const;
+
+    /**
+     * \brief True iff this interval is a superset of \a x different from x.
+     *
+     * \see #is_strict_subset(const Interval&) const.
+     */
+    bool is_strict_superset(const Interval& x) const;
+
+    /**
+     * \brief True iff *this contains \a d.
+     *
+     * \note d can also be an "open bound", i.e., infinity.
+     * So this function is not restricted to a set-membership
+     * interpretation.
+     */
+    bool contains(const double& d) const;
+
+    /**
+     * \brief True iff the interior of *this contains \a d.
+     *
+     */
+    bool interior_contains(const double& d) const;
+
+    /**
+     * \brief True iff *this and \a x intersect.
+     */
+    bool intersects(const Interval &x) const;
+
+    /**
+     * \brief True iff *this and \a x intersect and the intersection has a non-null volume.
+     *
+     * Equivalently, some interior points (of this or x) must belong to the intersection.
+     */
+    bool overlaps(const Interval &x) const;
+
+    /**
+     * \brief True iff *this and \a x do not intersect.
+     *
+     */
+    bool is_disjoint(const Interval &x) const;
+
+
 	/** \brief Add \a d to *this and return the result.  */
-	AffineMain& operator+=(double d);
+	virtual AffineMain& operator+=(double d);
 
 	/** \brief Subtract \a d to *this and return the result. */
-	AffineMain& operator-=(double d);
+	virtual AffineMain& operator-=(double d);
 
 	/** \brief Multiply *this by \a d and return the result. */
-	AffineMain& operator*=(double d);
+	virtual AffineMain& operator*=(double d);
 
 	/** \brief Divide *this by \a d and return the result. */
-	AffineMain& operator/=(double d) ;
+	virtual AffineMain& operator/=(double d) ;
 
 	/** \brief Add \a x to *this and return the result. */
-	AffineMain& operator+=(const Interval& x);
+	virtual AffineMain& operator+=(const Interval& x);
 
 	/** \brief Subtract \a x to *this and return the result. */
-	AffineMain& operator-=(const Interval& x);
+	virtual AffineMain& operator-=(const Interval& x);
 
 	/** \brief Multiply *this by \a x and return the result. */
-	AffineMain& operator*=(const Interval& x);
+	virtual AffineMain& operator*=(const Interval& x);
 
 	/** \brief Divide *this by \a x and return the result.*/
-	AffineMain& operator/=(const Interval& x);
+	virtual AffineMain& operator/=(const Interval& x);
 
 	/** \brief Add \a x to *this and return the result. */
-	AffineMain& operator+=(const AffineMain& x);
+	virtual AffineMain& operator+=(const AffineMain& x);
 
 	/** \brief Subtract \a x to *this and return the result. */
-	AffineMain& operator-=(const AffineMain& x);
+	virtual AffineMain& operator-=(const AffineMain& x);
 
 	/** \brief Multiply *this by \a x and return the result. */
-	AffineMain& operator*=(const AffineMain& x);
+	virtual AffineMain& operator*=(const AffineMain& x);
 
 	/** \brief Divide *this by \a x and return the result. */
-	AffineMain& operator/=(const AffineMain& x);
+	virtual AffineMain& operator/=(const AffineMain& x);
 
 
-	/** \brief Return sqr(*this) */
-	AffineMain& Asqr(const Interval& itv);
-
-	AffineMain&  Aneg();
-	AffineMain&  Ainv(const Interval& itv);
-	AffineMain&  Asqrt(const Interval& itv);
-	AffineMain&  Aexp(const Interval& itv);
-	AffineMain&  Alog(const Interval& itv);
-	AffineMain&  Apow(int n, const Interval& itv);
-	AffineMain&  Apow(double d, const Interval& itv);
-	AffineMain&  Apow(const Interval &y, const Interval& itvx);
-	AffineMain&  Aroot(int n, const Interval& itv);
-	AffineMain&  Acos(const Interval& itv);
-	AffineMain&  Asin(const Interval& itv);
-	AffineMain&  Atan(const Interval& itv);
-	AffineMain&  Aacos(const Interval& itv);
-	AffineMain&  Aasin(const Interval& itv);
-	AffineMain&  Aatan(const Interval& itv);
-	AffineMain&  Acosh(const Interval& itv);
-	AffineMain&  Asinh(const Interval& itv);
-	AffineMain&  Atanh(const Interval& itv);
-	AffineMain&  Aabs(const Interval& itv);
-
-
-
-	AffineMain&  Ainv_CH(const Interval& itv);
-	AffineMain&  Asqrt_CH(const Interval& itv);
-	AffineMain&  Aexp_CH(const Interval& itv);
-	AffineMain&  Alog_CH(const Interval& itv);
-
-	AffineMain&  Ainv_MR(const Interval& itv);
-	AffineMain&  Asqrt_MR(const Interval& itv);
-	AffineMain&  Aexp_MR(const Interval& itv);
-	AffineMain&  Alog_MR(const Interval& itv);
 
 	typedef AffineMain<T> SCALAR;
 	typedef AffineMainVector<T> VECTOR;
 	typedef AffineMainMatrix<T> MATRIX;
 
 
+
+private:
+	/** \brief Return sqr(*this) */
+	virtual AffineMain& Asqr(const Interval& itv);
+	virtual AffineMain&  Aneg();
+	virtual AffineMain&  Ainv(const Interval& itv);
+	virtual AffineMain&  Asqrt(const Interval& itv);
+	virtual AffineMain&  Aexp(const Interval& itv);
+	virtual AffineMain&  Alog(const Interval& itv);
+	virtual AffineMain&  Apow(int n, const Interval& itv);
+	virtual AffineMain&  Apow(double d, const Interval& itv);
+	virtual AffineMain&  Apow(const Interval &y, const Interval& itvx);
+	virtual AffineMain&  Aroot(int n, const Interval& itv);
+	virtual AffineMain&  Acos(const Interval& itv);
+	virtual AffineMain&  Asin(const Interval& itv);
+	virtual AffineMain&  Atan(const Interval& itv);
+	virtual AffineMain&  Aacos(const Interval& itv);
+	virtual AffineMain&  Aasin(const Interval& itv);
+	virtual AffineMain&  Aatan(const Interval& itv);
+	virtual AffineMain&  Acosh(const Interval& itv);
+	virtual AffineMain&  Asinh(const Interval& itv);
+	virtual AffineMain&  Atanh(const Interval& itv);
+	virtual AffineMain&  Aabs(const Interval& itv);
+	virtual AffineMain&  Ainv_CH(const Interval& itv);
+	virtual AffineMain&  Asqrt_CH(const Interval& itv);
+	virtual AffineMain&  Aexp_CH(const Interval& itv);
+	virtual AffineMain&  Alog_CH(const Interval& itv);
+	virtual AffineMain&  Ainv_MR(const Interval& itv);
+	virtual AffineMain&  Asqrt_MR(const Interval& itv);
+	virtual AffineMain&  Aexp_MR(const Interval& itv);
+	virtual AffineMain&  Alog_MR(const Interval& itv);
+
+
+
+	template<class A>   friend AffineMain<A> operator/(double d, const AffineMain<A>& x);
+	template<class A>	friend AffineMain<A> inv(const AffineMain<A>&  x);
+	template<class A>	friend AffineMain<A> sqr(const AffineMain<A>&  x);
+	template<class A>	friend AffineMain<A> sqrt(const AffineMain<A>&  x);
+	template<class A>	friend AffineMain<A> exp(const AffineMain<A>&  x);
+	template<class A>	friend AffineMain<A> log(const AffineMain<A>&  x);
+	template<class A>	friend AffineMain<A> pow(const AffineMain<A>&  x, int n);
+	template<class A>	friend AffineMain<A> pow(const AffineMain<A>&  x, double d);
+	template<class A>	friend AffineMain<A> pow(const AffineMain<A>& x, const Interval &y);
+	template<class A>	friend AffineMain<A> pow(const AffineMain<A>& x, const AffineMain<A>& y);
+	template<class A>	friend AffineMain<A> root(const AffineMain<A>&  x, int n);
+	template<class A>	friend AffineMain<A> cos(const AffineMain<A>&  x);
+	template<class A>	friend AffineMain<A> sin(const AffineMain<A>&  x);
+	template<class A>	friend AffineMain<A> tan(const AffineMain<A>&  x);
+	template<class A>	friend AffineMain<A> acos(const AffineMain<A>&  x);
+	template<class A>	friend AffineMain<A> asin(const AffineMain<A>&  x);
+	template<class A>	friend AffineMain<A> atan(const AffineMain<A>&  x);
+	template<class A>	friend AffineMain<A> cosh(const AffineMain<A>&  x);
+	template<class A>	friend AffineMain<A> sinh(const AffineMain<A>&  x);
+	template<class A>	friend AffineMain<A> tanh(const AffineMain<A>&  x);
+	template<class A>	friend AffineMain<A> abs(const AffineMain<A>& x);
+
+
+	template<class A> friend void AffineEval<A>::div_fwd   (int x1, int x2, int y);
+	template<class A> friend void AffineEval<A>::abs_fwd    (int x, int y);
+	template<class A> friend void AffineEval<A>::power_fwd  (int x, int y, int p);
+	template<class A> friend void AffineEval<A>::sqr_fwd    (int x, int y);
+	template<class A> friend void AffineEval<A>::sqrt_fwd   (int x, int y);
+	template<class A> friend void AffineEval<A>::exp_fwd    (int x, int y);
+	template<class A> friend void AffineEval<A>::log_fwd    (int x, int y);
+	template<class A> friend void AffineEval<A>::cos_fwd    (int x, int y);
+	template<class A> friend void AffineEval<A>::sin_fwd    (int x, int y);
+	template<class A> friend void AffineEval<A>::tan_fwd    (int x, int y);
+	template<class A> friend void AffineEval<A>::cosh_fwd   (int x, int y);
+	template<class A> friend void AffineEval<A>::sinh_fwd   (int x, int y);
+	template<class A> friend void AffineEval<A>::tanh_fwd   (int x, int y);
+	template<class A> friend void AffineEval<A>::acos_fwd   (int x, int y);
+	template<class A> friend void AffineEval<A>::asin_fwd   (int x, int y);
+	template<class A> friend void AffineEval<A>::atan_fwd   (int x, int y);
 
 };
 
@@ -629,6 +801,42 @@ inline double AffineMain<T>::mig() const { return this->itv().mig(); }
 
 template<class T>
 inline double AffineMain<T>::mag() const { return this->itv().mag(); }
+
+template<class T>
+inline bool AffineMain<T>::is_subset(const Interval& x) const { return this->itv().is_subset(x); }
+
+template<class T>
+inline bool AffineMain<T>::is_strict_subset(const Interval& x) const { return this->itv().is_strict_subset(x); }
+
+template<class T>
+inline bool AffineMain<T>::is_interior_subset(const Interval& x) const { return this->itv().is_interior_subset(x); }
+
+template<class T>
+inline bool AffineMain<T>::is_relative_interior_subset(const Interval& x) const { return this->itv().is_relative_interior_subset(x); }
+
+template<class T>
+inline bool AffineMain<T>::is_strict_interior_subset(const Interval& x) const { return this->itv().is_strict_interior_subset(x); }
+
+template<class T>
+inline bool AffineMain<T>::is_superset(const Interval& x) const { return this->itv().is_superset(x); }
+
+template<class T>
+inline bool AffineMain<T>::is_strict_superset(const Interval& x) const { return this->itv().is_strict_superset(x); }
+
+template<class T>
+inline bool AffineMain<T>::contains(const double& d) const { return this->itv().contains(d); }
+
+template<class T>
+inline bool AffineMain<T>::interior_contains(const double& d) const { return this->itv().interior_contains(d); }
+
+template<class T>
+inline bool AffineMain<T>::intersects(const Interval &x) const { return this->itv().intersects(x); }
+
+template<class T>
+inline bool AffineMain<T>::overlaps(const Interval &x) const { return this->itv().overlaps(x); }
+
+template<class T>
+inline bool AffineMain<T>::is_disjoint(const Interval &x) const { return this->itv().is_disjoint(x); }
 
 
 /** \brief Return (-x) */
@@ -2399,12 +2607,15 @@ inline AffineMain<T>& AffineMain<T>::Apow(int n, const Interval& itv) {
 template<class T>
 inline AffineMain<T>& AffineMain<T>::Apow(double d, const Interval& itv) {
 	if ( ((int) (d)) == d) {
-		return *this->Apow((int) (d),itv);
+		this->Apow((int) (d),itv);
+		return *this;
 	} else if (d<0) {
 		this->Apow(Interval(-d), itv);
-		return *this->Ainv(pow(itv,-d));
+		this->Ainv(pow(itv,-d));
+		return *this;
 	} else {
-		return *this->Apow(Interval(d),itv);
+		this->Apow(Interval(d),itv);
+		return *this;
 	}
 }
 
