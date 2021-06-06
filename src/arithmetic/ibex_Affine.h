@@ -54,6 +54,14 @@ template<class T> class AffineEval;
  *
  * \brief Affine Arithmetic AF2
  *
+ * Code for the particular case:
+ * if the affine form is actif, _actif=1  and _n is the size of the affine form
+ * if the set is degenerate, _actif = 0 and itv().diam()< AF_EC
+ * if the set is empty, _actif = -1
+ * if the set is ]-oo,+oo[, _actif = -2 and _err =]-oo,+oo[
+ * if the set is [a, +oo[ , _actif = -3 and _err = [a, +oo[
+ * if the set is ]-oo, a] , _actif = -4 and _err = ]-oo, a]
+ *
  */
 
 
@@ -94,7 +102,7 @@ private:
 //	friend class AffineMainMatrix<T>;
 
 
-    const int var;
+    const unsigned long int var;
 
     AffineVarMain(const AffineVarMain<T>& x);
 	/** \brief Create an affine form with n variables and  initialized val[0] with d. */
@@ -357,18 +365,16 @@ void AffineVarMainVector<T>::resize(int n) {
 	}
 }
 
+//=================================================================================================================
+//=================================================================================================================
+//=================================================================================================================
 
 template<class T=AF_Default>
 class AffineMain {
 
 protected:
-//	friend class AffineVarMain<T>;
-//	friend class AffineMainVector<T>;
-//	friend class AffineMainMatrix<T>;
-//	friend 	Array< TemplateDomain< AffineMain > > convert_to_affinedomain<T>(const Array<Domain>& d);
-//	friend 	Array< TemplateDomain< AffineMain > > convert_to_affinedomain<T>(const Array<const Domain>& d);
-	template<class A>
-	friend std::ostream& operator<<(std::ostream& os, const AffineMain<A>& x);
+
+
 	/** \brief tolerance for default compact procedure  */
 	static const double AF_COMPAC_Tol;
 	static const double AF_EM;
@@ -768,6 +774,8 @@ private:
 	template<class A> friend void AffineEval<A>::acos_fwd   (int x, int y);
 	template<class A> friend void AffineEval<A>::asin_fwd   (int x, int y);
 	template<class A> friend void AffineEval<A>::atan_fwd   (int x, int y);
+
+	template<class A> friend std::ostream& operator<<(std::ostream& os, const AffineMain<A>& x);
 
 };
 

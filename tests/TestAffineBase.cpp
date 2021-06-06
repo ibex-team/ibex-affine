@@ -27,12 +27,16 @@ template<class T>
 void  TestAffineBase<T>::check_affine_eq(const AffineMain<T>& y_actual, const Interval& y_expected, double err) {
 	//std::cout << "check:    " << y_expected << " (expected)        " << y_actual << " (actual)"<< std::endl;
 	if (y_expected.is_empty()) { CPPUNIT_ASSERT(y_actual.is_empty()); return; }
-
-	CPPUNIT_ASSERT(!y_actual.is_empty());
-	CPPUNIT_ASSERT_DOUBLES_EQUAL(y_expected.lb(),y_actual.itv().lb(),err);
-	CPPUNIT_ASSERT_DOUBLES_EQUAL(y_expected.ub(),y_actual.itv().ub(),err);
-	CPPUNIT_ASSERT_DOUBLES_EQUAL(y_expected.mid(),y_actual.mid(),err);
-	CPPUNIT_ASSERT_DOUBLES_EQUAL(y_expected.rad(),y_actual.val(0),err);
+	if (y_expected.is_unbounded()) {
+		CPPUNIT_ASSERT(y_actual.is_unbounded());
+		CPPUNIT_ASSERT(y_actual.itv()==y_expected);
+	} else {
+		CPPUNIT_ASSERT(!y_actual.is_empty());
+		CPPUNIT_ASSERT_DOUBLES_EQUAL(y_expected.lb(),y_actual.itv().lb(),err);
+		CPPUNIT_ASSERT_DOUBLES_EQUAL(y_expected.ub(),y_actual.itv().ub(),err);
+		CPPUNIT_ASSERT_DOUBLES_EQUAL(y_expected.mid(),y_actual.mid(),err);
+		CPPUNIT_ASSERT_DOUBLES_EQUAL(y_expected.rad(),y_actual.val(0),err);
+	}
 }
 
 
@@ -40,12 +44,16 @@ template<class T>
 void  TestAffineBase<T>::check_affine_eq2(const AffineMain<T>& y_actual, const Interval& y_expected, double err) {
 	//std::cout << "check:    " << y_expected << " (expected)        " << y_actual << " (actual)"<< std::endl;
 	if (y_expected.is_empty()) { CPPUNIT_ASSERT(y_actual.is_empty()); return; }
-
-	CPPUNIT_ASSERT(!y_actual.is_empty());
-	CPPUNIT_ASSERT_DOUBLES_EQUAL(y_expected.lb(),y_actual.itv().lb(),err);
-	CPPUNIT_ASSERT_DOUBLES_EQUAL(y_expected.ub(),y_actual.itv().ub(),err);
-	CPPUNIT_ASSERT_DOUBLES_EQUAL(y_expected.mid(),y_actual.mid(),err);
-	CPPUNIT_ASSERT_DOUBLES_EQUAL(y_expected.rad(),fabs(y_actual.val(0))+fabs(y_actual.val(1)),err);
+	if (y_expected.is_unbounded()) {
+		CPPUNIT_ASSERT(y_actual.is_unbounded());
+		CPPUNIT_ASSERT(y_actual.itv()==y_expected);
+	} else {
+		CPPUNIT_ASSERT(!y_actual.is_empty());
+		CPPUNIT_ASSERT_DOUBLES_EQUAL(y_expected.lb(),y_actual.itv().lb(),err);
+		CPPUNIT_ASSERT_DOUBLES_EQUAL(y_expected.ub(),y_actual.itv().ub(),err);
+		CPPUNIT_ASSERT_DOUBLES_EQUAL(y_expected.mid(),y_actual.mid(),err);
+		CPPUNIT_ASSERT_DOUBLES_EQUAL(y_expected.rad(),fabs(y_actual.val(0))+fabs(y_actual.val(1)),err);
+	}
 }
 
 template<class T>

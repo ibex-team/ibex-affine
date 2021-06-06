@@ -1198,6 +1198,8 @@ void TestAffineArith<T>::test101()   {
 	AffineEval<T> cal(ydot);
 	IntervalVector res  = cal.eval(v).v();
 	AffineMainVector<T> resa = cal.af2.top->v();
+	std::cout<<std::setprecision(20)<<std::endl<<"Affine:  "<<resa<<std::endl;
+	std::cout<<std::setprecision(20)<<std::endl<<"Interval:  "<<res<<std::endl;
 	for (int j = 0; j < 3; ++j) {
 		CPPUNIT_ASSERT(compare_results3 ( res[j], resa[j]));
 	}
@@ -1224,6 +1226,8 @@ void TestAffineArith<T>::test102()   {
 	AffineEval<T> cal(ydot);
 	IntervalVector res  = cal.eval(v).v();
 	AffineMainVector<T> resa = cal.af2.top->v();
+	std::cout<<std::setprecision(20)<<std::endl<<"Affine:  "<<resa<<std::endl;
+	std::cout<<std::setprecision(20)<<std::endl<<"Interval:  "<<res<<std::endl;
 	for (int j = 0; j < 3; ++j) {
 		CPPUNIT_ASSERT(compare_results_inclusion ( res[j], resa[j]));
 	}

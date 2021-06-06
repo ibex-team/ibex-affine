@@ -17,6 +17,8 @@
 
 #include <list>
 #include <ostream>
+#include <utility>
+
 
 namespace ibex {
 
@@ -33,17 +35,17 @@ template<class T>  class AffineVarMain;
 	friend std::ostream& operator<<(std::ostream& os, const AffineMain<A>& x);
 
     static unsigned long int _counter;
-
-    /**
-     * Code for the particular case:
-     * if the affine form is actif, _n>1  and _n is the size of the affine form
-     * if the set is degenerate, _n = 0 or itv().diam()< AF_EC()
-     * if the set is empty, _n = -1
-     * if the set is ]-oo,+oo[, _n = -2
-     * if the set is [a, +oo[ , _n = -3 and _err= a
-     * if the set is ]-oo, a] , _n = -4 and _err= a
-     *
-     */
+    static double maTol;
+	/**
+	 * Code for the particular case:
+	 * if the affine form is actif, _actif=1  and _n is the size of the affine form
+	 * if the set is degenerate, _actif = 0 and itv().diam()< AF_EC
+	 * if the set is empty, _actif = -1
+	 * if the set is ]-oo,+oo[, _actif = -2 and _err =]-oo,+oo[
+	 * if the set is [a, +oo[ , _actif = -3 and _err = [a, +oo[
+	 * if the set is ]-oo, a] , _actif = -4 and _err = ]-oo, a]
+	 *
+	 */
     double _center;
     std::list< std::pair<int, double> > _rays;
     Interval _garbage;
