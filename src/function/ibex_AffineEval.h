@@ -12,6 +12,7 @@
 #define __IBEX_AFFINE_EVAL_H__
 
 #include "ibex_Function.h"
+#include "ibex_AffineVar.h"
 #include "ibex_AffineMatrix.h"
 #include "ibex_AffineDomain.h"
 #include "ibex_FwdAlgorithm.h"

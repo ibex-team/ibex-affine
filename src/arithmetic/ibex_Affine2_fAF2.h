@@ -28,10 +28,6 @@
 #endif
 
 
-
-
-#include "ibex_Interval.h"
-
 namespace ibex {
 
 template<class T>  class AffineMain;

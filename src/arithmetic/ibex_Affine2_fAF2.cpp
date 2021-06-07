@@ -8,10 +8,17 @@
  * Author(s)   : Jordan Ninin
  * Created     : Jul 16, 2013
  * ---------------------------------------------------------------------------- */
-#include "ibex_Affine2_fAF2.h"
+
+
+#ifndef IBEX_AFFINE_AF2_H_
+#define IBEX_AFFINE_AF2_H_
+
+
 #include "ibex_Affine.h"
 #include <iostream>
 #include <cassert>
+
+
 
 namespace ibex {
 
@@ -360,7 +367,7 @@ AffineMain<AF_fAF2>& AffineMain<AF_fAF2>::inflate(double ddelta) {
 
 template<>
 void AffineMain<AF_fAF2>::resize(int n) {
-	assert(n>=_n);
+	assert(n>=1);
 	if (n>_n) {
 		double * tmp= new double[n+1];
 		int i=0;
@@ -369,6 +376,15 @@ void AffineMain<AF_fAF2>::resize(int n) {
 		}
 		for (;i<=n;i++) {
 			tmp[i] = 0;
+		}
+		_n = n;
+		delete[] _elt._val;
+		_elt._val = tmp;
+	} else if (n<_n) {
+		double * tmp= new double[n+1];
+		int i=0;
+		for (;i<=n;i++) {
+			tmp[i] = _elt._val[i];
 		}
 		_n = n;
 		delete[] _elt._val;
@@ -744,90 +760,6 @@ void AffineMain<AF_fAF2>::compact(double tol){
 }
 
 
-//===========================================================================================
-//===========================================================================================
-
-
-
-
-template<>
-AffineVarMain<AF_fAF2>& AffineVarMain<AF_fAF2>::operator=(const Interval& x) {
-
-	if (x.is_empty()) {
-		_actif = -1;
-		_elt._err = 0.0;
-	} else if (x.ub()>= POS_INFINITY && x.lb()<= NEG_INFINITY ) {
-		_actif = -2;
-		_elt._err = 0.0;
-	} else if (x.ub()>= POS_INFINITY ) {
-		_actif = -3;
-		_elt._err = x.lb();
-	} else if (x.lb()<= NEG_INFINITY ) {
-		_actif = -4;
-		_elt._err = x.ub();
-	} else  {
-		assert((unsigned long int)_n > var);
-		_elt._err = 0.0;
-		if (_elt._val==NULL) _elt._val = new double[size()+1];
-		_elt._val[0] = x.mid();
-		for (int i = 1; i <= size(); i++){
-			_elt._val[i] = 0.0;
-		}
-		if (x.is_degenerated()){
-			_actif=0;
-		} else {
-			_actif=1;
-			_elt._val[var+1] = x.rad();
-		}
-	}
-	return *this;
-
-}
-
-//
-//template<>
-//AffineVarMain<AF_fAF2>& AffineVarMain<AF_fAF2>::operator=(const AffineVarMain<AF_fAF2>& x) {
-//	if (this != &x) {
-//		_elt._err = x._elt._err;
-//		if (x.is_actif()) {
-//			if (_n!=x.size()) {
-//				_n =x.size();
-//				if (_elt._val!=NULL) { delete[] _elt._val; }
-//				_elt._val = new double[_n+1];
-//			}
-//			if (_elt._val==NULL) _elt._val = new double[_n+1];
-//
-//			for (int i = 0; i <= x.size(); i++) {
-//				_elt._val[i] = x._elt._val[i];
-//			}
-//		} else {
-//			_n = x._n;
-//			if (_elt._val != NULL) {
-//				delete[] _elt._val;
-//				_elt._val = NULL;
-//			}
-//		}
-//	}
-//	return *this;
-//}
-
-//template<>
-//AffineVarMain<AF_fAF2>::AffineVarMain(const Interval & itv) :
-//		AffineMain<AF_fAF2>(_count+1, _count, itv),
-//		var		(_count) {
-//	_count++;
-//}
-//
-//template<>
-//AffineVarMain<AF_fAF2>::AffineVarMain(double d) :
-//		AffineMain<AF_fAF2>(_count+1, _count, Interval(d)),
-//		var		(_count) {
-//	_count++;
-//}
-
-
-
-
 
 
 
@@ -840,5 +772,6 @@ AffineVarMain<AF_fAF2>& AffineVarMain<AF_fAF2>::operator=(const Interval& x) {
 }// end namespace ibex
 
 
+#endif /* IBEX_Affine_AF2_H_ */
 
 

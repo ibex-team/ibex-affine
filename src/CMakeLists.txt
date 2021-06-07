@@ -5,6 +5,8 @@ list (APPEND SRC ${CMAKE_CURRENT_SOURCE_DIR}/arithmetic/ibex_Affine2_fAF2.cpp
                 ${CMAKE_CURRENT_SOURCE_DIR}/arithmetic/ibex_Affine3_fAFFullI.cpp
                 ${CMAKE_CURRENT_SOURCE_DIR}/arithmetic/ibex_Affine3_fAFFullI.h
                 ${CMAKE_CURRENT_SOURCE_DIR}/arithmetic/ibex_AffineDomain.h
+                ${CMAKE_CURRENT_SOURCE_DIR}/arithmetic/ibex_AffineVar.cpp
+                ${CMAKE_CURRENT_SOURCE_DIR}/arithmetic/ibex_AffineVar.h
                 ${CMAKE_CURRENT_SOURCE_DIR}/arithmetic/ibex_Affine.h
                 ${CMAKE_CURRENT_SOURCE_DIR}/arithmetic/ibex_AffineMatrix.h
                 ${CMAKE_CURRENT_SOURCE_DIR}/arithmetic/ibex_AffineVector.h

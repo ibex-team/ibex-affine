@@ -25,17 +25,17 @@ namespace ibex {
 template<class T>  class AffineMain;
 template<class T>  class AffineVarMain;
 
-  class AF_fAFFullI {
+class AF_fAFFullI {
 
 
-  private:
-    friend class AffineVarMain<AF_fAFFullI>;
-    friend class AffineMain<AF_fAFFullI>;
+private:
+	friend class AffineVarMain<AF_fAFFullI>;
+	friend class AffineMain<AF_fAFFullI>;
 	template<class A>
 	friend std::ostream& operator<<(std::ostream& os, const AffineMain<A>& x);
 
-    static unsigned long int _counter;
-    static double maTol;
+	static unsigned long int _counter;
+	static double maTol;
 	/**
 	 * Code for the particular case:
 	 * if the affine form is actif, _actif=1  and _n is the size of the affine form
@@ -46,28 +46,28 @@ template<class T>  class AffineVarMain;
 	 * if the set is ]-oo, a] , _actif = -4 and _err = ]-oo, a]
 	 *
 	 */
-    double _center;
-    std::list< std::pair<int, double> > _rays;
-    Interval _garbage;
+	double _center;
+	std::list< std::pair<int, double> > _rays;
+	Interval _garbage;
 
-  
-    AF_fAFFullI (double center, std::list<std::pair<int,double> > rays, Interval garbage);
 
-  public:
-    /** \brief  Delete the affine form */
-    virtual ~AF_fAFFullI();
-    
+	AF_fAFFullI (double center, std::list<std::pair<int,double> > rays, Interval garbage);
 
-  };
+public:
+	/** \brief  Delete the affine form */
+	virtual ~AF_fAFFullI();
 
-  inline AF_fAFFullI::AF_fAFFullI (double center, std::list<std::pair<int,double> > rays, Interval garbage) :
-    _center(center), _rays(rays), _garbage(garbage) {
 
-  }
+};
 
-  inline AF_fAFFullI::~AF_fAFFullI() {
-    if (!_rays.empty()) { _rays.clear(); }
-  }
+inline AF_fAFFullI::AF_fAFFullI (double center, std::list<std::pair<int,double> > rays, Interval garbage) :
+    		_center(center), _rays(rays), _garbage(garbage) {
+
+}
+
+inline AF_fAFFullI::~AF_fAFFullI() {
+	if (!_rays.empty()) { _rays.clear(); }
+}
 
 
 

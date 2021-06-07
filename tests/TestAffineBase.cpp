@@ -35,7 +35,7 @@ void  TestAffineBase<T>::check_affine_eq(const AffineMain<T>& y_actual, const In
 		CPPUNIT_ASSERT_DOUBLES_EQUAL(y_expected.lb(),y_actual.itv().lb(),err);
 		CPPUNIT_ASSERT_DOUBLES_EQUAL(y_expected.ub(),y_actual.itv().ub(),err);
 		CPPUNIT_ASSERT_DOUBLES_EQUAL(y_expected.mid(),y_actual.mid(),err);
-		CPPUNIT_ASSERT_DOUBLES_EQUAL(y_expected.rad(),y_actual.val(0),err);
+		CPPUNIT_ASSERT_DOUBLES_EQUAL(y_expected.rad(),fabs(y_actual.val(0)),err);
 	}
 }
 
