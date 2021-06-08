@@ -1181,7 +1181,7 @@ void TestAffineArith<T>::test100()   {
 /* ********************* */
 template<class T>
 void TestAffineArith<T>::test101()   {
-	Variable yd(3);
+	const ExprSymbol& yd = ExprSymbol::new_("yd",Dim::col_vec(3));
 	double sigma=10.0;
 	double  rho=28.0;
 	double beta = 8.0/3.0;
@@ -1209,7 +1209,7 @@ void TestAffineArith<T>::test101()   {
 /* ********************* */
 template<class T>
 void TestAffineArith<T>::test102()   {
-	Variable yd(3);
+	const ExprSymbol& yd = ExprSymbol::new_("yd",Dim::col_vec(3));
 	double sigma=10.0;
 	double  rho=28.0;
 	double beta = 8.0/3.0;

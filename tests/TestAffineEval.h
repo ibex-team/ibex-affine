@@ -47,6 +47,12 @@ public:
 	CPPUNIT_TEST(test_cosh);
 	CPPUNIT_TEST(test_sinh);
 	CPPUNIT_TEST(test_tanh);
+
+	CPPUNIT_TEST(issue242);
+	CPPUNIT_TEST(eval_components01);
+	CPPUNIT_TEST(eval_components02);
+	CPPUNIT_TEST(matrix_components);
+
 	CPPUNIT_TEST_SUITE_END();
 
 
@@ -82,6 +88,12 @@ public:
 	void test01();
 	void test02();
 
+	void issue242();
+	void eval_components01();
+	void eval_components02();
+
+	// check in particular that the components that are not selected are not computed uselessly
+	void matrix_components();
 };
 
 CPPUNIT_TEST_SUITE_REGISTRATION(TestAffineEval<AF_Default>);

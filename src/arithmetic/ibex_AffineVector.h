@@ -78,7 +78,7 @@ public:
 	/**
 	 * \brief Create  a copy of \a x.
 	 */
-	AffineMainVector(const AffineMainVector& x);
+	AffineMainVector(const AffineMainVector<T>& x);
 	explicit AffineMainVector(const AffineVarMainVector<T>& x);
 
 	/**
@@ -132,7 +132,7 @@ public:
 	 * A return a non-const reference to the
 	 * i^th component (i starts from 0)
 	 */
-	AffineMain<T>& operator[](int i);
+	virtual AffineMain<T>& operator[](int i);
 
 	/**
 	 * \brief Set this AffineMainVector to the empty AffineMainVector
@@ -184,7 +184,7 @@ public:
 	 * (*this) is the empty Interval (however, in this case, the status of
 	 * (*this) remains "empty").
 	 */
-	virtual void resize(int n2);
+	void resize(int n2);
 
 	/**
 	 * \brief Return a subvector.
@@ -202,7 +202,7 @@ public:
 	 *
 	 * \pre (*this) must not be empty
 	 */
-	virtual void put(int start_index, const AffineMainVector& subvec);
+	void put(int start_index, const AffineMainVector& subvec);
 
 	/**
 	 * \brief Assign this AffineMainVector to x.
@@ -210,20 +210,23 @@ public:
 	 * \pre Dimensions of this and x must match.
 	 * \note Emptiness is overridden.
 	 */
-	virtual AffineMainVector& operator=(const AffineMainVector& x);
+	AffineMainVector& operator=(const AffineMainVector& x);
 	AffineMainVector& operator=(const IntervalVector& x);
+	AffineMainVector& operator=(const AffineVarMainVector<T>& x);
 
 	/**
 	 * \brief Return true if the bounds of this AffineMainVector match that of \a x.
 	 */
 	bool operator==(const AffineMainVector& x) const;
 	bool operator==(const IntervalVector& x) const;
+	bool operator==(const AffineVarMainVector<T>& x) const;
 
 	/**
 	 * \brief Return true if one bounds of one component of *this differs from \a x.
 	 */
 	bool operator!=(const IntervalVector& x) const;
 	bool operator!=(const AffineMainVector& x) const;
+	bool operator!=(const AffineVarMainVector<T>& x) const;
 
 
 	/**
@@ -299,6 +302,7 @@ public:
 	 */
 	virtual AffineMainVector& operator+=(const IntervalVector& x2);
 	virtual AffineMainVector& operator+=(const AffineMainVector& x2);
+	virtual AffineMainVector& operator+=(const AffineVarMainVector<T>& x2);
 
 	/**
 	 * \brief (*this)-=x2.
@@ -310,6 +314,7 @@ public:
 	 */
 	virtual AffineMainVector& operator-=(const IntervalVector& x2);
 	virtual AffineMainVector& operator-=(const AffineMainVector& x2);
+	virtual AffineMainVector& operator-=(const AffineVarMainVector<T>& x2);
 
 	/**
 	 * \brief x=d*x
@@ -321,6 +326,7 @@ public:
 	 */
 	virtual AffineMainVector& operator*=(const Interval& x1);
 	virtual AffineMainVector& operator*=(const AffineMain<T>& x1);
+	virtual AffineMainVector& operator*=(const AffineVarMain<T>& x1);
 
 
 };
@@ -676,7 +682,6 @@ IntervalVector operator|(const AffineMainVector<T>& y,const AffineMainVector<T>&
 
 template<class T>
 IntervalVector AffineMainVector<T>::itv() const {
-	assert(!is_empty());
 	IntervalVector intv(_n);
 	for (int i = 0; i < _n; i++) {
 		intv[i] = (*this)[i].itv();
@@ -784,9 +789,14 @@ template<class T>
 AffineMainVector<T>& AffineMainVector<T>::operator=(const AffineMainVector<T>& x)                 { resize(x.size()); // see issue #10
                                                                                   return _assignV(*this,x); }
 template<class T>
+AffineMainVector<T>& AffineMainVector<T>::operator=(const AffineVarMainVector<T>& x)                 { resize(x.size()); // see issue #10
+                                                                                  return _assignV(*this,x); }
+template<class T>
 AffineMainVector<T>& AffineMainVector<T>::operator=(const IntervalVector& x)                { return _assignV(*this,x); }
 template<class T>
 bool           AffineMainVector<T>::operator==(const AffineMainVector<T>& x) const          { return _equalsV(*this,x); }
+template<class T>
+bool           AffineMainVector<T>::operator==(const AffineVarMainVector<T>& x) const          { return _equalsV(*this,x); }
 template<class T>
 bool           AffineMainVector<T>::operator==(const IntervalVector& x) const         { return _equalsV(*this,x); }
 template<class T>
@@ -831,7 +841,11 @@ std::ostream& operator<<(std::ostream& os, const AffineMainVector<T>& x)        
 
 template<class T>
 inline AffineMainVector<T> AffineMainVector<T>::empty(int n) {
-	return AffineMainVector<T>(n, Interval::empty_set());
+	AffineMainVector<T> tmp(n);
+	for (int i=0;i<n;i++){
+		tmp[i] = Interval::empty_set();
+	}
+	return tmp;
 }
 
 //template<class T>
@@ -869,6 +883,11 @@ inline bool AffineMainVector<T>::operator!=(const IntervalVector& x) const {
 }
 template<class T>
 inline bool AffineMainVector<T>::operator!=(const AffineMainVector<T>& x) const {
+	return !(*this==x);
+}
+
+template<class T>
+inline bool AffineMainVector<T>::operator!=(const AffineVarMainVector<T>& x) const {
 	return !(*this==x);
 }
 
@@ -936,6 +955,10 @@ template<class T>
 inline AffineMainVector<T>& AffineMainVector<T>::operator+=(const AffineMainVector<T>& x2) {
 	return set_addV<AffineMainVector<T>,AffineMainVector<T> >(*this,x2);
 }
+template<class T>
+inline AffineMainVector<T>& AffineMainVector<T>::operator+=(const AffineVarMainVector<T>& x2) {
+	return set_addV<AffineMainVector<T>,AffineVarMainVector<T> >(*this,x2);
+}
 
 template<class T>
 inline AffineMainVector<T>& AffineMainVector<T>::operator-=(const Vector& x2) {
@@ -950,6 +973,11 @@ inline AffineMainVector<T>& AffineMainVector<T>::operator-=(const IntervalVector
 template<class T>
 inline AffineMainVector<T>& AffineMainVector<T>::operator-=(const AffineMainVector<T>& x2) {
 	return set_subV<AffineMainVector<T>,AffineMainVector<T> >(*this,x2);
+}
+
+template<class T>
+inline AffineMainVector<T>& AffineMainVector<T>::operator-=(const AffineVarMainVector<T>& x2) {
+	return set_subV<AffineMainVector<T>,AffineVarMainVector<T> >(*this,x2);
 }
 
 template<class T>
@@ -968,8 +996,13 @@ inline AffineMainVector<T>& AffineMainVector<T>::operator*=(const AffineMain<T>&
 }
 
 template<class T>
+inline AffineMainVector<T>& AffineMainVector<T>::operator*=(const AffineVarMain<T>& x1) {
+	return set_mulSV<AffineVarMain<T>,AffineMainVector<T> >(x1,*this);
+}
+
+template<class T>
 inline AffineMainVector<T> abs( const AffineMainVector<T>& x) {
-	return absV(x);
+	return _abs(x);
 }
 
 
@@ -985,7 +1018,7 @@ inline AffineMainVector<T> operator+(const AffineMainVector<T>& x1, const Vector
 
 template<class T>
 inline AffineMainVector<T> operator+(const IntervalVector& x1, const AffineMainVector<T>& x2) {
-	return x2 + x1;
+	return AffineMainVector<T>(x2)+=x1;
 }
 
 template<class T>

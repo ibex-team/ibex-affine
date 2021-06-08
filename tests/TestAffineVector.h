@@ -144,6 +144,9 @@ private:
 	void check_af(const AffineMainVector<T>& y_actual, const IntervalVector& y_expected, double err = ERROR) {
 		check(y_actual.itv(), y_expected, err);
 	}
+	void check_af(const AffineVarMainVector<T>& y_actual, const IntervalVector& y_expected, double err = ERROR) {
+			check(y_actual.itv(), y_expected, err);
+	}
 	void check_af(const AffineMainMatrix<T>& y_actual, const IntervalMatrix& y_expected, double err = ERROR) {
 		check(y_actual.itv(), y_expected, err);
 	}
@@ -151,6 +154,15 @@ private:
 		check(y_actual.itv(), y_expected.itv(), err);
 	}
 	void check_af(const AffineMainVector<T>& y_actual, const AffineMainVector<T>& y_expected, double err = ERROR) {
+		check(y_actual.itv(), y_expected.itv(), err);
+	}
+	void check_af(const AffineVarMainVector<T>& y_actual, const AffineMainVector<T>& y_expected, double err = ERROR) {
+		check(y_actual.itv(), y_expected.itv(), err);
+	}
+	void check_af(const AffineMainVector<T>& y_actual, const AffineVarMainVector<T>& y_expected, double err = ERROR) {
+		check(y_actual.itv(), y_expected.itv(), err);
+	}
+	void check_af(const AffineVarMainVector<T>& y_actual, const AffineVarMainVector<T>& y_expected, double err = ERROR) {
 		check(y_actual.itv(), y_expected.itv(), err);
 	}
 	void check_af(const AffineMainMatrix<T>& y_actual, const AffineMainMatrix<T>& y_expected, double err = ERROR) {

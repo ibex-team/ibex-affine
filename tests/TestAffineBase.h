@@ -17,6 +17,7 @@
 #include <cppunit/ui/text/TestRunner.h>
 #include <cppunit/extensions/TestFactoryRegistry.h>
 #include "ibex_Affine.h"
+#include "ibex_AffineVar.h"
 #include "ibex_AffineVector.h"
 #include "ibex.h"
 #include "utils.h"

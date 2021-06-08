@@ -23,6 +23,7 @@ void TestAffineVector<T>::cons01() {
 	x[1]=Interval::ALL_REALS;
 	check_af(AffineVarMainVector<T>(2),x);
 	check_af(AffineVarMainVector<T>(x),x);
+	check_af(AffineMainVector<T>(2),x);
 	check_af(AffineMainVector<T>(2)=x,x);
 }
 
@@ -33,7 +34,15 @@ void TestAffineVector<T>::cons02() {
 	x[1]=(Interval(0,1));
 	check_af(AffineVarMainVector<T>(2,Interval(0,1)),x);
 	check_af(AffineVarMainVector<T>(x),x);
+	AffineMainVector<T> tmp(2);
+	tmp.init(Interval(0,1));
+	check_af(tmp,x);
+	AffineVarMainVector<T> ttt(x);
+	check_af(AffineMainVector<T>(ttt),x);
 	check_af(AffineMainVector<T>(2)=x,x);
+	AffineVarMainVector<T> tmp2(2);
+	tmp2.init(Interval(0,1));
+	check_af(tmp2,x);
 }
 
 template <class T>
@@ -62,9 +71,10 @@ void TestAffineVector<T>::cons05() {
 	AffineVarMainVector<T>  x(2);
 	x[0].set_empty();
 	x[1].set_empty();
-	//check_af(x,IntervalVector::empty(2));
+	check_af(AffineMainVector<T>::empty(2),IntervalVector::empty(2));
+	check_af(x,IntervalVector::empty(2));
 	CPPUNIT_ASSERT(x.is_empty());
-	//check_af(x,IntervalVector(2)=x);
+	check_af(x,IntervalVector(2)=x.itv());
 	CPPUNIT_ASSERT((AffineMainVector<T>(2)=x).is_empty());
 }
 
@@ -74,6 +84,10 @@ void TestAffineVector<T>::set_empty01() {
 	CPPUNIT_ASSERT(!x.is_empty());
 	x.set_empty();
 	CPPUNIT_ASSERT(x.is_empty());
+	AffineMainVector<T> x2(2);
+	CPPUNIT_ASSERT(!x2.is_empty());
+	x2.set_empty();
+	CPPUNIT_ASSERT(x2.is_empty());
 }
 
 
@@ -81,6 +95,7 @@ void TestAffineVector<T>::set_empty01() {
 template <class T>
 void TestAffineVector<T>::is_empty02() {
 	CPPUNIT_ASSERT(!AffineMainVector<T>(2).is_empty());
+	CPPUNIT_ASSERT(!AffineVarMainVector<T>(2).is_empty());
 }
 
 template <class T>
@@ -91,6 +106,13 @@ void TestAffineVector<T>::resize01() {
 	check_af(x[0],Interval(1,2));
 	check_af(x[1],Interval::ALL_REALS);
 	check_af(x[2],Interval::ALL_REALS);
+	AffineMainVector<T> x2(1);
+	x2[0] = Interval(1,2);
+	x2.resize(3);
+	CPPUNIT_ASSERT(x2.size()==3);
+	check_af(x2[0],Interval(1,2));
+	check_af(x2[1],Interval::ALL_REALS);
+	check_af(x2[2],Interval::ALL_REALS);
 }
 
 template <class T>
@@ -99,6 +121,11 @@ void TestAffineVector<T>::resize02() {
 	x.resize(1);
 	CPPUNIT_ASSERT(x.size()==1);
 	check_af(x[0],Interval(1,2));
+	AffineMainVector<T> x2(1);
+	x2[0] = Interval(1,2);
+	x2.resize(1);
+	CPPUNIT_ASSERT(x2.size()==1);
+	check_af(x2[0],Interval(1,2));
 }
 
 template <class T>
@@ -109,6 +136,13 @@ void TestAffineVector<T>::resize03() {
 	CPPUNIT_ASSERT(x.size()==3);
 	CPPUNIT_ASSERT(x.is_empty());
 	CPPUNIT_ASSERT(x[2]==Interval::ALL_REALS);
+	AffineMainVector<T> x2(2);
+	x2[0]= Interval(1,2);
+	x2.set_empty();
+	x2.resize(3);
+	CPPUNIT_ASSERT(x2.size()==3);
+	CPPUNIT_ASSERT(x2.is_empty());
+	CPPUNIT_ASSERT(x2[2]==Interval::ALL_REALS);
 }
 
 template <class T>
@@ -117,10 +151,32 @@ void TestAffineVector<T>::resize04() {
 	x[0]=Interval(1,2);
 	x[1]=Interval(3,4);
 	AffineVarMainVector<T> af(x);
+	AffineMainVector<T> af2(af);
+
 	af.resize(2);
 	CPPUNIT_ASSERT(af.size()==2);
 	check_af(af[0],Interval(1,2));
 	check_af(af[1],Interval(3,4));
+	af.resize(5);
+	CPPUNIT_ASSERT(af.size()==5);
+	check_af(af[0],Interval(1,2));
+	check_af(af[1],Interval(3,4));
+	af.resize(1);
+	CPPUNIT_ASSERT(af.size()==1);
+	check_af(af[0],Interval(1,2));
+
+	CPPUNIT_ASSERT(af2.size()==5);
+	af2.resize(2);
+	CPPUNIT_ASSERT(af2.size()==2);
+	check_af(af2[0],Interval(1,2));
+	check_af(af2[1],Interval(3,4));
+	af2.resize(5);
+	CPPUNIT_ASSERT(af2.size()==5);
+	check_af(af2[0],Interval(1,2));
+	check_af(af2[1],Interval(3,4));
+	af2.resize(1);
+	CPPUNIT_ASSERT(af2.size()==1);
+	check_af(af[0],Interval(1,2));
 }
 
 static double _x[][2]={{0,1},{2,3},{4,5}};

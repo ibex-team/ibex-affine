@@ -34,7 +34,7 @@
 
 namespace ibex {
 
-//template<class T>  class AffineVarMain;
+template<class T>  class AffineVarMain;
 template<class T>  class AffineVarMainVector;
 template<class T>  class AffineMain;
 template<class T> class AffineMainVector;
@@ -137,7 +137,7 @@ public:
 	virtual ~AffineMain() { };
 
 	/** \brief Return -*this. */
-	AffineMain operator-() const;
+	virtual AffineMain operator-() const;
 
 	/** \brief True iff *this and x are exactly the same intervals. */
 	bool operator==(const AffineMain& x) const;
@@ -444,6 +444,7 @@ private:
 
 
 
+	template<class A>   friend AffineMain<A> AffineVarMain<A>::operator-() const ;
 	template<class A>   friend AffineMain<A> operator/(double d, const AffineMain<A>& x);
 	template<class A>	friend AffineMain<A> inv(const AffineMain<A>&  x);
 	template<class A>	friend AffineMain<A> sqr(const AffineMain<A>&  x);
@@ -485,7 +486,6 @@ private:
 	template<class A> friend void AffineEval<A>::atan_fwd   (int x, int y);
 
 	template<class A> friend std::ostream& operator<<(std::ostream& os, const AffineMain<A>& x);
-
 };
 
 // the following functions are

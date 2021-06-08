@@ -23,7 +23,7 @@
 
 template<class T>
 void TestAffineEval<T>::test01() {
-	Variable x(2);
+	const ExprSymbol& x = ExprSymbol::new_("x",Dim::col_vec(2));
 	Function f(x,x[0]*pow(x[1],2)+exp(x[1]*x[0]));
 	IntervalVector itv(2,Interval(1,2));
 	CPPUNIT_ASSERT(check_af2(f,itv));
@@ -32,7 +32,7 @@ void TestAffineEval<T>::test01() {
 
 template<class T>
 void TestAffineEval<T>::test02() {
-	Variable x;
+	const ExprSymbol& x = ExprSymbol::new_();
 	Function f(x,cosh(x)-x);
 	IntervalVector itv(1,Interval(1,2));
 	CPPUNIT_ASSERT(check_af2(f,itv));
@@ -41,7 +41,7 @@ void TestAffineEval<T>::test02() {
 
 template<class T>
 void TestAffineEval<T>::test_pow2() {
-	Variable x;
+	const ExprSymbol& x = ExprSymbol::new_();
 	Interval itv;
 	Function f(x,pow(x,2));
 	itv =Interval(1,2);
@@ -70,7 +70,7 @@ void TestAffineEval<T>::test_pow2() {
 
 template<class T>
 void TestAffineEval<T>::test_pow4() {
-	Variable x;
+	const ExprSymbol& x = ExprSymbol::new_();
 	Interval itv;
 	Function f(x,pow(x,4));
 	itv =Interval(1,2);
@@ -101,7 +101,7 @@ void TestAffineEval<T>::test_pow4() {
 
 template<class T>
 void TestAffineEval<T>::test_pow5() {
-	Variable x;
+	const ExprSymbol& x = ExprSymbol::new_();
 	Interval itv;
 	Function f(x,pow(x,5));
 	itv =Interval(1,2);
@@ -131,7 +131,7 @@ void TestAffineEval<T>::test_pow5() {
 
 template<class T>
 void TestAffineEval<T>::test_root2() {
-	Variable x;
+	const ExprSymbol& x = ExprSymbol::new_();
 	Interval itv;
 	Function f(x,pow(x,1/2));
 	itv =Interval(1,2);
@@ -160,7 +160,7 @@ void TestAffineEval<T>::test_root2() {
 
 template<class T>
 void TestAffineEval<T>::test_root4() {
-	Variable x;
+	const ExprSymbol& x = ExprSymbol::new_();
 	Interval itv;
 	Function f(x,pow(x,1/4));
 	itv =Interval(1,2);
@@ -191,7 +191,7 @@ void TestAffineEval<T>::test_root4() {
 
 template<class T>
 void TestAffineEval<T>::test_root5() {
-	Variable x;
+	const ExprSymbol& x = ExprSymbol::new_();
 	Interval itv;
 	Function f(x,pow(x,1/5));
 	itv =Interval(1,2);
@@ -222,7 +222,7 @@ void TestAffineEval<T>::test_root5() {
 
 template<class T>
 void TestAffineEval<T>::test_powINT1() {
-	Variable x;
+	const ExprSymbol& x = ExprSymbol::new_();
 	Interval itv;
 	Function f(x,pow(x,Interval(2,3)));
 	itv =Interval(1,2);
@@ -251,7 +251,7 @@ void TestAffineEval<T>::test_powINT1() {
 
 template<class T>
 void TestAffineEval<T>::test_powINT2() {
-	Variable x;
+	const ExprSymbol& x = ExprSymbol::new_();
 	Interval itv;
 	Function f(x,pow(x,Interval(-2,3)));
 	itv =Interval(1,2);
@@ -281,7 +281,7 @@ void TestAffineEval<T>::test_powINT2() {
 
 template<class T>
 void TestAffineEval<T>::test_sqrt() {
-	Variable x;
+	const ExprSymbol& x = ExprSymbol::new_();
 	Interval itv;
 	Function f(x,sqrt(x));
 	itv =Interval(1,2);
@@ -310,7 +310,7 @@ void TestAffineEval<T>::test_sqrt() {
 
 template<class T>
 void TestAffineEval<T>::test_exp() {
-	Variable x;
+	const ExprSymbol& x = ExprSymbol::new_();
 	Interval itv;
 	Function f(x,exp(x));
 	itv =Interval(1,2);
@@ -349,7 +349,7 @@ void TestAffineEval<T>::test_exp() {
 
 template<class T>
 void TestAffineEval<T>::test_log() {
-	Variable x;
+	const ExprSymbol& x = ExprSymbol::new_();
 	Interval itv;
 	Function f(x,log(x));
 	itv =Interval(1,2);
@@ -388,7 +388,7 @@ void TestAffineEval<T>::test_log() {
 
 template<class T>
 void TestAffineEval<T>::test_inv() {
-	Variable x;
+	const ExprSymbol& x = ExprSymbol::new_();
 	Interval itv;
 	Function f(x,1.0/x);
 	itv =Interval(1,2);
@@ -429,7 +429,7 @@ void TestAffineEval<T>::test_inv() {
 
 template<class T>
 void TestAffineEval<T>::test_cos() {
-	Variable x;
+	const ExprSymbol& x = ExprSymbol::new_();
 	Interval itv;
 	Function f(x,cos(x));
 	itv =Interval(1,2);
@@ -519,7 +519,7 @@ void TestAffineEval<T>::test_cos() {
 
 template<class T>
 void TestAffineEval<T>::test_sin() {
-	Variable x;
+	const ExprSymbol& x = ExprSymbol::new_();
 	Interval itv;
 	Function f(x,sin(x));
 	itv =Interval(1,2);
@@ -606,7 +606,7 @@ void TestAffineEval<T>::test_sin() {
 
 template<class T>
 void TestAffineEval<T>::test_tan() {
-	Variable x;
+	const ExprSymbol& x = ExprSymbol::new_();
 	Interval itv;
 	Function f(x,tan(x));
 	itv =Interval(1,2);
@@ -691,7 +691,7 @@ void TestAffineEval<T>::test_tan() {
 
 template<class T>
 void TestAffineEval<T>::test_abs() {
-	Variable x;
+	const ExprSymbol& x = ExprSymbol::new_();
 	Interval itv;
 	Function f(x,abs(x));
 	itv =Interval(1,2);
@@ -725,7 +725,7 @@ void TestAffineEval<T>::test_abs() {
 
 template<class T>
 void TestAffineEval<T>::test_acos() {
-	Variable x;
+	const ExprSymbol& x = ExprSymbol::new_();
 	Interval itv;
 	Function f(x,acos(x));
 	itv =Interval(1,2);
@@ -821,7 +821,7 @@ void TestAffineEval<T>::test_acos() {
 
 template<class T>
 void TestAffineEval<T>::test_asin() {
-	Variable x;
+	const ExprSymbol& x = ExprSymbol::new_();
 	Interval itv;
 	Function f(x,asin(x));
 	itv =Interval(1,2);
@@ -917,7 +917,7 @@ void TestAffineEval<T>::test_asin() {
 
 template<class T>
 void TestAffineEval<T>::test_atan() {
-	Variable x;
+	const ExprSymbol& x = ExprSymbol::new_();
 	Interval itv;
 	Function f(x,atan(x));
 	itv =Interval(1,2);
@@ -1007,7 +1007,7 @@ void TestAffineEval<T>::test_atan() {
 
 template<class T>
 void TestAffineEval<T>::test_cosh() {
-	Variable x;
+	const ExprSymbol& x = ExprSymbol::new_();
 	Interval itv;
 	Function f(x,cosh(x));
 	itv =Interval(1,2);
@@ -1041,7 +1041,7 @@ void TestAffineEval<T>::test_cosh() {
 
 template<class T>
 void TestAffineEval<T>::test_sinh() {
-	Variable x;
+	const ExprSymbol& x = ExprSymbol::new_();
 	Interval itv;
 	Function f(x,sinh(x));
 	itv =Interval(1,2);
@@ -1077,7 +1077,7 @@ void TestAffineEval<T>::test_sinh() {
 
 template<class T>
 void TestAffineEval<T>::test_tanh() {
-	Variable x;
+	const ExprSymbol& x = ExprSymbol::new_();
 	Interval itv;
 	Function f(x,tanh(x));
 	itv =Interval(1,2);
@@ -1122,6 +1122,7 @@ bool TestAffineEval<T>::check_af2 (Function& f, Interval& I){
 	AffineMain<T> faa;
 	Interval itv2;
 	Interval itv;
+	AffineMain<T> aitv ;
 
 	AffineEval<T> eval_af(f);
 
@@ -1130,14 +1131,23 @@ bool TestAffineEval<T>::check_af2 (Function& f, Interval& I){
 			itv2 =f.eval(IntervalVector(1,Interval(ii)));
 
 			itv = eval_af.eval(IntervalVector(1,Interval(ii))).i();
-
 			faa = eval_af.af2.top->i();
+			aitv = eval_af.eval(AffineVarMainVector<T>(1,Interval(ii))).i();
+
 
 			if (!(itv2.is_subset(faa.itv())))
 			{
-				//std::cout  << " DEP = "<< ii<< "  "  << f<< std::endl;
-				//std::cout  << " RES = "<< itv2 << " /// "<< itv << " ///// " << faa << std::endl;
-				//		std::cout  << " RES = "<< itv2 << " ///// " << faa << std::endl;
+				std::cout  << " DEP = "<< ii<< "  "  << f<< std::endl;
+				std::cout  << " RES = "<< itv2 << " /// "<< itv << " ///// " << faa << std::endl;
+				std::cout  << " RES = "<< itv2 << " ///// " << faa << std::endl;
+
+				return false;
+			}
+			if (!(itv2.is_subset(aitv.itv())))
+			{
+				std::cout  << " DEP = "<< ii<< "  "  << f<< std::endl;
+				std::cout  << " RES = "<< itv2 << " /// "<< itv << " ///// " << aitv << std::endl;
+				std::cout  << " RES = "<< itv2 << " ///// " << aitv << std::endl;
 
 				return false;
 			}
@@ -1148,8 +1158,9 @@ bool TestAffineEval<T>::check_af2 (Function& f, Interval& I){
 	itv2 =f.eval(IntervalVector(1,I));
 
 	itv = eval_af.eval(IntervalVector(1,I)).i();
-
 	faa = eval_af.af2.top->i();
+
+	aitv = eval_af.eval(AffineVarMainVector<T>(1,I)).i();
 
 	if (!(itv2.is_subset(faa.itv())))
 	{
@@ -1159,8 +1170,16 @@ bool TestAffineEval<T>::check_af2 (Function& f, Interval& I){
 
 		return false;
 	}
+	if (!(itv2.is_subset(aitv.itv())))
+	{
+		std::cout  << " DEP = "<< I<< "  "  << f<< std::endl;
+		std::cout  << " RES = "<< itv2 << " /// "<< itv << " ///// " << aitv << std::endl;
+		std::cout  << " RES = "<< itv2 << " ///// " << aitv << std::endl;
+
+		return false;
+	}
 /*	if (faa.size()>0) {
-		Variable x;
+		const ExprSymbol& x = ExprSymbol::new_();
 		Function lininf(x,(faa.val(0)+faa.val(1)*(2* (x)-(I.lb()+I.ub()))/(I.diam())));
 
 		Function linsup(x, lininf(x)+faa.err().lb());
@@ -1190,4 +1209,108 @@ bool TestAffineEval<T>::check_af2 (Function& f, Interval& I){
 
 }
 
+template<class T>
+void TestAffineEval<T>::issue242() {
+	Function f("x[3]","-x");
+	IntervalVector x(3,Interval::one());
+	AffineEval<T> evalf(f);
+	IntervalVector res = evalf.eval(x).v();
+	CPPUNIT_ASSERT(almost_eq(res,-x,0));
+
+	AffineMainVector<T> resaf = evalf.eval(AffineVarMainVector<T>(x)).v();
+	CPPUNIT_ASSERT(almost_eq(resaf.itv(),-x,0));
+}
+template<class T>
+void TestAffineEval<T>::eval_components01() {
+	const ExprSymbol& x = ExprSymbol::new_("x");
+	const ExprSymbol& y = ExprSymbol::new_("y");
+	const ExprSymbol& z = ExprSymbol::new_("z");
+	const ExprNode& e1=x+3*y;
+	const ExprNode& e2=y-2*x;
+	const ExprNode& e3=e1*e2;
+	Function f(x,y,z,Return(e3+1,e2+3,e3-2,e3-4));
+
+	Interval vx=Interval::one();
+	Interval vy=2*Interval::one();
+	IntervalVector box(3);
+	box[0]=vx;
+	box[1]=vy;
+
+	BitSet components=BitSet::empty(4);
+	components.add(0);
+	components.add(2);
+
+
+	AffineEval<T> evalf(f);
+	IntervalVector res = evalf.eval(box,components).v();
+	CPPUNIT_ASSERT(res.size()==2);
+	CPPUNIT_ASSERT(res[0]==(vx+3*vy)*(vy-2*vx)+1);
+	CPPUNIT_ASSERT(res[1]==(vx+3*vy)*(vy-2*vx)-2);
+
+	AffineMainVector<T> resaf = evalf.eval(AffineVarMainVector<T>(box),components).v();
+
+	CPPUNIT_ASSERT(resaf.size()==2);
+	CPPUNIT_ASSERT(resaf[0]==(vx+3*vy)*(vy-2*vx)+1);
+	CPPUNIT_ASSERT(resaf[1]==(vx+3*vy)*(vy-2*vx)-2);
+}
+template<class T>
+void TestAffineEval<T>::eval_components02() {
+	Dim d=Dim::matrix(3,3);
+	const ExprSymbol& x = ExprSymbol::new_("x",Dim::col_vec(2));
+	const ExprSymbol& y = ExprSymbol::new_("y",d);
+	const ExprSymbol& z = ExprSymbol::new_("z",d);
+
+	Function f(x,y,z,Return(x[1],transpose(y[DoubleIndex::one_row(d,1)]),z[DoubleIndex::one_col(d,2)]));
+
+	IntervalVector box(20);
+	for (int i=0; i<20; i++) box[i]=Interval(i,i);
+
+	BitSet components=BitSet::empty(9);
+	components.add(0);
+	components.add(2);
+	components.add(4);
+	components.add(6);
+
+	AffineEval<T> evalf(f);
+	IntervalVector res = evalf.eval(box,components).v();
+
+	CPPUNIT_ASSERT(res.size()==4);
+	CPPUNIT_ASSERT(res[0]==1);
+	CPPUNIT_ASSERT(res[1]==6);
+	CPPUNIT_ASSERT(res[2]==13);
+	CPPUNIT_ASSERT(res[3]==19);
+
+	AffineMainVector<T> resaf = evalf.eval(AffineVarMainVector<T>(box),components).v();
+	CPPUNIT_ASSERT(resaf.size()==4);
+	CPPUNIT_ASSERT(resaf[0]==1);
+	CPPUNIT_ASSERT(resaf[1]==6);
+	CPPUNIT_ASSERT(resaf[2]==13);
+	CPPUNIT_ASSERT(resaf[3]==19);
+}
+template<class T>
+void TestAffineEval<T>::matrix_components() {
+	const ExprSymbol& x = ExprSymbol::new_();
+	Function f(x,Return(
+			Return(x  ,x+1,x+2,ExprVector::ROW),
+			Return(x+3,x+4,x+5,ExprVector::ROW),
+			Return(x+6,x+7,x+8,ExprVector::ROW),
+			ExprVector::COL));
+
+	double _M1[] = { 0, 1, 2, 3, 4, 5, 6, 7, 8 };
+
+	AffineEval<T> evalf(f);
+	IntervalMatrix res = evalf.eval(IntervalVector(1,Interval::ZERO)).m();
+	CPPUNIT_ASSERT(res == Matrix(3,3,_M1));
+
+
+	// perform another evaluation
+	double _M2[] = { 9, 10, 11, 15, 16, 17 };
+	BitSet bitset(3);
+	bitset.add(0);
+	bitset.add(2);
+
+	IntervalMatrix res2 = evalf.eval(IntervalVector(1,Interval(9,9)),bitset).m();
+	CPPUNIT_ASSERT(res2 == Matrix(2,3,_M2));
+
+}
 

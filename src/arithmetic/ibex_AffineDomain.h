@@ -32,8 +32,8 @@ namespace ibex {
  * </ul>
  *
  */
-typedef TemplateDomain<Affine2> Affine2Domain;
-typedef TemplateDomain<Affine3> Affine3Domain;
+typedef TemplateDomain<AffineMain<AF_Default> > Affine2Domain;
+typedef TemplateDomain<AffineMain<AF_Other>> Affine3Domain;
 
 
 /*

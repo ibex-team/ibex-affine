@@ -112,6 +112,7 @@ AffineMain<AF_fAF2>::AffineMain(const AffineMain<AF_fAF2>& x) :
 }
 
 
+
 template<>
 AffineMain<AF_fAF2>& AffineMain<AF_fAF2>::operator=(const AffineMain<AF_fAF2>& x) {
 	if (this != &x) {
