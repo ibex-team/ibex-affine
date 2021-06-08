@@ -18,7 +18,7 @@ namespace ibex {
 
 double AF_fAFFullI::maTol = 2.5e-15;
 
-unsigned long int AF_fAFFullI::_counter = 0;
+unsigned long int AF_fAFFullI::_counter = 50;
 
 bool noise_null (const std::pair<int,double> value) { return (value.second >= 0)&&(value.second <= 0.0); }
 

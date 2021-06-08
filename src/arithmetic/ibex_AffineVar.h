@@ -40,8 +40,8 @@ template<class T>  class AffineVarMainVector;
  */
 
 
-typedef AffineVarMainVector<AF_Default> Affine2Vars;
-typedef AffineVarMainVector<AF_Other>  Affine3Vars;
+typedef AffineVarMainVector<AF_Default> Affine2Variables;
+typedef AffineVarMainVector<AF_Other>  Affine3Variables;
 
 
 
