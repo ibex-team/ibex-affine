@@ -173,7 +173,8 @@ AffineMain<AF_fAFFullI>& AffineMain<AF_fAFFullI>::operator=(double d) {
 
 
 template<>
-double AffineMain<AF_fAFFullI>::val(int i) const{  // TODO changer la std::list par une autre structure pour ameliorer
+double AffineMain<AF_fAFFullI>::val(int i) const{
+	// TODO changer la std::list par une autre structure pour ameliorer
 	assert((0<=i) && (i<=size()));
 	if (!_elt._rays.empty()) {
 		std::list<std::pair<int,double> >::const_iterator iter = _elt._rays.begin();

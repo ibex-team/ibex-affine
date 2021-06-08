@@ -105,7 +105,7 @@ Array< TemplateDomain< AffineMain<T> > > convert_to_affinedomain(const Array<con
 template<>
 inline TemplateDomain<Affine2>& TemplateDomain<Affine2>::operator&=(const TemplateDomain<Affine2>& ) {
 	/* intersection is forbidden with affine forms */
-        throw std::logic_error("intersection is forbidden with affine forms");
+        throw std::logic_error("TemplateDomain<Affine2>::operator&= : Intersection is forbidden with affine forms");
 }
 
 

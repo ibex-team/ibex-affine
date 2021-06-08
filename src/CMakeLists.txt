@@ -21,7 +21,7 @@ add_library (ibex-affine ${SRC})
 target_include_directories (ibex-affine PUBLIC
                 "$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/arithmetic>"
                 "$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/function>"
-                "$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/numeroc>"
+                "$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/numeric>"
                 "$<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}/ibex-affine>")
 target_link_libraries (ibex-affine PUBLIC Ibex::ibex)
 

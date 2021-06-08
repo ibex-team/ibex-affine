@@ -924,13 +924,13 @@ inline AffineMainVector<T> cart_prod(const AffineMainVector<T>& x, const AffineM
 template<class T>
 inline void AffineMainVector<T>::compact(double tol) {
 	assert(!is_empty());
-	for (int i = 0; i < _vec.size(); i++) { 	_vec[i].compact(tol);	}
+	for (int i = 0; i < size(); i++) { 	_vec[i].compact(tol);	}
 }
 
 template<class T>
 inline void AffineMainVector<T>::compact() {
 	assert(!is_empty());
-	for (int i = 0; i < _vec.size(); i++) { 	_vec[i].compact();	}
+	for (int i = 0; i < size(); i++) { 	_vec[i].compact();	}
 }
 
 

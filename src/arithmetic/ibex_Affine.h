@@ -34,9 +34,9 @@
 
 namespace ibex {
 
-template<class T>  class AffineVarMain;
-template<class T>  class AffineVarMainVector;
-template<class T>  class AffineMain;
+template<class T> class AffineVarMain;
+template<class T> class AffineVarMainVector;
+template<class T> class AffineMain;
 template<class T> class AffineMainVector;
 template<class T> class AffineMainMatrix;
 template<class T> class AffineEval;
@@ -774,7 +774,6 @@ Interval operator|(const AffineMain<T>&  x1, const Interval& x2);
 
 /**
  * \brief Return the largest integer interval included in x.
- *  TODO Affine2::integer not yet implemented integer
  */
 template<class T>
 AffineMain<T> integer(const AffineMain<T>&  x);

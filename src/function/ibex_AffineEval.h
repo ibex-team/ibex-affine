@@ -178,21 +178,6 @@ public:
 
 protected:
 
-//	/**
-//	 * \brief Run the forward algorithm on the box \a box.
-//	 */
-//	void forward(const IntervalVector& box);
-//
-//	/**
-//	 * \brief Run the forward algorithm on the box \a box.
-//	 */
-//	void forward(const AffineMainVector<T>& box);
-//
-//	/**
-//	 * \brief Run the forward algorithm with input domains.
-//	 */
-//	void forward(const Array<const Domain>& argD, const Array<const TemplateDomain<AffineMain<T> > >& argDAF2);
-
 	/**
 	 * Since there is no affine evaluator in the Function class,
 	 * we store here all the evaluators of the called functions
@@ -208,7 +193,7 @@ protected:
 	 * the definition domain of the function).
 	 */
 	class EmptyBoxException { };
-	//TODO
+
 };
 
 
@@ -686,39 +671,6 @@ TemplateDomain<AffineMain<T> > AffineEval<T>::eval(const AffineVarMainVector<T>&
 	return eval(AffineMainVector<T>(aff), rows, cols);
 }
 
-
-//template<class T>
-//inline void AffineEval<T>::forward(const Array<const Domain>& argD, const Array<const TemplateDomain<AffineMain<T> > >& argDAF2) {
-////TODO remove
-//	d.write_arg_domains(argD);
-//	af2.write_arg_domains(argDAF2);
-//
-//	//------------- for debug
-////	std::cout << "Function " << f.name << ", domains before eval:" << std::endl;
-////		for (int i=0; i<f.nb_arg(); i++) {
-////			std::cout << "arg[" << i << "]=" << f.arg_domains[i] << std::endl;
-////		}
-//
-//	f.forward<AffineEval<T> >(*this);
-//}
-//
-//template<class T>
-//inline void AffineEval<T>::forward(const IntervalVector& box) {
-//	d.write_arg_domains(box);
-//	af2.write_arg_domains(AffineMainVector<T>(AffineVarMainVector<T>(box)));
-//
-//	// TODO: should manage empty result! (see Eval.cpp)
-//	f.forward<AffineEval<T> >(*this);
-//}
-//
-//template<class T>
-//inline void AffineEval<T>::forward(const AffineMainVector<T>& box) {
-//
-//	d.write_arg_domains(box.itv());
-//	af2.write_arg_domains(box);
-//
-//	f.forward<AffineEval<T> >(*this);
-//}
 
 template<class T>
 inline void AffineEval<T>::idx_fwd(int, int ) { /* nothing to do */ }
