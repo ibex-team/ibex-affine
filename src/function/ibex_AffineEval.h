@@ -22,6 +22,9 @@
 
 namespace ibex {
 
+typedef AffineEval<AF_Default> Affine2Eval;
+typedef AffineEval<AF_Other>  Affine3Eval;
+
 /**
  * \ingroup symbolic
  *
@@ -75,7 +78,6 @@ public:
 	 */
 	Domain eval(const IntervalVector& box, const BitSet& rows, const BitSet& cols);
 
-
 	/**
 	 * \brief Run the forward algorithm with input domains, and return the result as an Affine domain.
 	 */
@@ -86,6 +88,8 @@ public:
 	 */
 	TemplateDomain<AffineMain<T> >& eval(const AffineMainVector<T>& box);
 	TemplateDomain<AffineMain<T> >& eval(const AffineVarMainVector<T>& box);
+	std::pair<Domain*,TemplateDomain<AffineMain<T> >* > eval(const IntervalVector& box,const AffineMainVector<T>& aff);
+	std::pair<Domain*,TemplateDomain<AffineMain<T> >* > eval(const IntervalVector& box,const AffineVarMainVector<T>& aff);
 
 	/**
 	 * \brief Evaluate a subset of components, and return the result as an Affine domain.
@@ -207,8 +211,6 @@ protected:
 	//TODO
 };
 
-typedef AffineEval<AF_Default> Affine2Eval;
-typedef AffineEval<AF_Other>  Affine3Eval;
 
 /* ============================================================================
  	 	 	 	 	 	 	 implementation
@@ -323,6 +325,25 @@ TemplateDomain<AffineMain<T> >& AffineEval<T>::eval(const AffineMainVector<T>& b
 template<class T>
 inline TemplateDomain<AffineMain<T> >& AffineEval<T>::eval(const AffineVarMainVector<T>& box) {
 	return eval(AffineMainVector<T>(box));
+}
+
+
+template<class T>
+std::pair<Domain*,TemplateDomain<AffineMain<T> >* > AffineEval<T>::eval(const IntervalVector& box,const AffineMainVector<T>& aff) {
+	d.write_arg_domains(box);
+	af2.write_arg_domains(aff);
+
+	try {
+		f.forward<AffineEval<T> >(*this);
+	} catch(EmptyBoxException&) {
+		d.top->set_empty();
+		af2.top->set_empty();
+	}
+	return std::pair<Domain*,TemplateDomain<AffineMain<T> >* >(d.top,af2.top);
+}
+template<class T>
+std::pair<Domain*,TemplateDomain<AffineMain<T> >* > AffineEval<T>::eval(const IntervalVector& box,const AffineVarMainVector<T>& aff) {
+	return eval(box,AffineMainVector<T>(aff));
 }
 
 

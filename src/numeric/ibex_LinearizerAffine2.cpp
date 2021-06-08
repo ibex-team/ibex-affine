@@ -43,8 +43,8 @@ bool LinearizerAffine2::goal_linearization(const IntervalVector& box, LPSolver& 
 		ibex_error("LinearRelaxAffine2: there is no goal function to linearize.");
 	}
 
-	goal_af_evl->eval(box);
-	Affine2 af2 = goal_af_evl->af2.top->i();
+	std::pair<Domain*,Affine2Domain*> res = goal_af_evl->eval(box, Affine2Vars(box));
+	Affine2 af2 = res.second->i();
 	if (af2.is_empty()) {
 		return false;
 	}
@@ -85,8 +85,12 @@ int LinearizerAffine2::inlinearization(const IntervalVector& box, LPSolver& lp_s
 	// Create the linear relaxation of each constraint
 	for (int ctr = 0; ctr < sys.nb_ctr; ctr++) {
 		CmpOp op = sys.ctrs[ctr].op;
-		ev  = ctr_af_evl[ctr]->eval(box).i();
-		af2 = ctr_af_evl[ctr]->af2.top->i();
+
+		std::pair<Domain*,Affine2Domain*> res = ctr_af_evl[ctr]->eval(box, Affine2Vars(box));
+		ev  = res.first->i();
+		af2 = res.second->i();
+		//ev  = ctr_af_evl[ctr]->eval(box).i();
+		//af2 = ctr_af_evl[ctr]->af2.top->i();
 
 		//std::cout <<ev<<":::"<< af2<<"  "<<af2.size()<<"  " <<sys.nb_var<< std::endl;
 
@@ -147,6 +151,7 @@ int LinearizerAffine2::inlinearization(const IntervalVector& box, LPSolver& lp_s
 int LinearizerAffine2::linearize(const IntervalVector& box, LPSolver& lp_solver) {
 
 	Affine2 af2;
+	Affine2Vars varaf2(box);
 	Vector rowconst(sys.nb_var);
 	Interval ev(0.0);
 	Interval center(0.0);
@@ -158,8 +163,13 @@ int LinearizerAffine2::linearize(const IntervalVector& box, LPSolver& lp_solver)
 	for (int ctr = 0; ctr < sys.nb_ctr; ctr++) {
 
 		op  = sys.ctrs[ctr].op;
-		ev  = ctr_af_evl[ctr]->eval(box).i();
-		af2 = ctr_af_evl[ctr]->af2.top->i();
+
+		std::pair<Domain*,Affine2Domain*> res = ctr_af_evl[ctr]->eval(box, varaf2);
+		ev  = res.first->i();
+		af2 = res.second->i();
+		//ev  = ctr_af_evl[ctr]->eval(box).i();
+		//af2 = ctr_af_evl[ctr]->af2.top->i();
+
 
 		if (ev.is_empty()) {
 			af2.set_empty();
