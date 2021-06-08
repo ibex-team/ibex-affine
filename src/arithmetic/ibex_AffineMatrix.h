@@ -53,11 +53,11 @@ public:
 	 */
 	AffineMainMatrix(int nb_rows, int nb_cols, const AffineMain<T>& x);
 
-	/** It is too difficult to know the size of each AF2. So we let the user do what exactly he want to do.
-	 * \brief Create \a x.size Affine2MainVector<T> of dimension \a x.nb_col*x.nb_row with
-	 * the [i][j] component initialized to \a Affine2(m[i][j]).
+	/** It is too difficult to know the size of each AffineMain. So we let the user do what exactly he want to do.
+	 * \brief Create \a x.size AffineMainVector<T> of dimension \a x.nb_col*x.nb_row with
+	 * the [i][j] component initialized to \a AffineMain(m[i][j]).
 	 */
-	explicit AffineMainMatrix(const IntervalMatrix& m);
+	//explicit AffineMainMatrix(const IntervalMatrix& m);
 
 	/**
 	 * \brief Create  a copy of x
@@ -82,7 +82,7 @@ public:
 	 * \param bounds an (mxn)x2 array of doubles
 	 * \pre m>0, n>0
 	 */
-	AffineMainMatrix(int m, int n, double x[][2]);
+	//AffineMainMatrix(int m, int n, double x[][2]);
 
 	/**
 	 * \brief Delete *this.
@@ -90,17 +90,17 @@ public:
 	~AffineMainMatrix();
 
 	/**
-	 * \brief Create a mxn empty matrix
+	 * \brief Create a (nb_rows x nb_cols) empty matrix
 	 *
-	 * Create an empty Affine2MainMatrix of dimension \a n x \a m
+	 * Create an empty Affine2MainMatrix of dimension \a  nb_rows \a nb_cols
 	 * (all the components being empty Affine2s)
 	 *
-	 * \pre m>0, n>0
+	 * \pre nb_rows>0, n>0
 	 */
-	static AffineMainMatrix empty(int m, int n);
+	static AffineMainMatrix empty(int nb_rows, int nb_cols);
 
 	/**
-	 * \brief Set *this to m.
+	 * \brief Set *this to x.
 	 */
 	AffineMainMatrix& operator=(const AffineMainMatrix& x);
 	AffineMainMatrix& operator=(const IntervalMatrix& x);
@@ -195,14 +195,14 @@ public:
 	/**
 	 * \brief Return the ith row.
 
-	 * Equivalent to (*this)[i.
+	 * Equivalent to (*this)[i].
 	 */
 	AffineMainVector<T>& row(int i);
 
 	/**
 	 * \brief Return a const reference to the ith row.
 
-	 * Equivalent to (*this)[i.
+	 * Equivalent to (*this)[i].
 	 */
 	const AffineMainVector<T>& row(int i) const;
 
@@ -232,6 +232,32 @@ public:
 	 * \brief Set a column.
 	 */
 	void set_col(int col, const AffineMainVector<T>& v);
+
+	/**
+	 * \brief Insert a submatrix at some position
+	 * \pre (*this) must be nonempty
+	 */
+	void put(int row_start_index, int col_start_index, const Matrix& M);
+
+	/**
+	 * \brief Insert a submatrix at some position
+	 * \pre (*this) must be nonempty
+	 */
+	void put(int row_start_index, int col_start_index, const AffineMainMatrix<T>& M);
+
+	/**
+	 * \brief Insert a subvecvtor at some position
+	 * \param row_vec true if the vector is a row vector
+	 * \pre (*this) must be nonempty
+	 */
+	void put(int row_start_index, int col_start_index, const Vector& V, bool row_vec);
+
+	/**
+	 * \brief Insert a subvecvtor at some position
+	 * \param row_vec true if the vector is a row vector
+	 * \pre (*this) must be nonempty
+	 */
+	void put(int row_start_index, int col_start_index, const AffineMainVector<T>& V, bool row_vec);
 
 
     /**
@@ -535,20 +561,20 @@ AffineMainMatrix<T>::AffineMainMatrix(int nb_rows1, int nb_cols1, const AffineMa
 
 
 
-template<class T>
-AffineMainMatrix<T>::AffineMainMatrix(int m, int n, double bounds[][2]) : _nb_rows(m), _nb_cols(n) {
-	assert(m>0);
-	assert(n>0);
-		int k=0; // counter for "bounds"
-		_M = new AffineMainVector<T>[_nb_rows];
-		for (int i=0; i<_nb_rows; i++) {
-			_M[i].resize(_nb_cols);
-			for (int j=0; j<_nb_cols; j++) {
-				_M[i]._vec[j]=AffineMain<T>(Interval(bounds[k][0],bounds[k][1]));
-				k++;
-			}
-		}
-}
+//template<class T>
+//AffineMainMatrix<T>::AffineMainMatrix(int m, int n, double bounds[][2]) : _nb_rows(m), _nb_cols(n) {
+//	assert(m>0);
+//	assert(n>0);
+//		int k=0; // counter for "bounds"
+//		_M = new AffineMainVector<T>[_nb_rows];
+//		for (int i=0; i<_nb_rows; i++) {
+//			_M[i].resize(_nb_cols);
+//			for (int j=0; j<_nb_cols; j++) {
+//				_M[i]._vec[j]=AffineMain<T>(Interval(bounds[k][0],bounds[k][1]));
+//				k++;
+//			}
+//		}
+//}
 
 template<class T>
 AffineMainMatrix<T>::AffineMainMatrix(const AffineMainMatrix<T>& m) : _nb_rows(m.nb_rows()), _nb_cols(m.nb_cols()){
@@ -562,18 +588,18 @@ AffineMainMatrix<T>::AffineMainMatrix(const AffineMainMatrix<T>& m) : _nb_rows(m
 }
 
 
-template<class T>
-AffineMainMatrix<T>::AffineMainMatrix(const IntervalMatrix& m) : _nb_rows(m.nb_rows()), _nb_cols(m.nb_cols()){
-	_M = new AffineMainVector<T>[_nb_rows];
-	int k=0; // counter for "bounds"
-	for (int i=0; i<_nb_rows; i++) {
-		_M[i].resize(_nb_cols);
-		for (int j=0; j<_nb_cols; j++)  {
-			_M[i]._vec[j]=AffineMain<T>(m[i][j]);
-			k++;
-		}
-	}
-}
+//template<class T>
+//AffineMainMatrix<T>::AffineMainMatrix(const IntervalMatrix& m) : _nb_rows(m.nb_rows()), _nb_cols(m.nb_cols()){
+//	_M = new AffineMainVector<T>[_nb_rows];
+//	int k=0; // counter for "bounds"
+//	for (int i=0; i<_nb_rows; i++) {
+//		_M[i].resize(_nb_cols);
+//		for (int j=0; j<_nb_cols; j++)  {
+//			_M[i]._vec[j]=(m[i][j]);
+//			k++;
+//		}
+//	}
+//}
 
 
 template<class T>
@@ -677,6 +703,27 @@ template<class T>
 AffineMainMatrix<T> AffineMainMatrix<T>::submatrix(int row_start_index, int row_end_index,	int col_start_index, int col_end_index) {
 	return _submatrix(*this,row_start_index,row_end_index,col_start_index,col_end_index);
 }
+
+template<class T>
+void AffineMainMatrix<T>::put(int row_start_index, int col_start_index, const Matrix& sub) {
+	_put<AffineMainMatrix<T>,Matrix>(*this, row_start_index, col_start_index, sub);
+}
+
+template<class T>
+void AffineMainMatrix<T>::put(int row_start_index, int col_start_index, const AffineMainMatrix<T>& sub) {
+	_put<AffineMainMatrix<T>,AffineMainMatrix<T> >(*this, row_start_index, col_start_index, sub);
+}
+
+template<class T>
+void AffineMainMatrix<T>::put(int row_start_index, int col_start_index, const Vector& sub, bool row_vec) {
+	_put<AffineMainMatrix<T>,Vector>(*this, row_start_index, col_start_index, sub, row_vec);
+}
+
+template<class T>
+void AffineMainMatrix<T>::put(int row_start_index, int col_start_index, const AffineMainVector<T>& sub, bool row_vec) {
+	_put<AffineMainMatrix<T>,AffineMainVector<T> >(*this, row_start_index, col_start_index, sub, row_vec);
+}
+
 
 template<class T>
 AffineMainMatrix<T> AffineMainMatrix<T>::transpose() const {

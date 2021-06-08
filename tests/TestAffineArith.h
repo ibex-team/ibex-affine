@@ -1,11 +1,12 @@
 /* ============================================================================
  * I B E X - Affine2 Test
  * ============================================================================
+ * Copyright   : ENSTA Bretagne (FRANCE)
  * License     : This program can be distributed under the terms of the GNU LGPL.
- *               See the file COPYING.LESSER.
+ *               See the file LICENSE
  *
- * Author(s)   : Jordan Ninin
- * Created     : April 08, 2013
+ * Author(s)   : Jordan NININ
+ * Created     : Juin 20, 2021
  * ---------------------------------------------------------------------------- */
 
 
@@ -14,13 +15,10 @@
 
 #include <cppunit/TestFixture.h>
 #include <cppunit/extensions/HelperMacros.h>
-#include "ibex_Interval.h"
+#include "ibex.h"
 #include "ibex_Affine.h"
+#include "ibex_AffineEval.h"
 #include "utils.h"
-#include <string>
-#include <iostream>
-#include <iomanip>
-#include "ibex_Function.h"
 
 using namespace ibex;
 
@@ -59,8 +57,11 @@ public:
 	CPPUNIT_TEST(test29);
 	CPPUNIT_TEST(test30);
 	CPPUNIT_TEST(test31);
+	CPPUNIT_TEST(test31_1);
 	CPPUNIT_TEST(test32);
 	CPPUNIT_TEST(test33);
+	CPPUNIT_TEST(test33_2);
+	CPPUNIT_TEST(test33_3);
 	CPPUNIT_TEST(test34);
 	CPPUNIT_TEST(test35);
 	CPPUNIT_TEST(test36);
@@ -129,11 +130,14 @@ public:
 	CPPUNIT_TEST(test99);
 	CPPUNIT_TEST(test100);
 	CPPUNIT_TEST(test101);
+	CPPUNIT_TEST(test102);
 	CPPUNIT_TEST_SUITE_END();
 
-	typedef enum { EQUALITY, INCLUSION, INCLUSION_TIGHT, INTERSECTION } comp_t;
 
-	bool compare_results (comp_t c, Interval r, AffineMain<T>  a) ;
+	bool compare_results (Interval r, AffineMain<T>  a) ;
+	bool compare_results_inclusion (Interval r, AffineMain<T>  a) ;
+	bool compare_results2 (Interval r, AffineMain<T>  a) ;
+	bool compare_results3 (Interval r, AffineMain<T>  a) ;
 
 
 	void test01();
@@ -167,8 +171,11 @@ public:
 	void test29();
 	void test30();
 	void test31();
+	void test31_1();
 	void test32();
 	void test33();
+	void test33_2();
+	void test33_3();
 	void test34();
 	void test35();
 	void test36();
@@ -237,6 +244,7 @@ public:
 	void test99();
 	void test100();
 	void test101();
+	void test102();
 };
 
 CPPUNIT_TEST_SUITE_REGISTRATION(TestAffineArith<AF_Default>);

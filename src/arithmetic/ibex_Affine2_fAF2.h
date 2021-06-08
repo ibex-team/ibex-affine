@@ -28,27 +28,25 @@
 #endif
 
 
-
-
-#include "ibex_Interval.h"
-
 namespace ibex {
 
 template<class T>  class AffineMain;
+template<class T>  class AffineVarMain;
 
 class AF_fAF2 {
 
+private:
+	friend class AffineVarMain<AF_fAF2>;
 	friend class AffineMain<AF_fAF2>;
 
-private:
 	/**
 	 * Code for the particular case:
-	 * if the affine form is actif, _n>1  and _n is the size of the affine form
-	 * if the set is degenerate, _n = 0 or itv().diam()< AF_EC()
-	 * if the set is empty, _n = -1
-	 * if the set is ]-oo,+oo[, _n = -2
-	 * if the set is [a, +oo[ , _n = -3 and _err= a
-	 * if the set is ]-oo, a] , _n = -4 and _err= a
+	 * if the affine form is actif, _actif=1  and _n is the size of the affine form
+	 * if the set is degenerate, _actif = 0 and itv().diam()< AF_EC
+	 * if the set is empty, _actif = -1
+	 * if the set is ]-oo,+oo[, _actif = -2 and _err =]-oo,+oo[
+	 * if the set is [a, +oo[ , _actif = -3 and _err = [a, +oo[
+	 * if the set is ]-oo, a] , _actif = -4 and _err = ]-oo, a]
 	 *
 	 */
 
@@ -59,20 +57,18 @@ private:
 	/**
 	 * \brief return the exact rounding error of the addition of 2 floating-point numbers
 	 */
-	double twoSum(double a, double b, double *res);
+	static double twoSum(double a, double b, double *res);
 
 	/**
 	 * \brief return the exact rounding error of the multiplication of 2 floating-point numbers
 	 */
-	double twoProd(double a, double b, double *res);
-	void Split(double x, int sp, double *x_high, double *x_low);
+	static double twoProd(double a, double b, double *res);
+	static void Split(double x, int sp, double *x_high, double *x_low);
 
-
-
-public:
 	/** \brief Create an empty affine form. */
 	AF_fAF2(double * val, double err);
 
+public:
 	/** \brief  Delete the affine form */
 	virtual ~AF_fAF2();
 

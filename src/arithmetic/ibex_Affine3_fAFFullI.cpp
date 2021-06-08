@@ -1,31 +1,51 @@
 /* ============================================================================
- * D Y N I B E X - Definition of the Affine3 class based on fAFFull version 1
+ * I B E X - Definition of the AffineMain<AF_fAFFull> class based on fAFFull version 1 of DynIbex
  * ============================================================================
  * Copyright   : ENSTA ParisTech
  * License     : This program can be distributed under the terms of the GNU LGPL.
  *               See the file COPYING.LESSER.
  *
- * Author(s)   : Julien Alexandre dit Sandretto and Alexandre Chapoutot
+ * Author(s)   : Julien Alexandre dit Sandretto, Alexandre Chapoutot and Jordan Ninin
  * Created     : Jul 18, 2014
  * Sponsored   : This research benefited from the support of the "Chair Complex Systems Engineering - Ecole Polytechnique, THALES, DGA, FX, DASSAULT AVIATION, DCNS Research, ENSTA ParisTech, Telecom ParisTech, Fondation ParisTech and FDO ENSTA"
  * ---------------------------------------------------------------------------- */
 #include "ibex_Affine3_fAFFullI.h"
 #include "ibex_Affine.h"
-#include <iomanip>
+//#include <iomanip>
+#include <cassert>
 
 namespace ibex {
 
-double maTol = 2.5e-15;
+double AF_fAFFullI::maTol = 2.5e-15;
 
-unsigned long int AF_fAFFullI::_counter = 1;
+unsigned long int AF_fAFFullI::_counter = 50;
 
 bool noise_null (const std::pair<int,double> value) { return (value.second >= 0)&&(value.second <= 0.0); }
+
+
+//TODO  Changer la list en vector pour faire bien le AffineMain::val(i)
+/**
+ * Code for the particular case:
+ * if the affine form is actif, _actif=1  and _n is the size of the affine form
+ * if the set is degenerate, _actif = 0 and itv().diam()< AF_EC
+ * if the set is empty, _actif = -1
+ * if the set is ]-oo,+oo[, _actif = -2 and _err = ]-oo,+oo[
+ * if the set is [a, +oo[ , _actif = -3 and _err = [a, +oo[
+ * if the set is ]-oo, a] , _actif = -4 and _err = ]-oo, a]
+ *
+ */
+template<>
+AffineMain<AF_fAFFullI>::AffineMain() :
+	_actif (-2     ),
+	_n		(0		),
+	_elt	(0.0, std::list<std::pair<int,double> >(), Interval(0.0))	{
+}
 
 template<>
 AffineMain<AF_fAFFullI>& AffineMain<AF_fAFFullI>::operator=(const Interval& x) {
 	_elt._garbage = Interval(0.0); //
 	if (x.is_empty()) {
-		_n = -1;
+		_actif = -1;
 		_elt._center = 0.0;
 		// Note the empty Affine form is an empty list
 		if (!_elt._rays.empty()) {
@@ -33,7 +53,7 @@ AffineMain<AF_fAFFullI>& AffineMain<AF_fAFFullI>::operator=(const Interval& x) {
 		}
 	}
 	else if (x.ub()>= POS_INFINITY && x.lb()<= NEG_INFINITY ) {
-		_n = -2;
+		_actif = -2;
 		_elt._center = 0.0;
 		// Note the entire set in Affine form is an empty list
 		if (!_elt._rays.empty()) {
@@ -41,14 +61,14 @@ AffineMain<AF_fAFFullI>& AffineMain<AF_fAFFullI>::operator=(const Interval& x) {
 		}
 	}
 	else if (x.ub()>= POS_INFINITY ) {
-		_n = -3;
+		_actif = -3;
 		_elt._center = x.lb();
 		if (!_elt._rays.empty()) {
 			_elt._rays.clear();
 		}
 	}
 	else if (x.lb()<= NEG_INFINITY ) {
-		_n = -4;
+		_actif = -4;
 		_elt._center = x.ub();
 		if (!_elt._rays.empty()) {
 			_elt._rays.clear();
@@ -58,64 +78,47 @@ AffineMain<AF_fAFFullI>& AffineMain<AF_fAFFullI>::operator=(const Interval& x) {
 		if (!_elt._rays.empty()) {
 			_elt._rays.clear();
 		}
-		_n = 1;
 		_elt._center = x.mid();
-		std::pair<int,double> p(AF_fAFFullI::_counter++, x.rad());
-		_elt._rays.push_back(p);
-
+		if ( x.is_degenerated()) {
+			_actif = 0;
+		} else {
+			_actif = 1;
+			std::pair<int,double> p(AF_fAFFullI::_counter++, x.rad());
+			_elt._rays.push_back(p);
+		}
 	}
 	return *this;
 }
 
 
-
 template<>
-AffineMain<AF_fAFFullI>::AffineMain() :
-_n		(-2		),
-_elt	(0.0, std::list<std::pair<int,double> >(), Interval(0.0))	{
-}
+AffineMain<AF_fAFFullI>::AffineMain(int size, int var, const Interval& itv) :
+	_actif	(0),
+	_n 		(size),
+	_elt	(0, std::list<std::pair<int,double> >(), Interval(0.0))  {
+	assert((size>=0) && (var>=0) && (var<=size));
+	if (!(itv.is_unbounded()||itv.is_empty())) {
+		_elt._center = itv.mid();
+		if (! itv.is_degenerated()) {
+			_actif =1;
+			std::pair<int,double> p(var, itv.rad());
+			_elt._rays.push_back(p);
+			if (AF_fAFFullI::_counter <= (unsigned long int)var ) {AF_fAFFullI::_counter = var+1;}
 
-template<>
-AffineMain<AF_fAFFullI>::AffineMain(int n, int m, const Interval& itv) :
-_n 		(1),
-_elt	(0.0, std::list<std::pair<int,double> >(), Interval(0.0))
-{
-	assert((n>=0) && (m>=0));
-	// std::cout << "not implemented" << std::endl;
-	*this = itv;
-}
-
-
-template<>
-AffineMain<AF_fAFFullI>::AffineMain(const double d) :
-_n 		(1),
-_elt	(0.0, std::list<std::pair<int,double> >(), Interval(0.0)) {
-	if (fabs(d)<POS_INFINITY) {
-		_elt._center = d;
-	} else {
-		if (d>0) {
-			_n = -3;
-		} else {
-			_n = -4;
 		}
+	} else {
+		*this = itv;
 	}
 }
 
 
-template<>
-AffineMain<AF_fAFFullI>::AffineMain(const Interval & itv):
-_n 		(1),
-_elt	(0.0,std::list<std::pair<int,double> >(),Interval(0.0)) {
-	*this = itv;
-}
-
 
 template<>
 AffineMain<AF_fAFFullI>::AffineMain(const AffineMain<AF_fAFFullI>& x) :
-_n		(x._n),
-_elt	(x._elt._center, std::list<std::pair<int,double> >(),x._elt._garbage) {
-	if (!x._elt._rays.empty())
-	{
+		_actif	(x._actif),
+		_n		(x._n),
+		_elt	(x._elt._center, std::list<std::pair<int,double> >(),x._elt._garbage) {
+	if (!x._elt._rays.empty())	{
 		std::list<std::pair<int,double> >::const_iterator it = x._elt._rays.begin();
 		for (; it != x._elt._rays.end(); ++it) {
 			_elt._rays.push_back(std::pair<int,double>(it->first,it->second));
@@ -126,9 +129,53 @@ _elt	(x._elt._center, std::list<std::pair<int,double> >(),x._elt._garbage) {
 
 
 template<>
+AffineMain<AF_fAFFullI>& AffineMain<AF_fAFFullI>::operator=(const AffineMain<AF_fAFFullI>& x) {
+	if (this != &x) {
+		_n = x._n;
+		_actif = x._actif;
+		_elt._center = x._elt._center;
+		_elt._garbage = x._elt._garbage;
+		_elt._rays.clear();
+
+		if ((x.is_actif()) && (!x._elt._rays.empty()))	{
+			std::list<std::pair<int,double> >::const_iterator it = x._elt._rays.begin();
+			for (; it != x._elt._rays.end(); ++it) {
+				_elt._rays.push_back(std::pair<int,double>(it->first,it->second));
+			}
+		}
+	}
+	return *this;
+}
+
+template<>
+AffineMain<AF_fAFFullI>& AffineMain<AF_fAFFullI>::operator=(double d) {
+	_elt._garbage = Interval(0.0);
+	if (!_elt._rays.empty()) {
+		_elt._rays.clear();
+	}
+
+	if (fabs(d)<POS_INFINITY) {
+		_actif = 0;
+		_elt._center = d;
+
+	} else {
+		if (d>0) {
+			_actif = -3;
+			_elt._center = d;
+		} else {
+			_actif = -4;
+			_elt._center = d;
+		}
+	}
+	return *this;
+}
+
+
+
+template<>
 double AffineMain<AF_fAFFullI>::val(int i) const{
-	assert((0<=i) && (((unsigned int)i)<=AF_fAFFullI::_counter));
-	if (i == 0) return _elt._center;
+	// TODO changer la std::list par une autre structure pour ameliorer
+	assert((0<=i) && (i<=size()));
 	if (!_elt._rays.empty()) {
 		std::list<std::pair<int,double> >::const_iterator iter = _elt._rays.begin();
 		for (; iter != _elt._rays.end(); ++iter) {
@@ -148,41 +195,56 @@ double AffineMain<AF_fAFFullI>::err() const{
 
 template<>
 int AffineMain<AF_fAFFullI>::size() const {
-	if (!_elt._rays.empty())
-	{
+	if (!_elt._rays.empty())	{
 		std::pair<int,double> p = _elt._rays.back();
-		return p.first;
+		if (_n>p.first) {
+			return _n;
+		} else {
+			return p.first;
+		}
 	}
-	else
-		return 0;
-
+	else {
+		return _n;
+	}
 }
 
 template<>
 const Interval AffineMain<AF_fAFFullI>::itv() const {
 
-	if (is_actif()) {
+	switch(_actif) {
+	case -1 : {
+		return Interval::empty_set();
+		break;
+	}
+	case -2 : {
+		return Interval::all_reals();
+		break;
+	}
+	case -3 : {
+		return Interval(_elt._center,POS_INFINITY);
+		break;
+	}
+	case -4: {
+		return Interval(NEG_INFINITY,_elt._center);
+		break;
+	}
+	case 0: {
+		return Interval(_elt._center);
+		break;
+	}
+	default: { // _actif==1
 		Interval res(_elt._center);
 		Interval pmOne(-1.0, 1.0);
 		if (!_elt._rays.empty()) {
-
 			std::list<std::pair<int,double> >::const_iterator it = _elt._rays.begin();
-
 			for (; it != _elt._rays.end(); ++it) {
 				res += (it -> second * pmOne);
-
 			}
 		}
 		res += _elt._garbage;
 		return res;
-	} else if (_n==-1) {
-		return Interval::empty_set();
-	} else if (_n==-2) {
-		return Interval::all_reals();
-	} else if (_n==-3) {
-		return Interval(_elt._center,POS_INFINITY);
-	} else  {  //if (_n==-4)
-		return Interval(NEG_INFINITY,_elt._center);
+		break;
+	}
 	}
 }
 
@@ -192,84 +254,39 @@ double AffineMain<AF_fAFFullI>::mid() const{
 }
 
 
-template<>
-std::ostream& operator<<(std::ostream& os, const AffineMain<AF_fAFFullI>& x) {
-	os << std::setprecision(15) << x.itv() << " : ";
-	if (x.is_actif()) {
-		os << x.val(0);
-		for (int i = 1; i <= x.size(); i++) {
-			double v = x.val(i);
-			if (v!=0)
-			{
-				os << std::setprecision(15) <<" + " << v << " eps_" << i;
-			}
-		}
-		// Check that err() is a centered intervall
-		os << " + " << x.err() << "[-1,1]";
-	} else {
-		os << "Affine3 form not Activate ";
-	}
-	return os;
-}
 
-
-template<>
-AffineMain<AF_fAFFullI>& AffineMain<AF_fAFFullI>::operator=(const AffineMain<AF_fAFFullI>& x) {
-	if (this != &x) {
-		_n = x._n;
-		_elt._center = x._elt._center;
-		_elt._garbage = x._elt._garbage;
-		_elt._rays.clear();
-
-		if (!x._elt._rays.empty())
-		{
-			std::list<std::pair<int,double> >::const_iterator it = x._elt._rays.begin();
-			for (; it != x._elt._rays.end(); ++it) {
-				_elt._rays.push_back(std::pair<int,double>(it->first,it->second));
-			}
-		}
-	}
-	return *this;
-}
-
-template<>
-AffineMain<AF_fAFFullI>& AffineMain<AF_fAFFullI>::operator=(double d) {
-	_elt._garbage = Interval(0.0);
-	if (!_elt._rays.empty()) {
-		_elt._rays.clear();
-	}
-
-	if (fabs(d)<POS_INFINITY) {
-		_n = 0;
-		_elt._center = d;
-
-	} else {
-		if (d>0) {
-			_n = -3;
-		} else {
-			_n = -4;
-		}
-	}
-
-	return *this;
-}
 
 
 
 /**
  * Code for the particular case:
- * if the affine form is actif, _n>1  and _n is the size of the affine form
- * if the set is degenerate, _n = 0 or itv().diam()< AF_EC
- * if the set is empty, _n = -1
- * if the set is ]-oo,+oo[, _n = -2 and _ err=]-oo,+oo[
- * if the set is [a, +oo[ , _n = -3 and _err = [a, +oo[
- * if the set is ]-oo, a] , _n = -4 and _err = ]-oo, a]
+ * if the affine form is actif, _actif=1  and _n is the size of the affine form
+ * if the set is degenerate, _actif = 0 and itv().diam()< AF_EC
+ * if the set is empty, _actif = -1
+ * if the set is ]-oo,+oo[, _actif = -2 and _err =]-oo,+oo[
+ * if the set is [a, +oo[ , _actif = -3 and _err = [a, +oo[
+ * if the set is ]-oo, a] , _actif = -4 and _err = ]-oo, a]
  *
  */
 
 template<>
 AffineMain<AF_fAFFullI>& AffineMain<AF_fAFFullI>::Aneg() {
-	if (is_actif()) {
+	switch(_actif) {
+	case -3 : {
+		_elt._center = -_elt._center;
+		_actif    = -4;
+		break;
+	}
+	case -4 : {
+		_elt._center = -_elt._center;
+		_actif    = -3;
+		break;
+	}
+	case 0 :{
+		_elt._center = (-_elt._center);
+		break;
+	}
+	case 1 : {
 		_elt._center = -_elt._center;
 		_elt._garbage = -_elt._garbage;
 		if (!_elt._rays.empty()) {
@@ -278,20 +295,12 @@ AffineMain<AF_fAFFullI>& AffineMain<AF_fAFFullI>::Aneg() {
 				it->second = -(it->second);
 			}
 		}
-	} else {
-		switch(_n) {
-		case -3 : {
-			_elt._center=-_elt._center;
-			_n = -4;
-			break;
-		}
-		case -4 : {
-			_elt._center= -_elt._center;
-			_n = -3;
-			break;
-		}
-		}
+		break;
 	}
+	default :
+		break;
+	}
+
 	return *this;
 }
 
@@ -300,18 +309,15 @@ AffineMain<AF_fAFFullI>& AffineMain<AF_fAFFullI>::Aneg() {
 
 template<>
 AffineMain<AF_fAFFullI>& AffineMain<AF_fAFFullI>::operator*=(double alpha) {
-	Interval roundoff_error(0.,0.);
-	Interval intermediate(0.,0.);
-
-	if (is_actif()) {
-		//std::cout << "B1" << std::endl;
-		if (alpha >= 0.0 && alpha <= 0) {
-			_n = 0;
+	if (_actif==1) {  // multiply by a scalar alpha
+		if (alpha==0.0) {
+			_actif = 0;
 			_elt._center = 0.0;
 			_elt._rays.clear();
 			_elt._garbage = Interval(0.0);
-		}
-		else if ((fabs(alpha)) < POS_INFINITY) {
+		} else if ((fabs(alpha)) < POS_INFINITY) {
+			Interval roundoff_error(0.,0.);
+			Interval intermediate(0.,0.);
 			// Computation step for the center
 			intermediate = Interval(_elt._center) * alpha;
 			_elt._center = intermediate.mid();
@@ -329,19 +335,46 @@ AffineMain<AF_fAFFullI>& AffineMain<AF_fAFFullI>::operator*=(double alpha) {
 			}
 
 			_elt._garbage += roundoff_error * Interval(-1,1);
-			if (_elt._garbage.rad() > maTol) {
+			if (_elt._garbage.rad() > AF_fAFFullI::maTol) {
 				std::pair<int,double> pcumul(AF_fAFFullI::_counter++, _elt._garbage.rad());
 				_elt._rays.push_back(pcumul);
 				_elt._garbage = Interval(0.0);
 			}
+
+			_elt._rays.remove_if(noise_null);
 		} else {
 			*this = itv()*alpha;
+
 		}
-	} else {
+	} else {  //scalar alpha
 		*this = itv()* alpha;
 	}
-	_elt._rays.remove_if(noise_null);
+	return *this;
+}
 
+
+
+template<>
+AffineMain<AF_fAFFullI>& AffineMain<AF_fAFFullI>::operator+=(double beta) {
+
+	if ((_actif==1) && (fabs(beta))<POS_INFINITY) {
+		Interval roundoff_error(0.,0.);
+		Interval intermediate(0.,0.);
+		intermediate = Interval(_elt._center) + beta;
+		_elt._center = intermediate.mid();
+		roundoff_error += intermediate.rad();
+
+		_elt._garbage += roundoff_error * Interval(-1,1);
+		if (_elt._garbage.rad() > AF_fAFFullI::maTol) {
+			std::pair<int,double> pcumul(AF_fAFFullI::_counter++, _elt._garbage.rad());
+			_elt._rays.push_back(pcumul);
+			_elt._garbage = Interval(0.0);
+		}
+
+		_elt._rays.remove_if(noise_null);
+	} else {
+		*this = itv()+ beta;
+	}
 	return *this;
 }
 
@@ -349,66 +382,98 @@ AffineMain<AF_fAFFullI>& AffineMain<AF_fAFFullI>::operator*=(double alpha) {
 
 
 template<>
+AffineMain<AF_fAFFullI>& AffineMain<AF_fAFFullI>::inflate(double ddelta) {
+	assert(ddelta>=0);
+	if (ddelta>0) {
+		if (is_actif()) {
+			if ((ddelta)<POS_INFINITY) {
+				_actif=1;
+				std::pair<int,double> pdelta(AF_fAFFullI::_counter++, ddelta);
+				_elt._rays.push_back(pdelta);
+				_elt._rays.remove_if(noise_null);
+			}
+			else {
+				*this = Interval::all_reals();
+			}
+		} else {
+			*this = itv()+Interval(-1,1)*ddelta;
+		}
+	}
+	return *this;
+}
+
+
+
+template<>
 AffineMain<AF_fAFFullI>& AffineMain<AF_fAFFullI>::operator+=( const AffineMain<AF_fAFFullI>& y) {
-	Interval roundoff_error(0.,0.);
-	Interval intermediate(0.,0.);
 
 	if (is_actif() && y.is_actif()) {
-		// Computation step for the center
-		intermediate = Interval(_elt._center) + y._elt._center;
-		_elt._center = intermediate.mid();
-		roundoff_error += intermediate.rad();
+		if (y.is_degenerated()) {
+			*this += y.mid();
+		} else if (is_degenerated()) {
+			double tmp = _elt._center;
+			*this = y;
+			*this += tmp;
+		} else {
+			Interval roundoff_error(0.,0.);
+			Interval intermediate(0.,0.);
+			// Computation step for the center
+			intermediate = Interval(_elt._center) + y._elt._center;
+			_elt._center = intermediate.mid();
+			roundoff_error += intermediate.rad();
 
-		_elt._garbage += y._elt._garbage;
+			_elt._garbage += y._elt._garbage;
 
-		// Computation step for the rays
-		if (_elt._rays.empty())	{
-			if (!y._elt._rays.empty())	{
-				std::list<std::pair<int,double> >::const_iterator ity = y._elt._rays.begin();
-				for (; ity != y._elt._rays.end(); ++ity)	{
-					_elt._rays.push_back(std::pair<int,double>(ity->first,ity->second));
+			// Computation step for the rays
+			if (_elt._rays.empty())	{
+				if (!y._elt._rays.empty())	{
+					std::list<std::pair<int,double> >::const_iterator ity = y._elt._rays.begin();
+					for (; ity != y._elt._rays.end(); ++ity)	{
+						_elt._rays.push_back(std::pair<int,double>(ity->first,ity->second));
+					}
+				}
+			} else if (/*!_elt._rays.empty() &&*/ !y._elt._rays.empty()) {
+				std::list<std::pair<int,double> >::iterator it =  _elt._rays.begin();
+				std::list<std::pair<int,double> >::const_iterator ity =  y._elt._rays.begin();
+
+				while ((ity != y._elt._rays.end()) || (it != _elt._rays.end()))		{
+					if (ity == y._elt._rays.end()) { //y is finished : stop
+						break;
+					}
+					else if (it == _elt._rays.end()) { //x is finished : we push y
+						std::pair<int,double> py(ity->first,ity->second );
+						_elt._rays.insert(it, py);
+						ity++;
+					}
+					else if (it -> first == ity -> first) { //same noise term : add
+						intermediate = Interval(it -> second) + ity -> second;
+						it -> second = intermediate.ub();
+						it++;
+						ity++;
+					}
+					else if (it -> first < ity -> first) { //noise of y after current x noise : x++
+						it++;
+					}
+					else  { //noise of y before current x noise : add y before x
+						std::pair<int,double> py(ity->first,ity->second );
+						_elt._rays.insert(it, py);
+						ity++;
+					}
 				}
 			}
-		} else if (/*!_elt._rays.empty() &&*/ !y._elt._rays.empty()) {
-			std::list<std::pair<int,double> >::iterator it =  _elt._rays.begin();
-			std::list<std::pair<int,double> >::const_iterator ity =  y._elt._rays.begin();
 
-			while ((ity != y._elt._rays.end()) || (it != _elt._rays.end()))		{
-				if (ity == y._elt._rays.end()) { //y is finished : stop
-					break;
-				}
-				else if (it == _elt._rays.end()) { //x is finished : we push y
-					std::pair<int,double> py(ity->first,ity->second );
-					_elt._rays.insert(it, py);
-					ity++;
-				}
-				else if (it -> first == ity -> first) { //same noise term : add
-					intermediate = Interval(it -> second) + ity -> second;
-					it -> second = intermediate.ub();
-					it++;
-					ity++;
-				}
-				else if (it -> first < ity -> first) { //noise of y after current x noise : x++
-					it++;
-				}
-				else  { //noise of y before current x noise : add y before x
-					std::pair<int,double> py(ity->first,ity->second );
-					_elt._rays.insert(it, py);
-					ity++;
-				}
+			_elt._garbage += roundoff_error * Interval(-1,1);
+			if (_elt._garbage.rad() > AF_fAFFullI::maTol) {
+				std::pair<int,double> pcumul(AF_fAFFullI::_counter++, _elt._garbage.rad());
+				_elt._rays.push_back(pcumul);
+				_elt._garbage = Interval(0.0);
 			}
-		}
 
-		_elt._garbage += roundoff_error * Interval(-1,1);
-		if (_elt._garbage.rad() > maTol) {
-			std::pair<int,double> pcumul(AF_fAFFullI::_counter++, _elt._garbage.rad());
-			_elt._rays.push_back(pcumul);
-			_elt._garbage = Interval(0.0);
+			_elt._rays.remove_if(noise_null);
 		}
-
-	} else if (is_actif()) { // y is not a valid affine2 form. So we add y.itv() such as an interval
+	} else if (is_actif()) { // y is not a valid Affine Form. So we add y.itv() such as an interval
 		*this += y.itv();
-	} else if (y.is_actif()) {
+	} else if (y.is_actif()) { // this case is perhap not necessary
 		Interval tmp = itv();
 		*this = y;
 		*this += tmp;
@@ -416,108 +481,40 @@ AffineMain<AF_fAFFullI>& AffineMain<AF_fAFFullI>::operator+=( const AffineMain<A
 		*this = itv() + y.itv();
 	}
 
-	_elt._rays.remove_if(noise_null);
 
 	return *this;
 }
 
 
-template<>
-AffineMain<AF_fAFFullI>& AffineMain<AF_fAFFullI>::operator+=(double beta) {
-	Interval roundoff_error(0.,0.);
-	Interval intermediate(0.,0.);
-
-	if (is_actif() && (fabs(beta))<POS_INFINITY) {
-
-		intermediate = Interval(_elt._center) + beta;
-		_elt._center = intermediate.mid();
-		roundoff_error += intermediate.rad();
-
-		_elt._garbage += roundoff_error * Interval(-1,1);
-		if (_elt._garbage.rad() > maTol) {
-			std::pair<int,double> pcumul(AF_fAFFullI::_counter++, _elt._garbage.rad());
-			_elt._rays.push_back(pcumul);
-			_elt._garbage = Interval(0.0);
-		}
-
-	} else {
-		*this = itv()+ beta;
-	}
-
-	_elt._rays.remove_if(noise_null);
-
-	return *this;
-}
 
 
-template<>
-AffineMain<AF_fAFFullI>& AffineMain<AF_fAFFullI>::inflate(double ddelta) {
-	Interval roundoff_error(0.,0.);
 
-	if (is_actif()) {
-		//std::cout << "B4" << std::endl;
-		if ((fabs(ddelta))<POS_INFINITY) {
-			//double error = ddelta;
-			std::pair<int,double> pdelta(AF_fAFFullI::_counter++, ddelta);
-			_elt._rays.push_back(pdelta);
-		}
-		else {
-			Interval temp = itv()+Interval(-1,1)*ddelta;
-			_elt._center = temp.mid();
-			std::pair<int,double> p(AF_fAFFullI::_counter++, temp.rad());
-			_elt._rays.push_back(p);
-		}
-
-		_elt._garbage += roundoff_error * Interval(-1,1);
-		if (_elt._garbage.rad() > maTol) {
-			std::pair<int,double> pcumul(AF_fAFFullI::_counter++, _elt._garbage.rad());
-			_elt._rays.push_back(pcumul);
-			_elt._garbage = Interval(0.0);
-		}
-
-	} else {
-		*this = itv()+Interval(-1,1)*ddelta;
-	}
-
-	_elt._rays.remove_if(noise_null);
-
-	return *this;
-}
-
-
+// classical form
 template<>
 AffineMain<AF_fAFFullI>& AffineMain<AF_fAFFullI>::operator*=(const AffineMain<AF_fAFFullI>& y) {
-	// std::cout << "in *= "<< *this <<std::endl;
-	// std::cout << "in *= "<< y <<std::endl;
 
 	if (is_actif() && (y.is_actif())) {
+		if (y.is_degenerated()) {
+			*this *= y._elt._center;
+		} else if (is_degenerated()) {
+			double tmp = _elt._center;
+			*this = y;
+			*this *= tmp;
+		} else  {
+			_actif =1;
+			AffineMain<AF_fAFFullI> ax(*this);
 
-		AffineMain<AF_fAFFullI> ax(*this);
-		AffineMain<AF_fAFFullI> ay(y);
-		Interval ity = y.itv() - y._elt._center;
-		//std::cout << "ity : " << ity << std::endl;
+			double y0 = y._elt._center;
+			ax._elt._center = 0.0;
 
-		double y0 = y._elt._center;
-
-		AffineMain<AF_fAFFullI> temp1 = y*(this->_elt._center);
-		ax._elt._center = 0.0;
-		Interval itx = ax.itv();
-		//std::cout << "itx : " << itx << std::endl;
-
-		AffineMain<AF_fAFFullI> temp2 = ax*(y0);
-
-		itx *= ity;
-		//std::cout << "itx*ity : " << itx << std::endl;
-
-		*this = temp1+temp2+itx;
-
-	} else { // y is not a valid affine2 form. So we add y.itv() such as an interval
+			*this = (((y*(this->_elt._center)) + (ax*y0) )+ ( ax.itv() * (y.itv() - y._elt._center)));
+		}
+	} else {// y is not a valid Affine Form. So we add y.itv() such as an interval
 		*this = itv() * y.itv();
 	}
 
 	return *this;
 }
-
 
 template<>
 AffineMain<AF_fAFFullI>& AffineMain<AF_fAFFullI>::operator*=(const Interval& y) {
@@ -528,11 +525,19 @@ AffineMain<AF_fAFFullI>& AffineMain<AF_fAFFullI>::operator*=(const Interval& y) 
 			y.is_unbounded() ) {
 		*this = itv()*y;
 
+	} else if (y.is_degenerated()) {
+		*this *= y.mid();
 	} else {
-		*this *= AffineMain<AF_fAFFullI>(y);
+		 AffineMain<AF_fAFFullI> tmp;
+		 tmp = y;
+		*this *= tmp;
 	}
 	return *this;
 }
+
+
+
+
 
 template<>
 AffineMain<AF_fAFFullI>& AffineMain<AF_fAFFullI>::operator+=(const Interval& y) {
@@ -540,17 +545,19 @@ AffineMain<AF_fAFFullI>& AffineMain<AF_fAFFullI>::operator+=(const Interval& y) 
 	if (	(!is_actif())||
 			y.is_empty()||
 			y.is_unbounded() ) {
-		*this = itv()+y;
+		*this = (itv()+y);
 
 	} else {
-		//std::cout << "+=(y)" << y << std::endl;
-		*this += AffineMain<AF_fAFFullI>(y);
+		 AffineMain<AF_fAFFullI> tmp;
+		 tmp = y;
+		*this += tmp;
 
 	}
-
-
 	return *this;
 }
+
+
+
 
 template<>
 AffineMain<AF_fAFFullI>& AffineMain<AF_fAFFullI>::Asqr(const Interval& itv) {
@@ -562,10 +569,19 @@ AffineMain<AF_fAFFullI>& AffineMain<AF_fAFFullI>::Asqr(const Interval& itv) {
 		*this = pow(itv,2);
 
 	} else  {
-		this->Apow(Interval(2),itv);
+		// TODO il faut faire this->Apow(int n, const Interval itv);
+		// TODO ou tester AffineMain<AF_fAFFullI> y(*this); *this *=y;
+		if (itv.lb() >0 ) {
+			this->Apow(Interval(2),itv);
+		} else if (itv.ub()<0) {
+			this->Aneg();
+			this->Apow(Interval(2),-itv);
+		} else {
+			this->Aabs(abs(itv));
+			this->Apow(Interval(2),abs(itv));
+		}
 	}
 
-	//	std::cout << "out sqr "<<std::endl;
 	return *this;
 }
 
@@ -601,7 +617,7 @@ void AffineMain<AF_fAFFullI>::compact(double tol){
 
 		_elt._garbage += cumul;
 
-		if (_elt._garbage.rad() > maTol)
+		if (_elt._garbage.rad() > AF_fAFFullI::maTol)
 		{
 			std::pair<int,double> pcumul(AF_fAFFullI::_counter++, _elt._garbage.rad());
 			_elt._rays.push_back(pcumul);
@@ -612,4 +628,50 @@ void AffineMain<AF_fAFFullI>::compact(double tol){
 }
 
 
+template<>
+std::ostream& operator<<(std::ostream& os, const AffineMain<AF_fAFFullI>& x) {
+	os << x.itv() << " : ";
+	if (x.is_actif()) {
+		os << x.mid();
+
+		if (!x._elt._rays.empty()) {
+			std::list<std::pair<int,double> >::const_iterator iter = x._elt._rays.begin();
+			for (; iter != x._elt._rays.end(); ++iter) {
+				double v = iter -> second;
+				if (v!=0)
+					os << " + " << v  << " eps_" << iter -> first;
+			}
+		}
+		os << " + " << x.err() << "[-1,1]";
+	} else {
+		os << "Affine3 Form not activate ";
+	}
+	return os;
+}
+
+
+template<>
+void AffineMain<AF_fAFFullI>::resize(int n) { assert(n>=1); }
+
+
+
+
+
+//===========================================================================================
+//===========================================================================================
+
+
+
+
+
+
 }// end namespace ibex
+
+
+
+
+
+
+
+
+

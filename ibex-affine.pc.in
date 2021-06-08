@@ -2,7 +2,7 @@ prefix=@CMAKE_INSTALL_PREFIX@
 includedir=${prefix}/include
 libdir=${prefix}/lib
 
-Name: ibex-myplugin
+Name: ibex-affine
 Description: @IBEX_AFFINE_DESCRIPTION@
 Url: @IBEX_AFFINE_URL@
 Version: @IBEX_AFFINE_VERSION@

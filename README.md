@@ -1,6 +1,6 @@
 This repository contains the plugin Affine for the Ibex library.
 
-# Compilation of the plugin
+# Compilation of the plugin Affine
 
 ```
 mkdir build
@@ -33,4 +33,4 @@ For example,
 # Using the plugin
 
 To use the plugin, you can either use `pkg-config` or use
-`find_package (Ibex-affine)` in a CMake script.
+`find_package (ibex-affine)` in a CMake script.

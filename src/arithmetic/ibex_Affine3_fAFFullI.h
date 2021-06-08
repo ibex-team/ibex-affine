@@ -16,52 +16,58 @@
 #include "ibex_Interval.h"
 
 #include <list>
+#include <ostream>
+#include <utility>
+
 
 namespace ibex {
 
 template<class T>  class AffineMain;
+template<class T>  class AffineVarMain;
 
-  class AF_fAFFullI {
+class AF_fAFFullI {
 
 
-    friend class AffineMain<AF_fAFFullI>;
-    //    friend std::ostream& operator<<(std::ostream& os, const Affine2Main<AF_fAFFullI>&  x);
+private:
+	friend class AffineVarMain<AF_fAFFullI>;
+	friend class AffineMain<AF_fAFFullI>;
+	template<class A>
+	friend std::ostream& operator<<(std::ostream& os, const AffineMain<A>& x);
 
-    static unsigned long int _counter;
+	static unsigned long int _counter;
+	static double maTol;
+	/**
+	 * Code for the particular case:
+	 * if the affine form is actif, _actif=1  and _n is the size of the affine form
+	 * if the set is degenerate, _actif = 0 and itv().diam()< AF_EC
+	 * if the set is empty, _actif = -1
+	 * if the set is ]-oo,+oo[, _actif = -2 and _err =]-oo,+oo[
+	 * if the set is [a, +oo[ , _actif = -3 and _err = [a, +oo[
+	 * if the set is ]-oo, a] , _actif = -4 and _err = ]-oo, a]
+	 *
+	 */
+	double _center;
+	std::list< std::pair<int, double> > _rays;
+	Interval _garbage;
 
-  private:
-    /**
-     * Code for the particular case:
-     * if the affine form is actif, _n>1  and _n is the size of the affine form
-     * if the set is degenerate, _n = 0 or itv().diam()< AF_EC()
-     * if the set is empty, _n = -1
-     * if the set is ]-oo,+oo[, _n = -2
-     * if the set is [a, +oo[ , _n = -3 and _err= a
-     * if the set is ]-oo, a] , _n = -4 and _err= a
-     *
-     */
-    double _center;
-    std::list< std::pair<int, double> > _rays;
-    Interval _garbage;
 
-  
-  public:
-    AF_fAFFullI (double center, std::list<std::pair<int,double> > rays, Interval garbage);
+	AF_fAFFullI (double center, std::list<std::pair<int,double> > rays, Interval garbage);
 
-    /** \brief  Delete the affine form */
-    virtual ~AF_fAFFullI();
-    
+public:
+	/** \brief  Delete the affine form */
+	virtual ~AF_fAFFullI();
 
-  };
 
-  inline AF_fAFFullI::AF_fAFFullI (double center, std::list<std::pair<int,double> > rays, Interval garbage) :
-    _center(center), _rays(rays), _garbage(garbage) {
+};
 
-  }
+inline AF_fAFFullI::AF_fAFFullI (double center, std::list<std::pair<int,double> > rays, Interval garbage) :
+    		_center(center), _rays(rays), _garbage(garbage) {
 
-  inline AF_fAFFullI::~AF_fAFFullI() {
-    if (!_rays.empty()) { _rays.clear(); }
-  }
+}
+
+inline AF_fAFFullI::~AF_fAFFullI() {
+	if (!_rays.empty()) { _rays.clear(); }
+}
 
 
 

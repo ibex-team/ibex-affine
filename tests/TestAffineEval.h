@@ -1,11 +1,12 @@
 /* ============================================================================
- * I B E X - Affine2 Test
+ * I B E X - Affine evaluator Test
  * ============================================================================
+ * Copyright   : ENSTA Bretagne (FRANCE)
  * License     : This program can be distributed under the terms of the GNU LGPL.
- *               See the file COPYING.LESSER.
+ *               See the file LICENSE
  *
- * Author(s)   : Jordan Ninin
- * Created     : April 08, 2013
+ * Author(s)   : Jordan NININ
+ * Created     : Juin 20, 2021
  * ---------------------------------------------------------------------------- */
 
 
@@ -14,7 +15,8 @@
 
 #include <cppunit/TestFixture.h>
 #include <cppunit/extensions/HelperMacros.h>
-#include "ibex_Affine.h"
+#include "ibex_AffineEval.h"
+#include "ibex.h"
 #include "utils.h"
 
 using namespace ibex;
@@ -23,6 +25,14 @@ template<class T>
 class TestAffineEval : public CppUnit::TestFixture {
 public:
 	CPPUNIT_TEST_SUITE(TestAffineEval<T>);
+	CPPUNIT_TEST(test_root2);
+	CPPUNIT_TEST(test_root4);
+	CPPUNIT_TEST(test_root5);
+	CPPUNIT_TEST(test_pow2);
+	CPPUNIT_TEST(test_pow5);
+	CPPUNIT_TEST(test_powINT1);
+	CPPUNIT_TEST(test_powINT2);
+
 	CPPUNIT_TEST(test_sqrt);
 	CPPUNIT_TEST(test_exp);
 	CPPUNIT_TEST(test_log);
@@ -37,15 +47,21 @@ public:
 	CPPUNIT_TEST(test_cosh);
 	CPPUNIT_TEST(test_sinh);
 	CPPUNIT_TEST(test_tanh);
+
+	CPPUNIT_TEST(issue242);
+	CPPUNIT_TEST(eval_components01);
+	CPPUNIT_TEST(eval_components02);
+	CPPUNIT_TEST(matrix_components);
+
 	CPPUNIT_TEST_SUITE_END();
 
 
 	bool check_af2 (Function& f, IntervalVector& I);
 	bool check_af2 (Function& f, Interval& I);
 
-	//	void test_root2();
-	//	void test_root4();
-	//	void test_root5();
+	void test_root2();
+	void test_root4();
+	void test_root5();
 	void test_pow2();
 	void test_pow4();
 	void test_pow5();
@@ -72,6 +88,12 @@ public:
 	void test01();
 	void test02();
 
+	void issue242();
+	void eval_components01();
+	void eval_components02();
+
+	// check in particular that the components that are not selected are not computed uselessly
+	void matrix_components();
 };
 
 CPPUNIT_TEST_SUITE_REGISTRATION(TestAffineEval<AF_Default>);
