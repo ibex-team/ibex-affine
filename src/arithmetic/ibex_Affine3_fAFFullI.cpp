@@ -1,16 +1,16 @@
 /* ============================================================================
  * I B E X - Definition of the AffineMain<AF_fAFFull> class based on fAFFull version 1 of DynIbex
  * ============================================================================
- * Copyright   : ENSTA ParisTech
+ * Copyright   : ENSTA Bretagne
  * License     : This program can be distributed under the terms of the GNU LGPL.
- *               See the file COPYING.LESSER.
+ *               See the file LICENSE.
  *
- * Author(s)   : Julien Alexandre dit Sandretto, Alexandre Chapoutot and Jordan Ninin
+ * Author(s)   : Jordan Ninin, Julien Alexandre dit Sandretto and Alexandre Chapoutot
  * Created     : Jul 18, 2014
  * Sponsored   : This research benefited from the support of the "Chair Complex Systems Engineering - Ecole Polytechnique, THALES, DGA, FX, DASSAULT AVIATION, DCNS Research, ENSTA ParisTech, Telecom ParisTech, Fondation ParisTech and FDO ENSTA"
- * ---------------------------------------------------------------------------- */
+  * ---------------------------------------------------------------------------- */
 #include "ibex_Affine3_fAFFullI.h"
-#include "ibex_Affine.h"
+#include "ibex_AffineMain.h"
 //#include <iomanip>
 #include <cassert>
 

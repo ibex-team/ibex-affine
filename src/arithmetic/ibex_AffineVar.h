@@ -1,11 +1,11 @@
 /* ============================================================================
  * I B E X - AffineVar definition
  * ============================================================================
+ * Copyright   : ENSTA Bretagne (FRANCE)
  * License     : This program can be distributed under the terms of the GNU LGPL.
- *               See the file COPYING.LESSER.
+ *               See the file LICENCE.
  *
  * Author(s)   : Jordan Ninin
- * Bug fixes   :
  * Created     : June 6, 2020
  * ---------------------------------------------------------------------------- */
 
@@ -14,7 +14,8 @@
 
 #include "ibex_TemplateVector.h"
 #include "ibex_IntervalVector.h"
-#include "ibex_Affine.h"
+#include "ibex_AffineMain.h"
+#include "ibex_AffineVector.h"
 #include <math.h>
 #include <ostream>
 #include <cassert>

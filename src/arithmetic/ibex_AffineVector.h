@@ -1,11 +1,12 @@
 /* ============================================================================
  * I B E X - Affine Vector definition
  * ============================================================================
+ * Copyright   : ENSTA Bretagne (FRANCE)
  * License     : This program can be distributed under the terms of the GNU LGPL.
- *               See the file COPYING.LESSER.
+ *               See the file LICENCE.
  *
  * Author(s)   : Jordan Ninin
- * Created     : March 13, 2013
+ * Created     : June 6, 2020
  * ---------------------------------------------------------------------------- */
 
 #ifndef __IBEX_AFFINE_VECTOR_H__
@@ -19,7 +20,7 @@
 #include "ibex_IntervalMatrix.h"
 #include "ibex_Vector.h"
 #include "ibex_Matrix.h"
-#include "ibex_Affine.h"
+#include "ibex_AffineMain.h"
 
 namespace ibex {
 

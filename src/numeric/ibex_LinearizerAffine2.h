@@ -11,11 +11,11 @@
 #ifndef __IBEX_LINEARIZER_AFFINE2_H__
 #define __IBEX_LINEARIZER_AFFINE2_H__
 
+#include "ibex_Affine.h"
 #include "ibex_System.h"
-#include "ibex_AffineEval.h"
 #include "ibex_Linearizer.h"
 
-#include <vector>
+//#include <vector>
 
 namespace ibex {
 

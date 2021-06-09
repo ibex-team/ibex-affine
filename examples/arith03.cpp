@@ -10,7 +10,6 @@
 
 #include "ibex.h"
 #include "ibex_Affine.h"
-#include "ibex_AffineEval.h"
 #include <time.h>
 
 using namespace std;
@@ -29,11 +28,16 @@ int main() {
 
 		IntervalVector I(3, Interval(1, 2));
 		I[1] = Interval(1, 3);
+		Affine2Variables AF(I);
 		Interval fi = ff.eval(I);
 		cout << fi << endl;
 		Affine2Eval eval_af(ff);
-		eval_af.eval(I).i();
-		Affine2 faa = eval_af.af2.top->i();
+		Affine2Domain dom_faa = eval_af.eval(AF);
+		Affine2 faa = dom_faa.i();
+		/* OR this way, it is the same
+		std::pair<Domain*, Affine2Domain*> res = eval_af.eval(I,AF);
+		Affine2 faa = res.second->i();
+		*/
 		cout << faa << endl;
 
 //		Function lininf(x, faa.val(0)-faa.err().ub() + faa.val(1)*(2*x[0]-(I[0].lb()+I[0].ub()))/(I[0].diam()) + faa.val(2)*(2*x[1]-(I[1].lb()+I[1].ub()))/(I[1].diam())) ;
@@ -86,34 +90,31 @@ int main() {
 		cout << "==========================================" << endl;
 		cout << "TEST 2: " << endl;
 		Interval fia, i1, i2;
-		Affine2 a1, a2;
 
-		Affine2 faa;
 		i1 = Interval(1, 2);
 		i2 = Interval(1, 3);
 		fia = i1 * pow(i2, 2) - exp(i1 * i2);
 
-		a1 = Affine2(2, 1, i1);
-		a2 = Affine2(2, 2, i2);
-		faa = a1 * pow(a2, 2) - exp(a2 * a1);
+		Affine2Variables aa(2);
+		aa[0] = i1;
+		aa[1] = i2;
+		Affine2 faa = aa[0] * pow(aa[1], 2) - exp(aa[0] * aa[1]);
 
-		cout << a1 << endl;
-		cout << a2 << endl;
+		cout << aa[0] << endl;
+		cout << aa[1] << endl;
 		cout << fia << endl;
 		cout << faa << endl;
 
-		Affine2 ff(1, 1, Interval(0, 1));
+		Affine2Variables ff(1, Interval(0, 1));
 
-		cout << ff << endl;
-		cout << pow(ff, 2) << endl;
+		cout << ff[0] << endl;
+		cout << pow(ff[0], 2) << endl;
 
 		Affine2 g;
-
 		cout << g << endl;
-		g = Affine2();
-
 		g = faa;
-
+		cout << g << endl;
+		g = ff;
 		cout << g << endl;
 
 /*		cout << " test de l'erreur non modifiable " << endl;
@@ -121,106 +122,63 @@ int main() {
 		faa.err() += Interval(10000);
 		cout << faa.err() << endl;
 */
-		Affine2 fff(1, 1, Interval(0.5, 1));
+		Affine2Variables fff(2);
+		fff[0] = Interval(0.5, 1);
+		fff[1] = Interval(2, 3);
 		cout << fff << endl;
 
-		Affine2 fff1(1, 1, Interval(2, 3));
-		cout << fff1 << endl;
 		cout << "test add" << endl;
-		cout << fff + fff1 << endl;
+		cout << fff[0] + fff[1] << endl;
 		cout << "test minus" << endl;
-		cout << fff - fff1 << endl;
+		cout << fff[0] - fff[1] << endl;
 		cout << "test mul" << endl;
-		cout << fff * fff1 << endl;
+		cout << fff[0] * fff[1] << endl;
 		cout << "test div" << endl;
-		cout << fff / fff1 << endl;
+		cout << fff[0] / fff[1] << endl;
 
 		cout << "==========================================" << endl;
 		cout << "test log" << endl;
-		cout << log(fff) << endl;
+		cout << log(fff[0]) << endl;
 		cout << "test inv" << endl;
-		cout << 1.0 / (fff) << endl;
+		cout << 1.0 / (fff[0]) << endl;
 		cout << "test exp" << endl;
-		cout << exp(fff) << endl;
+		cout << exp(fff[0]) << endl;
 		cout << "test sqrt" << endl;
-		cout << sqrt(fff) << endl;
+		cout << sqrt(fff[0]) << endl;
 		cout << "test pow 2" << endl;
-		cout << pow(fff, 2) << endl;
+		cout << pow(fff[0], 2) << endl;
 
 		cout << "test pow 3" << endl;
-		cout << pow(fff, 3) << endl;
+		cout << pow(fff[0], 3) << endl;
 
 		cout << "test pow 0" << endl;
-		cout << pow(fff, 0) << endl;
+		cout << pow(fff[0], 0) << endl;
 
 		cout << "test pow 1" << endl;
-		cout << pow(fff, 1) << endl;
+		cout << pow(fff[0], 1) << endl;
 
 		cout << "==========================================" << endl;
 		cout << "test log" << endl;
-		cout << log(fff1) << endl;
+		cout << log(fff[1]) << endl;
 		cout << "test inv" << endl;
-		cout << 1.0 / (fff1) << endl;
+		cout << 1.0 / (fff[1]) << endl;
 		cout << "test exp" << endl;
-		cout << exp(fff1) << endl;
+		cout << exp(fff[1]) << endl;
 		cout << "test sqrt" << endl;
-		cout << sqrt(fff1) << endl;
+		cout << sqrt(fff[1]) << endl;
 		cout << "test pow 2" << endl;
-		cout << pow(fff1, 2) << endl;
+		cout << pow(fff[1], 2) << endl;
 
 		cout << "test pow 3" << endl;
-		cout << pow(fff1, 3) << endl;
+		cout << pow(fff[1], 3) << endl;
 
 		cout << "test pow 0" << endl;
-		cout << pow(fff1, 0) << endl;
+		cout << pow(fff[1], 0) << endl;
 
 		cout << "test pow 1" << endl;
-		cout << pow(fff1, 1) << endl;
+		cout << pow(fff[1], 1) << endl;
 		cout << "==========================================" << endl;
 
-		fff1 = Affine2(2, 1, Interval(2, 3));
-		cout << "test log" << endl;
-		cout << log(fff1) << endl;
-		cout << "test inv" << endl;
-		cout << 1.0 / (fff1) << endl;
-		cout << "test exp" << endl;
-		cout << exp(fff1) << endl;
-		cout << "test sqrt" << endl;
-		cout << sqrt(fff1) << endl;
-		cout << "test pow 2" << endl;
-		cout << pow(fff1, 2) << endl;
-
-		cout << "test pow 3" << endl;
-		cout << pow(fff1, 3) << endl;
-
-		cout << "test pow 0" << endl;
-		cout << pow(fff1, 0) << endl;
-
-		cout << "test pow 1" << endl;
-		cout << pow(fff1, 1) << endl;
-		cout << "==========================================" << endl;
-
-		fff1 = Affine2(2, 2, Interval(2, 3));
-		cout << "test log" << endl;
-		cout << log(fff1) << endl;
-		cout << "test inv" << endl;
-		cout << 1.0 / (fff1) << endl;
-		cout << "test exp" << endl;
-		cout << exp(fff1) << endl;
-		cout << "test sqrt" << endl;
-		cout << sqrt(fff1) << endl;
-		cout << "test pow 2" << endl;
-		cout << pow(fff1, 2) << endl;
-
-		cout << "test pow 3" << endl;
-		cout << pow(fff1, 3) << endl;
-
-		cout << "test pow 0" << endl;
-		cout << pow(fff1, 0) << endl;
-
-		cout << "test pow 1" << endl;
-		cout << pow(fff1, 1) << endl;
-		cout << "==========================================" << endl;
 	}
 
 
@@ -273,7 +231,7 @@ int main() {
 		}
 		{
 			Affine2 f, z;
-			Affine2Vector x(4, Interval(3.9, 4.1), true );  // Initialization with x[i] = Affine2(4,i+1,Interval(3.9, 4.1));
+			Affine2Variables x(4, Interval(3.9, 4.1));  // Initialization with x[i] = Affine2(4,i+1,Interval(3.9, 4.1));
 			start = clock();
 			for (int k = 0; k < n; k++) {
 				f = 0;
