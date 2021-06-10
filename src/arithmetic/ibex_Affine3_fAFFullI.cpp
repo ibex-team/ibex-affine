@@ -1,5 +1,5 @@
 /* ============================================================================
- * I B E X - Definition of the AffineMain<AF_fAFFull> class based on fAFFull version 1 of DynIbex
+ * I B E X - Definition of the AffineMain<AF_fAFFull> class based on fAFFull version 1 from DynIbex
  * ============================================================================
  * Copyright   : ENSTA Bretagne
  * License     : This program can be distributed under the terms of the GNU LGPL.
@@ -17,10 +17,9 @@
 namespace ibex {
 
 double AF_fAFFullI::maTol = 2.5e-15;
+af3_int AF_fAFFullI::_counter = 50;
 
-unsigned long int AF_fAFFullI::_counter = 50;
-
-bool noise_null (const std::pair<int,double> value) { return (value.second >= 0)&&(value.second <= 0.0); }
+bool noise_null (const std::pair<af3_int,double> value) { return (value.second >= 0)&&(value.second <= 0.0); }
 
 
 //TODO  Changer la list en vector pour faire bien le AffineMain::val(i)
@@ -38,7 +37,7 @@ template<>
 AffineMain<AF_fAFFullI>::AffineMain() :
 	_actif (-2     ),
 	_n		(0		),
-	_elt	(0.0, std::list<std::pair<int,double> >(), Interval(0.0))	{
+	_elt	(0.0, std::list<std::pair<af3_int,double> >(), Interval(0.0))	{
 }
 
 template<>
@@ -83,7 +82,7 @@ AffineMain<AF_fAFFullI>& AffineMain<AF_fAFFullI>::operator=(const Interval& x) {
 			_actif = 0;
 		} else {
 			_actif = 1;
-			std::pair<int,double> p(AF_fAFFullI::_counter++, x.rad());
+			std::pair<af3_int,double> p(AF_fAFFullI::_counter++, x.rad());
 			_elt._rays.push_back(p);
 		}
 	}
@@ -95,15 +94,15 @@ template<>
 AffineMain<AF_fAFFullI>::AffineMain(int size, int var, const Interval& itv) :
 	_actif	(0),
 	_n 		(size),
-	_elt	(0, std::list<std::pair<int,double> >(), Interval(0.0))  {
+	_elt	(0, std::list<std::pair<af3_int,double> >(), Interval(0.0))  {
 	assert((size>=0) && (var>=0) && (var<=size));
 	if (!(itv.is_unbounded()||itv.is_empty())) {
 		_elt._center = itv.mid();
 		if (! itv.is_degenerated()) {
 			_actif =1;
-			std::pair<int,double> p(var, itv.rad());
+			std::pair<af3_int,double> p(var, itv.rad());
 			_elt._rays.push_back(p);
-			if (AF_fAFFullI::_counter <= (unsigned long int)var ) {AF_fAFFullI::_counter = var+1;}
+			if (AF_fAFFullI::_counter <= (unsigned long int)var ) {AF_fAFFullI::_counter = ((af3_int)var)+1;}
 
 		}
 	} else {
@@ -117,11 +116,11 @@ template<>
 AffineMain<AF_fAFFullI>::AffineMain(const AffineMain<AF_fAFFullI>& x) :
 		_actif	(x._actif),
 		_n		(x._n),
-		_elt	(x._elt._center, std::list<std::pair<int,double> >(),x._elt._garbage) {
+		_elt	(x._elt._center, std::list<std::pair<af3_int,double> >(),x._elt._garbage) {
 	if (!x._elt._rays.empty())	{
-		std::list<std::pair<int,double> >::const_iterator it = x._elt._rays.begin();
+		std::list<std::pair<af3_int,double> >::const_iterator it = x._elt._rays.begin();
 		for (; it != x._elt._rays.end(); ++it) {
-			_elt._rays.push_back(std::pair<int,double>(it->first,it->second));
+			_elt._rays.push_back(std::pair<af3_int,double>(it->first,it->second));
 		}
 	}
 
@@ -138,9 +137,9 @@ AffineMain<AF_fAFFullI>& AffineMain<AF_fAFFullI>::operator=(const AffineMain<AF_
 		_elt._rays.clear();
 
 		if ((x.is_actif()) && (!x._elt._rays.empty()))	{
-			std::list<std::pair<int,double> >::const_iterator it = x._elt._rays.begin();
+			std::list<std::pair<af3_int,double> >::const_iterator it = x._elt._rays.begin();
 			for (; it != x._elt._rays.end(); ++it) {
-				_elt._rays.push_back(std::pair<int,double>(it->first,it->second));
+				_elt._rays.push_back(std::pair<af3_int,double>(it->first,it->second));
 			}
 		}
 	}
@@ -177,10 +176,10 @@ double AffineMain<AF_fAFFullI>::val(int i) const{
 	// TODO changer la std::list par une autre structure pour ameliorer
 	assert((0<=i) && (i<=size()));
 	if (!_elt._rays.empty()) {
-		std::list<std::pair<int,double> >::const_iterator iter = _elt._rays.begin();
+		std::list<std::pair<af3_int,double> >::const_iterator iter = _elt._rays.begin();
 		for (; iter != _elt._rays.end(); ++iter) {
-			if (iter -> first == i) { return iter -> second; }
-			if (iter -> first > i) { return 0.0; }
+			if (iter -> first == (af3_int)i) { return iter -> second; }
+			if (iter -> first > (af3_int)i) { return 0.0; }
 		}
 	}
 	return 0.0;
@@ -196,11 +195,11 @@ double AffineMain<AF_fAFFullI>::err() const{
 template<>
 int AffineMain<AF_fAFFullI>::size() const {
 	if (!_elt._rays.empty())	{
-		std::pair<int,double> p = _elt._rays.back();
-		if (_n>p.first) {
+		std::pair<af3_int,double> p = _elt._rays.back();
+		if (_n>(int)p.first) {
 			return _n;
 		} else {
-			return p.first;
+			return (int)p.first;
 		}
 	}
 	else {
@@ -236,7 +235,7 @@ const Interval AffineMain<AF_fAFFullI>::itv() const {
 		Interval res(_elt._center);
 		Interval pmOne(-1.0, 1.0);
 		if (!_elt._rays.empty()) {
-			std::list<std::pair<int,double> >::const_iterator it = _elt._rays.begin();
+			std::list<std::pair<af3_int,double> >::const_iterator it = _elt._rays.begin();
 			for (; it != _elt._rays.end(); ++it) {
 				res += (it -> second * pmOne);
 			}
@@ -290,7 +289,7 @@ AffineMain<AF_fAFFullI>& AffineMain<AF_fAFFullI>::Aneg() {
 		_elt._center = -_elt._center;
 		_elt._garbage = -_elt._garbage;
 		if (!_elt._rays.empty()) {
-			std::list<std::pair<int,double> >::iterator it = _elt._rays.begin();
+			std::list<std::pair<af3_int,double> >::iterator it = _elt._rays.begin();
 			for (; it != _elt._rays.end(); ++it) {
 				it->second = -(it->second);
 			}
@@ -327,7 +326,7 @@ AffineMain<AF_fAFFullI>& AffineMain<AF_fAFFullI>::operator*=(double alpha) {
 
 			// Computation step for the rays
 			if (!_elt._rays.empty()) {
-				std::list<std::pair<int,double> >::iterator it =  _elt._rays.begin();
+				std::list<std::pair<af3_int,double> >::iterator it =  _elt._rays.begin();
 				for (; it != _elt._rays.end(); ++it) {
 					intermediate = Interval (it -> second) * alpha;
 					it -> second = intermediate.ub(); // Check if it true
@@ -336,7 +335,7 @@ AffineMain<AF_fAFFullI>& AffineMain<AF_fAFFullI>::operator*=(double alpha) {
 
 			_elt._garbage += roundoff_error * Interval(-1,1);
 			if (_elt._garbage.rad() > AF_fAFFullI::maTol) {
-				std::pair<int,double> pcumul(AF_fAFFullI::_counter++, _elt._garbage.rad());
+				std::pair<af3_int,double> pcumul(AF_fAFFullI::_counter++, _elt._garbage.rad());
 				_elt._rays.push_back(pcumul);
 				_elt._garbage = Interval(0.0);
 			}
@@ -366,7 +365,7 @@ AffineMain<AF_fAFFullI>& AffineMain<AF_fAFFullI>::operator+=(double beta) {
 
 		_elt._garbage += roundoff_error * Interval(-1,1);
 		if (_elt._garbage.rad() > AF_fAFFullI::maTol) {
-			std::pair<int,double> pcumul(AF_fAFFullI::_counter++, _elt._garbage.rad());
+			std::pair<af3_int,double> pcumul(AF_fAFFullI::_counter++, _elt._garbage.rad());
 			_elt._rays.push_back(pcumul);
 			_elt._garbage = Interval(0.0);
 		}
@@ -388,7 +387,7 @@ AffineMain<AF_fAFFullI>& AffineMain<AF_fAFFullI>::inflate(double ddelta) {
 		if (is_actif()) {
 			if ((ddelta)<POS_INFINITY) {
 				_actif=1;
-				std::pair<int,double> pdelta(AF_fAFFullI::_counter++, ddelta);
+				std::pair<af3_int,double> pdelta(AF_fAFFullI::_counter++, ddelta);
 				_elt._rays.push_back(pdelta);
 				_elt._rays.remove_if(noise_null);
 			}
@@ -427,21 +426,21 @@ AffineMain<AF_fAFFullI>& AffineMain<AF_fAFFullI>::operator+=( const AffineMain<A
 			// Computation step for the rays
 			if (_elt._rays.empty())	{
 				if (!y._elt._rays.empty())	{
-					std::list<std::pair<int,double> >::const_iterator ity = y._elt._rays.begin();
+					std::list<std::pair<af3_int,double> >::const_iterator ity = y._elt._rays.begin();
 					for (; ity != y._elt._rays.end(); ++ity)	{
-						_elt._rays.push_back(std::pair<int,double>(ity->first,ity->second));
+						_elt._rays.push_back(std::pair<af3_int,double>(ity->first,ity->second));
 					}
 				}
 			} else if (/*!_elt._rays.empty() &&*/ !y._elt._rays.empty()) {
-				std::list<std::pair<int,double> >::iterator it =  _elt._rays.begin();
-				std::list<std::pair<int,double> >::const_iterator ity =  y._elt._rays.begin();
+				std::list<std::pair<af3_int,double> >::iterator it =  _elt._rays.begin();
+				std::list<std::pair<af3_int,double> >::const_iterator ity =  y._elt._rays.begin();
 
 				while ((ity != y._elt._rays.end()) || (it != _elt._rays.end()))		{
 					if (ity == y._elt._rays.end()) { //y is finished : stop
 						break;
 					}
 					else if (it == _elt._rays.end()) { //x is finished : we push y
-						std::pair<int,double> py(ity->first,ity->second );
+						std::pair<af3_int,double> py(ity->first,ity->second );
 						_elt._rays.insert(it, py);
 						ity++;
 					}
@@ -455,7 +454,7 @@ AffineMain<AF_fAFFullI>& AffineMain<AF_fAFFullI>::operator+=( const AffineMain<A
 						it++;
 					}
 					else  { //noise of y before current x noise : add y before x
-						std::pair<int,double> py(ity->first,ity->second );
+						std::pair<af3_int,double> py(ity->first,ity->second );
 						_elt._rays.insert(it, py);
 						ity++;
 					}
@@ -464,7 +463,7 @@ AffineMain<AF_fAFFullI>& AffineMain<AF_fAFFullI>::operator+=( const AffineMain<A
 
 			_elt._garbage += roundoff_error * Interval(-1,1);
 			if (_elt._garbage.rad() > AF_fAFFullI::maTol) {
-				std::pair<int,double> pcumul(AF_fAFFullI::_counter++, _elt._garbage.rad());
+				std::pair<af3_int,double> pcumul(AF_fAFFullI::_counter++, _elt._garbage.rad());
 				_elt._rays.push_back(pcumul);
 				_elt._garbage = Interval(0.0);
 			}
@@ -593,7 +592,7 @@ void AffineMain<AF_fAFFullI>::compact(double tol){
 	Interval pmOne(-1.0, 1.0);
 
 	if (!_elt._rays.empty()) {
-		std::list<std::pair<int,double> >::iterator iter = _elt._rays.begin();
+		std::list<std::pair<af3_int,double> >::iterator iter = _elt._rays.begin();
 		Interval cumul(0.0);
 
 		int list_size = _elt._rays.size();
@@ -619,7 +618,7 @@ void AffineMain<AF_fAFFullI>::compact(double tol){
 
 		if (_elt._garbage.rad() > AF_fAFFullI::maTol)
 		{
-			std::pair<int,double> pcumul(AF_fAFFullI::_counter++, _elt._garbage.rad());
+			std::pair<af3_int,double> pcumul(AF_fAFFullI::_counter++, _elt._garbage.rad());
 			_elt._rays.push_back(pcumul);
 			_elt._garbage = Interval(0.0);
 		}
@@ -635,7 +634,7 @@ std::ostream& operator<<(std::ostream& os, const AffineMain<AF_fAFFullI>& x) {
 		os << x.mid();
 
 		if (!x._elt._rays.empty()) {
-			std::list<std::pair<int,double> >::const_iterator iter = x._elt._rays.begin();
+			std::list<std::pair<af3_int,double> >::const_iterator iter = x._elt._rays.begin();
 			for (; iter != x._elt._rays.end(); ++iter) {
 				double v = iter -> second;
 				if (v!=0)

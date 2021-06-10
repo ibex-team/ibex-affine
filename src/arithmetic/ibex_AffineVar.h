@@ -64,7 +64,7 @@ private:
 //	friend class AffineMainMatrix<T>;
 
 
-    unsigned long int _var;
+    int _var;
 
     AffineVarMain() : _var(0) {};
 

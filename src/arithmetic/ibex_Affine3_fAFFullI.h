@@ -1,5 +1,5 @@
 /* ============================================================================
- * I B E X - Definition of the Affine3 class based on fAFFull version 1
+ * I B E X - Definition of the Affine3 class based on fAFFull version 1 from DynIbex
  * ============================================================================
  * Copyright   : ENSTA Bretagne
  * License     : This program can be distributed under the terms of the GNU LGPL.
@@ -23,7 +23,9 @@
 namespace ibex {
 
 
+typedef unsigned long int af3_int;
 class AF_fAFFullI;
+
 
 //typedef AF_fAF1  AF_Other;
 //typedef AF_fAF2  AF_Other;
@@ -32,6 +34,7 @@ class AF_fAFFullI;
 //typedef AF_sAF  AF_Other;
 //typedef AF_No  AF_Other;
 typedef AF_fAFFullI AF_Other;
+
 
 
 template<class T>  class AffineMain;
@@ -46,7 +49,7 @@ private:
 	template<class A>
 	friend std::ostream& operator<<(std::ostream& os, const AffineMain<A>& x);
 
-	static unsigned long int _counter;
+	static af3_int _counter;
 	static double maTol;
 	/**
 	 * Code for the particular case:
@@ -59,11 +62,11 @@ private:
 	 *
 	 */
 	double _center;
-	std::list< std::pair<int, double> > _rays;
+	std::list< std::pair<af3_int, double> > _rays;
 	Interval _garbage;
 
 
-	AF_fAFFullI (double center, std::list<std::pair<int,double> > rays, Interval garbage);
+	AF_fAFFullI (double center, std::list<std::pair<af3_int,double> > rays, Interval garbage);
 
 public:
 	/** \brief  Delete the affine form */
@@ -72,7 +75,7 @@ public:
 
 };
 
-inline AF_fAFFullI::AF_fAFFullI (double center, std::list<std::pair<int,double> > rays, Interval garbage) :
+inline AF_fAFFullI::AF_fAFFullI (double center, std::list<std::pair<af3_int,double> > rays, Interval garbage) :
     		_center(center), _rays(rays), _garbage(garbage) {
 
 }

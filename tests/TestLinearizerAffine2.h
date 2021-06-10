@@ -1,11 +1,13 @@
-//============================================================================
-//                                  I B E X                                   
-// File        : TestLinearizerAffine2.h
-// Author      : Gilles Chabert and Jordan NININ
-// Copyright   : ENSTA Bretagne (France)
-// License     : See the LICENSE file
-// Created     : June 6, 20120
-//============================================================================
+/* ============================================================================
+ * I B E X - Test of the Linearizer of Affine2 forms
+ * ============================================================================
+ * Copyright   : ENSTA Bretagne (FRANCE)
+ * License     : This program can be distributed under the terms of the GNU LGPL.
+ *               See the file LICENCE.
+ *
+ * Author(s)   : Jordan Ninin
+ * Created     : June 6, 2020
+ * ---------------------------------------------------------------------------- */
 
 #ifndef __TEST_LINEARIZER_AFFINE2_H__
 #define __TEST_LINEARIZER_AFFINE2_H__

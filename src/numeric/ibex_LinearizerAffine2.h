@@ -1,11 +1,13 @@
-//============================================================================
-//                                  I B E X                                   
-// File        : ibex_CtcART.h
-// Author      : Jordan Ninin
-// License     : See the LICENSE file
-// Created     : May 19, 2013
-// Last Update : May 19, 2013
-//============================================================================
+/* ============================================================================
+ * I B E X - Definition of the Linearizer of Affine2 forms
+ * ============================================================================
+ * Copyright   : ENSTA Bretagne (FRANCE)
+ * License     : This program can be distributed under the terms of the GNU LGPL.
+ *               See the file LICENCE.
+ *
+ * Author(s)   : Jordan Ninin
+ * Created     : June 6, 2020
+ * ---------------------------------------------------------------------------- */
 
 
 #ifndef __IBEX_LINEARIZER_AFFINE2_H__
