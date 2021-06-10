@@ -1,12 +1,13 @@
-//============================================================================
-//                                  I B E X
-// File        : arith03.cpp
-// Author      : Jordan Ninin
-// Copyright   : Ecole des Mines de Nantes (France)
-// License     : See the LICENSE file
-// Created     : Fev 28, 2013
-// Last Update : Fev 28, 2013
-//============================================================================
+/* ============================================================================
+ * I B E X - Example
+ * ============================================================================
+ * Copyright   : ENSTA Bretagne (FRANCE)
+ * License     : This program can be distributed under the terms of the GNU LGPL.
+ *               See the file LICENCE.
+ *
+ * Author(s)   : Jordan Ninin
+ * Created     : June 6, 2020
+ * ---------------------------------------------------------------------------- */
 
 #include "ibex.h"
 #include "ibex_Affine.h"
@@ -60,7 +61,6 @@ int main() {
 				+ faa.val(2) * (2 * x2 - (I[2].lb() + I[2].ub()))
 				/ (I[2].diam()));
 
-		cout << lininf << endl;
 
 		Function f_inf(x, x2, lininf(x, x2) - ff(x, x2));
 		Function f_sup(x, x2, ff(x, x2) - linsup(x, x2));
@@ -204,7 +204,7 @@ int main() {
 	{
 		cout << "==========================================" << endl;
 		cout << "==========================================" << endl;
-		int n = 1.e6;
+		int n = 1.e4;
 		cout << "TEST 3 Performance : " << n << " evaluations of the Sheckel-5 Function "<< endl;
 		double A[5][4] = { { 4, 4, 4, 4 }, { 1, 1, 1, 1 }, { 8, 8, 8, 8 }, { 6,
 				6, 6, 6 }, { 3, 7, 3, 7 } };

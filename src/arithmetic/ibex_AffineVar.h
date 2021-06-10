@@ -66,55 +66,55 @@ private:
 
     int _var;
 
-    AffineVarMain() : _var(0) {};
+    AffineVarMain() : _var(-1) {};
 
 	/** \brief Create an affine form by copy. */
     AffineVarMain(const AffineVarMain<T>& x);
 
 	/** \brief Create an affine form with at most \size variables and  initialized the \var^th variable with  itv. */
-	AffineVarMain(int size, int var, const Interval& itv);
+	explicit AffineVarMain(int size, int var, const Interval& itv);
 
 	/** \brief Copy an affine Var form. */
 	AffineVarMain& operator=(const AffineVarMain<T>& x) ;
 
-	AffineVarMain& operator+=(const Vector& x2) {ibex_error(" AffineVarMain : operator+= non valid");};
-	AffineVarMain& operator+=(const Interval& x2) {ibex_error(" AffineVarMain : operator+= non valid");};
-	AffineVarMain& operator+=(const AffineMain<T>& x2) {ibex_error(" AffineVarMain : operator+= non valid");};
-	AffineVarMain& operator-=(const Vector& x2) {ibex_error(" AffineVarMain : operator-= non valid");};
-	AffineVarMain& operator-=(const Interval& x2) {ibex_error(" AffineVarMain : operator-= non valid");};
-	AffineVarMain& operator-=(const AffineMain<T>& x2) {ibex_error(" AffineVarMain : operator-= non valid");};
-	AffineVarMain& operator*=(double d) {ibex_error(" AffineVarMain : operator*= non valid");};
-	AffineVarMain& operator*=(const Interval& x1) {ibex_error(" AffineVarMain : operator*= non valid");};
-	AffineVarMain& operator*=(const AffineMain<T>& x1) {ibex_error(" AffineVarMain : operator*= non valid");};
+	AffineVarMain& operator+=(const Vector& x2) 		{ibex_error(" AffineVarMain : operator+= non valid");};
+	AffineVarMain& operator+=(const Interval& x2) 		{ibex_error(" AffineVarMain : operator+= non valid");};
+	AffineVarMain& operator+=(const AffineMain<T>& x2)	{ibex_error(" AffineVarMain : operator+= non valid");};
+	AffineVarMain& operator-=(const Vector& x2) 		{ibex_error(" AffineVarMain : operator-= non valid");};
+	AffineVarMain& operator-=(const Interval& x2) 		{ibex_error(" AffineVarMain : operator-= non valid");};
+	AffineVarMain& operator-=(const AffineMain<T>& x2) 	{ibex_error(" AffineVarMain : operator-= non valid");};
+	AffineVarMain& operator*=(double d) 				{ibex_error(" AffineVarMain : operator*= non valid");};
+	AffineVarMain& operator*=(const Interval& x1) 		{ibex_error(" AffineVarMain : operator*= non valid");};
+	AffineVarMain& operator*=(const AffineMain<T>& x1) 	{ibex_error(" AffineVarMain : operator*= non valid");};
 
-	AffineVarMain& Asqr(const Interval& itv)  {ibex_error(" AffineVarMain : operator Asqr non valid");};
-	AffineVarMain&  Aneg()  {ibex_error(" AffineVarMain : operator Aneg non valid");};
-	AffineVarMain&  Ainv(const Interval& itv)  {ibex_error(" AffineVarMain : operator Ainv non valid");};
-	AffineVarMain&  Asqrt(const Interval& itv)  {ibex_error(" AffineVarMain : operator non Asqrt valid");};
-	AffineVarMain&  Aexp(const Interval& itv)  {ibex_error(" AffineVarMain : operator Aexp non valid");};
-	AffineVarMain&  Alog(const Interval& itv)  {ibex_error(" AffineVarMain : operator Alog non valid");};
-	AffineVarMain&  Apow(int n, const Interval& itv)  {ibex_error(" AffineVarMain : operator Apow non valid");};
-	AffineVarMain&  Apow(double d, const Interval& itv)  {ibex_error(" AffineVarMain : operator Apow non valid");};
+	AffineVarMain&  Asqr(const Interval& itv)  	{ibex_error(" AffineVarMain : operator Asqr non valid");};
+	AffineVarMain&  Aneg()  					{ibex_error(" AffineVarMain : operator Aneg non valid");};
+	AffineVarMain&  Ainv(const Interval& itv)  	{ibex_error(" AffineVarMain : operator Ainv non valid");};
+	AffineVarMain&  Asqrt(const Interval& itv) 	{ibex_error(" AffineVarMain : operator non Asqrt valid");};
+	AffineVarMain&  Aexp(const Interval& itv)  	{ibex_error(" AffineVarMain : operator Aexp non valid");};
+	AffineVarMain&  Alog(const Interval& itv)  	{ibex_error(" AffineVarMain : operator Alog non valid");};
+	AffineVarMain&  Apow(int n, const Interval& itv)  	{ibex_error(" AffineVarMain : operator Apow non valid");};
+	AffineVarMain&  Apow(double d, const Interval& itv)	{ibex_error(" AffineVarMain : operator Apow non valid");};
 	AffineVarMain&  Apow(const Interval &y, const Interval& itvx)  {ibex_error(" AffineVarMain : operator Apow non valid");};
-	AffineVarMain&  Aroot(int n, const Interval& itv)  {ibex_error(" AffineVarMain : operator Aroot non valid");};
-	AffineVarMain&  Acos(const Interval& itv)  {ibex_error(" AffineVarMain : operator Acos non valid");};
-	AffineVarMain&  Asin(const Interval& itv)  {ibex_error(" AffineVarMain : operator Asin non valid");};
-	AffineVarMain&  Atan(const Interval& itv)  {ibex_error(" AffineVarMain : operator Atan non valid");};
+	AffineVarMain&  Aroot(int n, const Interval& itv)  	{ibex_error(" AffineVarMain : operator Aroot non valid");};
+	AffineVarMain&  Acos(const Interval& itv)  	{ibex_error(" AffineVarMain : operator Acos non valid");};
+	AffineVarMain&  Asin(const Interval& itv)  	{ibex_error(" AffineVarMain : operator Asin non valid");};
+	AffineVarMain&  Atan(const Interval& itv)  	{ibex_error(" AffineVarMain : operator Atan non valid");};
 	AffineVarMain&  Aacos(const Interval& itv)  {ibex_error(" AffineVarMain : operator Aacos non valid");};
 	AffineVarMain&  Aasin(const Interval& itv)  {ibex_error(" AffineVarMain : operator Aasin non valid");};
 	AffineVarMain&  Aatan(const Interval& itv)  {ibex_error(" AffineVarMain : operator Aatan non valid");};
 	AffineVarMain&  Acosh(const Interval& itv)  {ibex_error(" AffineVarMain : operator Acosh non valid");};
 	AffineVarMain&  Asinh(const Interval& itv)  {ibex_error(" AffineVarMain : operator Asinh non valid");};
 	AffineVarMain&  Atanh(const Interval& itv)  {ibex_error(" AffineVarMain : operator Atanh non valid");};
-	AffineVarMain&  Aabs(const Interval& itv)  {ibex_error(" AffineVarMain : operator Aabs non valid");};
-	AffineVarMain&  Ainv_CH(const Interval& itv)  {ibex_error(" AffineVarMain : operator Ainv_CH non valid");};
-	AffineVarMain&  Asqrt_CH(const Interval& itv)  {ibex_error(" AffineVarMain : operator Asqrt_CH non valid");};
-	AffineVarMain&  Aexp_CH(const Interval& itv)  {ibex_error(" AffineVarMain : operator Aexp_CH non valid");};
-	AffineVarMain&  Alog_CH(const Interval& itv)  {ibex_error(" AffineVarMain : operator Alog_CH non valid");};
-	AffineVarMain&  Ainv_MR(const Interval& itv)  {ibex_error(" AffineVarMain : operator Ainv_CH non valid");};
-	AffineVarMain&  Asqrt_MR(const Interval& itv)  {ibex_error(" AffineVarMain : operator Asqrt_MR non valid");};
-	AffineVarMain&  Aexp_MR(const Interval& itv)  {ibex_error(" AffineVarMain : operator Aexp_MR non valid");};
-	AffineVarMain&  Alog_MR(const Interval& itv)  {ibex_error(" AffineVarMain : operator Alog_MR non valid");};
+	AffineVarMain&  Aabs(const Interval& itv)  	{ibex_error(" AffineVarMain : operator Aabs non valid");};
+	AffineVarMain&  Ainv_CH(const Interval& itv) {ibex_error(" AffineVarMain : operator Ainv_CH non valid");};
+	AffineVarMain&  Asqrt_CH(const Interval& itv){ibex_error(" AffineVarMain : operator Asqrt_CH non valid");};
+	AffineVarMain&  Aexp_CH(const Interval& itv) {ibex_error(" AffineVarMain : operator Aexp_CH non valid");};
+	AffineVarMain&  Alog_CH(const Interval& itv) {ibex_error(" AffineVarMain : operator Alog_CH non valid");};
+	AffineVarMain&  Ainv_MR(const Interval& itv) {ibex_error(" AffineVarMain : operator Ainv_CH non valid");};
+	AffineVarMain&  Asqrt_MR(const Interval& itv){ibex_error(" AffineVarMain : operator Asqrt_MR non valid");};
+	AffineVarMain&  Aexp_MR(const Interval& itv) {ibex_error(" AffineVarMain : operator Aexp_MR non valid");};
+	AffineVarMain&  Alog_MR(const Interval& itv) {ibex_error(" AffineVarMain : operator Alog_MR non valid");};
 };
 
 
@@ -123,6 +123,7 @@ template<class T>
 AffineVarMain<T>::AffineVarMain(int size, int var1, const Interval& itv) :
 		AffineMain<T>(size, var1, itv),
 		_var		(var1) {
+	assert((size>var1)&&(var1>=0));
 }
 
 
@@ -206,7 +207,7 @@ public:
 	/**
 	 * \brief Delete this vector
 	 */
-	virtual ~AffineVarMainVector() {delete [] _vec;};
+	virtual ~AffineVarMainVector();
 
 
 	/**
@@ -713,21 +714,23 @@ inline bool AffineVarMainVector<T>::operator!=(const AffineVarMainVector<T>& x) 
 
 
 template<class T>
-inline AffineVarMainVector<T> cart_prod(const AffineVarMainVector<T>& x, const AffineVarMainVector<T>& y) {
+AffineVarMainVector<T> cart_prod(const AffineVarMainVector<T>& x, const AffineVarMainVector<T>& y) {
 	AffineVarMainVector<T> z(x.size()+y.size());
-	z.put(0,x);
-	z.put(x.size(),y);
+	for (int i=0; i<x.size(); i++) {
+		z[i]=AffineVarMain<T>(z.size(), i,(x[i]).itv());
+	}
+	for (int i=0; i<y.size(); i++) {
+		z[x.size()+i]=AffineVarMain<T>(z.size(), i,(y[i]).itv());
+	}
 	return z;
 }
 
 //===============================================================================================
 
-//template<class T>
-//inline AffineVarMainVector<T>::~AffineVarMainVector<T>() {
-//	for (int i=0; i<_vec.size(); i++) {
-//		delete _vec[i];
-//	}
-//}
+template<class T>
+inline AffineVarMainVector<T>::~AffineVarMainVector<T>() {
+		delete[] _vec;
+}
 
 
 template<class T>
@@ -743,70 +746,69 @@ AffineVarMain<T>& AffineVarMainVector<T>::operator[](int i) {
 }
 
 template<class T>
-AffineVarMainVector<T>::AffineVarMainVector(int n) {
-	assert(n>=1);
-	_n   = n;
-	_vec = new AffineVarMain<T>[n];
+AffineVarMainVector<T>::AffineVarMainVector(int n) :
+		_n(n),
+		_vec( new AffineVarMain<T>[n]) {
 	assert(n>=1);
 	for (int i = 0; i < n; i++){
-		(*this)[i] = AffineVarMain<T>(n, i, Interval::all_reals());
+		_vec[i] = AffineVarMain<T>(n, i, Interval::all_reals());
 	}
 }
 
 template<class T>
-AffineVarMainVector<T>::AffineVarMainVector(int n, const Interval& x) {
+AffineVarMainVector<T>::AffineVarMainVector(int n, const Interval& x) :
+		_n(n),
+		_vec( new AffineVarMain<T>[n]) {
 	assert(n>=1);
-	_n   = n;
-	_vec  = new AffineVarMain<T>[n];
 	for (int i = 0; i < n; i++) {
-		(*this)[i] = AffineVarMain<T>(n, i, x);
+		_vec[i] = AffineVarMain<T>(n, i, x);
 	}
 }
 
 
 template<class T>
-AffineVarMainVector<T>::AffineVarMainVector(const AffineVarMainVector<T>& x) {
-	_n   = x.size();
-	_vec  = new AffineVarMain<T>[x.size()];
+AffineVarMainVector<T>::AffineVarMainVector(const AffineVarMainVector<T>& x) :
+		_n(x.size()),
+		_vec( new AffineVarMain<T>[x.size()]) {
 	for (int i = 0; i < x.size(); i++){
-		(*this)[i] = AffineVarMain<T>(x.size(),i,(x[i]).itv());
+		_vec[i] = AffineVarMain<T>(x.size(),i,(x[i]).itv());
 	}
 
 }
 
 template<class T>
-AffineVarMainVector<T>::AffineVarMainVector(int n, double bounds[][2])  {
+AffineVarMainVector<T>::AffineVarMainVector(int n, double bounds[][2])   :
+		_n(n),
+		_vec( new AffineVarMain<T>[n]) {
 	assert(n>=1);
-	_n   = n;
-	_vec  = new AffineVarMain<T>[n];
 	if (bounds == 0){ // probably, the user called AffineVarMainVector<T>(n,0) and 0 is interpreted as NULL!
 		for (int i = 0; i < n; i++){
-			(*this)[i] = AffineVarMain<T>(n, i, Interval(0));
+			_vec[i] = AffineVarMain<T>(n, i, Interval(0));
 		}
 	}
 	else {
 		for (int i = 0; i < n; i++){
-			(*this)[i] = AffineVarMain<T>(n, i, Interval(bounds[i][0], bounds[i][1]));
+			_vec[i] = AffineVarMain<T>(n, i, Interval(bounds[i][0], bounds[i][1]));
 		}
 
 	}
 }
 
 template<class T>
-AffineVarMainVector<T>::AffineVarMainVector(const IntervalVector& x) {
-	_n   = x.size();
-	_vec  = new AffineVarMain<T>[x.size()];
+AffineVarMainVector<T>::AffineVarMainVector(const IntervalVector& x) :
+	_n   (x.size()),
+	_vec (new AffineVarMain<T>[x.size()]) {
 	for (int i = 0; i < x.size(); i++){
-		(*this)[i] = AffineVarMain<T>(x.size(), i, x[i]);
+		_vec[i] = AffineVarMain<T>(x.size(), i, x[i]);
 	}
 }
 
 template<class T>
-AffineVarMainVector<T>::AffineVarMainVector(const Vector& x) {
-	_n   = x.size();
-	_vec = new AffineVarMain<T>[x.size()];
+AffineVarMainVector<T>::AffineVarMainVector(const Vector& x) :
+	_n   ( x.size()),
+	_vec ( new AffineVarMain<T>[x.size()]) {
 	for (int i = 0; i < x.size(); i++){
-		(*this)[i] = AffineVarMain<T>(x.size(), i, Interval(x[i]));
+		_vec[i] = AffineVarMain<T>(x.size(), i, Interval(x[i]));
 	}
 }
 
@@ -820,7 +822,7 @@ void AffineVarMainVector<T>::resize(int n2) {
 	AffineVarMain<T>* newVec=new AffineVarMain<T>[n2];
 	int i=0;
 	for (; i<size() && i<n2; i++){
-		newVec[i]=AffineVarMain<T>(n2, i, ((*this)[i]).itv());
+		newVec[i]=AffineVarMain<T>(n2, i, (_vec[i]).itv());
 	}
 	for (; i<n2; i++) {
 		newVec[i]=AffineVarMain<T>(n2, i, Interval::all_reals());
