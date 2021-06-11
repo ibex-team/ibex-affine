@@ -21,61 +21,92 @@ int main() {
 	{
 		cout << "==========================================" << endl;
 		cout << "==========================================" << endl;
-		cout << "TEST 1: " << endl;
-		Variable x(2);
-		Variable x1, x2;
+		cout << "TEST 1: Definitions " << endl;
 
-		Function ff(x, x2, x[0] * pow(x[1], 2) - exp(x[0] * x[1]));
 
 		IntervalVector I(3, Interval(1, 2));
 		I[1] = Interval(1, 3);
+
 		Affine2Variables AF(I);
+		cout << "==  Initialization of the affine form with 3 epsilons variables: " << endl << AF << endl;
+
+		cout << "==  Affine2Variables is the only way to construct an correct Affine form from an Interval: " << endl ;
+		Affine2Variables xx(1 , I[1]);
+		cout<< xx[0] << endl;
+		Affine2Variables yy(1);
+		yy[0] = I[1];
+		cout<< yy[0] << endl;
+
+		cout << "==  Affine2(Interval itv) is not allowed. " << endl ;
+		cout << "==  Affine2 is used for intermediate result or constant: " << endl ;
+		Affine2 faa;
+		faa = I[1];
+		cout << "== Constant faa="<<I[1]<< " : " << faa << endl;
+		faa = AF[0]+AF[1];
+		cout << "== faa=AF[0]+AF[1] : " << faa << endl;
+		faa = faa+2*faa ;
+		cout << "== faa=faa+2*faa : " << faa << endl;
+		faa = faa*AF[0];
+		cout << "== faa = faa*AF[0] : " << faa << endl;
+
+
+		Variable x(2, "x");
+		Variable y("y");
+		Function ff(x, y, x[0] * pow(x[1], 2) - exp(x[0] * x[1])+y);
+		cout << "== Using Eval function : "<<ff<< endl;
 		Interval fi = ff.eval(I);
-		cout << fi << endl;
+		cout << "== Interval resultat using interval comptation of the function: "<< endl << fi << endl;
 		Affine2Eval eval_af(ff);
 		Affine2Domain dom_faa = eval_af.eval(AF);
-		Affine2 faa = dom_faa.i();
-		/* OR this way, it is the same
-		std::pair<Domain*, Affine2Domain*> res = eval_af.eval(I,AF);
-		Affine2 faa = res.second->i();
-		 */
+		faa = dom_faa.i();
+		cout << "== Affine resultat using Affine comptation of the function: "<< endl << faa << endl;
+		Domain dom_itv = eval_af.eval(I);
+		fi = dom_itv.i();
+		cout << "== Interval resultat using Affine comptation of the function: "<< endl << fi << endl;
+
+		cout << "== You can get in the same time Interval and Affine result with one evaluation : " << endl;
+		pair<Domain*, Affine2Domain*> res = eval_af.eval(I,AF);
+		fi = res.first->i();
+		faa = res.second->i();
+		cout << fi << endl;
 		cout << faa << endl;
+		cout <<  endl;
 
 		//		Function lininf(x, faa.val(0)-faa.err().ub() + faa.val(1)*(2*x[0]-(I[0].lb()+I[0].ub()))/(I[0].diam()) + faa.val(2)*(2*x[1]-(I[1].lb()+I[1].ub()))/(I[1].diam())) ;
 		//		Function linsup(x, faa.val(0)+faa.err().ub() + faa.val(1)*(2*x[0]-(I[0].lb()+I[0].ub()))/(I[0].diam()) + faa.val(2)*(2*x[1]-(I[1].lb()+I[1].ub()))/(I[1].diam())) ;
 
-		Function lininf(x, x2,
+		Function lininf(x, y,
 				faa.mid() - faa.err()
 				+ faa.val(0) * (2 * x[0] - (I[0].lb() + I[0].ub()))
 				/ (I[0].diam())
 				+ faa.val(1) * (2 * x[1] - (I[1].lb() + I[1].ub()))
 				/ (I[1].diam())
-				+ faa.val(2) * (2 * x2 - (I[2].lb() + I[2].ub()))
+				+ faa.val(2) * (2 * y - (I[2].lb() + I[2].ub()))
 				/ (I[2].diam()));
-		Function linsup(x, x2,
+		Function linsup(x, y,
 				faa.mid() + faa.err()
 				+ faa.val(0) * (2 * x[0] - (I[0].lb() + I[0].ub()))
 				/ (I[0].diam())
 				+ faa.val(1) * (2 * x[1] - (I[1].lb() + I[1].ub()))
 				/ (I[1].diam())
-				+ faa.val(2) * (2 * x2 - (I[2].lb() + I[2].ub()))
+				+ faa.val(2) * (2 * y - (I[2].lb() + I[2].ub()))
 				/ (I[2].diam()));
 
 
-		Function f_inf(x, x2, lininf(x, x2) - ff(x, x2));
-		Function f_sup(x, x2, ff(x, x2) - linsup(x, x2));
+		Function f_inf(x, y, lininf(x, y) - ff(x, y));
+		Function f_sup(x, y, ff(x, y) - linsup(x, y));
 		NumConstraint c_inf(f_inf, GT);
 		NumConstraint c_sup(f_sup, GT);
 
 
 		SystemFactory sysfac1, sysfac2;
 		sysfac1.add_var(x);
-		sysfac1.add_var(x2);
+		sysfac1.add_var(y);
 		sysfac1.add_ctr(c_inf);
 		System sys1(sysfac1);
 
 		sysfac2.add_var(x);
-		sysfac2.add_var(x2);
+		sysfac2.add_var(y);
 		sysfac2.add_ctr(c_sup);
 		System sys2(sysfac2);
 
@@ -95,7 +126,7 @@ int main() {
 		Solver::Status stat1 = sol1.solve(I);
 		Solver::Status stat2 = sol2.solve(I);
 
-		cout << " ok?  : inf " << stat1 << "  /  sup "<< stat2 << endl;
+		cout << " Validation of the enclosure the Affine form : ok?  inf " << stat1 << "  /  sup "<< stat2 << endl;
 		if (stat1!=1 || stat2!=1) {
 			cout << " size?  :  inf " << sol1.get_nb_cells() << " / sup " << sol2.get_nb_cells() << endl;
 			cout << sol1.get_data() << endl;
@@ -206,6 +237,7 @@ int main() {
 		cout << "==========================================" << endl;
 		int n = 1.e4;
 		cout << "TEST 3 Performance : " << n << " evaluations of the Sheckel-5 Function "<< endl;
+
 		double A[5][4] = { { 4, 4, 4, 4 }, { 1, 1, 1, 1 }, { 8, 8, 8, 8 }, { 6,
 				6, 6, 6 }, { 3, 7, 3, 7 } };
 
