@@ -643,7 +643,7 @@ std::ostream& operator<<(std::ostream& os, const AffineMain<AF_fAFFullI>& x) {
 		}
 		os << " + " << x.err() << "[-1,1]";
 	} else {
-		os << "Affine3 Form not activate ";
+		os << "Affine3 Form is not enabled. ";
 	}
 	return os;
 }

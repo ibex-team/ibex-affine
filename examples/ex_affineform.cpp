@@ -28,16 +28,16 @@ int main() {
 		I[1] = Interval(1, 3);
 
 		Affine2Variables AF(I);
-		cout << "==  Initialization of the affine form with 3 epsilons variables: " << endl << AF << endl;
+		cout << "==  Initialization of the Affine2 Form with 3 epsilons variables: " << endl << AF << endl;
 
-		cout << "==  Affine2Variables is the only way to construct an correct Affine form from an Interval: " << endl ;
+		cout << "==  Affine2Variables is the only way to construct an correct Affine2 Form from an Interval: " << endl ;
 		Affine2Variables xx(1 , I[1]);
 		cout<< xx[0] << endl;
 		Affine2Variables yy(1);
 		yy[0] = I[1];
 		cout<< yy[0] << endl;
 
-		cout << "==  Affine2(Interval itv) is not allowed. " << endl ;
+		cout << "==  Constructor Affine2(Interval& itv) and Constructor Affine2Variables(Affine2& af) is not allowed to avoid misunderstandings or bad use. " << endl ;
 		cout << "==  Affine2 is used for intermediate result or constant: " << endl ;
 		Affine2 faa;
 		faa = I[1];
@@ -52,17 +52,17 @@ int main() {
 
 		Variable x(2, "x");
 		Variable y("y");
-		Function ff(x, y, x[0] * pow(x[1], 2) - exp(x[0] * x[1])+y);
+		Function ff(x, y, x[0] * pow(x[1], 2) - exp(x[0] * x[1])+y, "myf");
 		cout << "== Using Eval function : "<<ff<< endl;
 		Interval fi = ff.eval(I);
-		cout << "== Interval resultat using interval comptation of the function: "<< endl << fi << endl;
+		cout << "== Interval results using interval computation of the function: "<< endl << fi << endl;
 		Affine2Eval eval_af(ff);
 		Affine2Domain dom_faa = eval_af.eval(AF);
 		faa = dom_faa.i();
-		cout << "== Affine resultat using Affine comptation of the function: "<< endl << faa << endl;
+		cout << "== Affine2 results using Affine2 computation of the function: "<< endl << faa << endl;
 		Domain dom_itv = eval_af.eval(I);
 		fi = dom_itv.i();
-		cout << "== Interval resultat using Affine comptation of the function: "<< endl << fi << endl;
+		cout << "== Interval results using Affine2 computation of the function: "<< endl << fi << endl;
 
 		cout << "== You can get in the same time Interval and Affine result with one evaluation : " << endl;
 		pair<Domain*, Affine2Domain*> res = eval_af.eval(I,AF);
@@ -72,8 +72,6 @@ int main() {
 		cout << faa << endl;
 		cout <<  endl;
 
-		//		Function lininf(x, faa.val(0)-faa.err().ub() + faa.val(1)*(2*x[0]-(I[0].lb()+I[0].ub()))/(I[0].diam()) + faa.val(2)*(2*x[1]-(I[1].lb()+I[1].ub()))/(I[1].diam())) ;
-		//		Function linsup(x, faa.val(0)+faa.err().ub() + faa.val(1)*(2*x[0]-(I[0].lb()+I[0].ub()))/(I[0].diam()) + faa.val(2)*(2*x[1]-(I[1].lb()+I[1].ub()))/(I[1].diam())) ;
 
 		Function lininf(x, y,
 				faa.mid() - faa.err()
@@ -126,13 +124,72 @@ int main() {
 		Solver::Status stat1 = sol1.solve(I);
 		Solver::Status stat2 = sol2.solve(I);
 
-		cout << " Validation of the enclosure the Affine form : ok?  inf " << stat1 << "  /  sup "<< stat2 << endl;
+		cout << "==  Validation of the enclosure the Affine2 form : ok?  inf " << stat1 << "  /  sup "<< stat2 << endl;
 		if (stat1!=1 || stat2!=1) {
 			cout << " size?  :  inf " << sol1.get_nb_cells() << " / sup " << sol2.get_nb_cells() << endl;
 			cout << sol1.get_data() << endl;
 			cout << "==========================================" << endl;
 			cout << sol2.get_data() << endl;
 		}
+
+		cout << "==========================================" << endl;
+		cout << "==========================================" << endl;
+		cout << "== In the same way, you can use Affine3Variables, Affine3 and Affine3Eval. " <<endl;
+		cout << "== Affine2 has a static internal structure to improve computation performance. " <<endl;
+		cout << "== Affine3 has a dynamic internal structure to use it with the DynIbex project. " <<endl;
+		cout << "==========================================" << endl;
+		cout << "==========================================" << endl;
+
+	}
+	{
+
+		IntervalVector I(3, Interval(1, 2));
+		I[1] = Interval(1, 3);
+
+		Affine3Variables AF(I);
+		cout << "==  Initialization of the Affine3 Form with 3 epsilons variables: " << endl << AF << endl;
+
+		cout << "==  Affine3Variables is the only way to construct an correct Affine3 Form from an Interval: " << endl ;
+		Affine3Variables xx(1 , I[1]);
+		cout<< xx[0] << endl;
+		Affine3Variables yy(1);
+		yy[0] = I[1];
+		cout<< yy[0] << endl;
+
+		cout << "==  Constructor Affine3(Interval& itv) and Constructor Affine3Variables(Affine2& af) is not allowed to avoid misunderstandings or bad use. " << endl ;
+		cout << "==  Affine3 is used for intermediate result or constant: " << endl ;
+		Affine3 faa;
+		faa = I[1];
+		cout << "== Constant faa="<<I[1]<< " : " << faa << endl;
+		faa = AF[0]+AF[1];
+		cout << "== faa=AF[0]+AF[1] : " << faa << endl;
+		faa = faa+2*faa ;
+		cout << "== faa=faa+2*faa : " << faa << endl;
+		faa = faa*AF[0];
+		cout << "== faa = faa*AF[0] : " << faa << endl;
+
+		Variable x(2, "x");
+		Variable y("y");
+		Function ff(x, y, x[0] * pow(x[1], 2) - exp(x[0] * x[1])+y, "myf");
+		cout << "== Using Eval function : "<<ff<< endl;
+		Interval fi = ff.eval(I);
+		cout << "== Interval results using interval computation of the function: "<< endl << fi << endl;
+		Affine3Eval eval_af(ff);
+		Affine3Domain dom_faa = eval_af.eval(AF);
+		faa = dom_faa.i();
+		cout << "== Affine3 results using Affine3 computation of the function: "<< endl << faa << endl;
+		Domain dom_itv = eval_af.eval(I);
+		fi = dom_itv.i();
+		cout << "== Interval results using Affine3 computation of the function: "<< endl << fi << endl;
+
+		cout << "== You can get in the same time Interval and Affine3 result with one evaluation : " << endl;
+		pair<Domain*, Affine3Domain*> res = eval_af.eval(I,AF);
+		fi = res.first->i();
+		faa = res.second->i();
+		cout << fi << endl;
+		cout << faa << endl;
+		cout <<  endl;
+
 	}
 
 	{
@@ -236,7 +293,7 @@ int main() {
 		cout << "==========================================" << endl;
 		cout << "==========================================" << endl;
 		int n = 1.e4;
-		cout << "TEST 3 Performance : " << n << " evaluations of the Sheckel-5 Function "<< endl;
+		cout << "TEST 3 Performance : " << n << " Evaluations of the Sheckel-5 Function "<< endl;
 
 		double A[5][4] = { { 4, 4, 4, 4 }, { 1, 1, 1, 1 }, { 8, 8, 8, 8 }, { 6,
 				6, 6, 6 }, { 3, 7, 3, 7 } };
@@ -337,7 +394,7 @@ int main() {
 			}
 			endtime = clock();
 			cpuTime = difftime(endtime, start) / CLOCKS_PER_SEC;
-			cout << "Affine3 avec compact: CPU-time = " << cpuTime << " seconds" << endl;
+			cout << "Affine3 with compact: CPU-time = " << cpuTime << " seconds" << endl;
 			cout << "Output : " << f << endl;
 		}
 //-------------------------------------
@@ -386,4 +443,143 @@ int main() {
 
 	return 0;
 }
+
+
+
+/* OUTPUT of ./ex_affineform
+==========================================
+==========================================
+TEST 1: Definitions
+==  Initialization of the Affine2 Form with 3 epsilons variables:
+([1, 2] : 1.5 + 0.5 eps_0 + 0 eps_1 + 0 eps_2 + 0 [-1,1]  ; [1, 3] : 2 + 0 eps_0 + 1 eps_1 + 0 eps_2 + 0 [-1,1]  ; [1, 2] : 1.5 + 0 eps_0 + 0 eps_1 + 0.5 eps_2 + 0 [-1,1] )
+==  Affine2Variables is the only way to construct an correct Affine2 Form from an Interval:
+[1, 3] : 2 + 1 eps_0 + 0 [-1,1]
+[1, 3] : 2 + 1 eps_0 + 0 [-1,1]
+==  Constructor Affine2(Interval& itv) and Constructor Affine2Variables(Affine2& af) is not allowed to avoid misunderstandings or bad use.
+==  Affine2 is used for intermediate result or constant:
+== Constant faa=[1, 3] : [1, 3] : 2 + 1 [-1,1]
+== faa=AF[0]+AF[1] : [2, 5] : 3.5 + 0.5 eps_0 + 1 eps_1 + 0 eps_2 + 0 [-1,1]
+== faa=faa+2*faa : [6, 15] : 10.5 + 1.5 eps_0 + 3 eps_1 + 0 eps_2 + 0 [-1,1]
+== faa = faa*AF[0] : [2.249999999999995, 30.00000000000001] : 16.125 + 7.5 eps_0 + 4.5 eps_1 + 0 eps_2 + 1.87501 [-1,1]
+== Using Eval function : myf:(x[2],y)->(((x(1)*x(2)^2)-exp((x(1)*x(2))))+y)
+== Interval results using interval computation of the function:
+[-401.4287934927352, 17.28171817154096]
+== Affine2 results using Affine2 computation of the function:
+[-390.4287934927361, 274.6849531133789] : -57.8719 + -77.8921 eps_0 + -114.213 eps_1 + 0.5 eps_2 + 139.952 [-1,1]
+== Interval results using Affine2 computation of the function:
+[-390.428793492736, 17.28171817154096]
+== You can get in the same time Interval and Affine result with one evaluation :
+[-390.428793492736, 17.28171817154096]
+[-390.4287934927361, 274.6849531133789] : -57.8719 + -77.8921 eps_0 + -114.213 eps_1 + 0.5 eps_2 + 139.952 [-1,1]
+
+==  Validation of the enclosure the Affine2 form : ok?  inf 1  /  sup 1
+==========================================
+==========================================
+== In the same way, you can use Affine3Variables, Affine3 and Affine3Eval.
+== Affine2 has a static internal structure to improve computation performance.
+== Affine3 has a dynamic internal structure to use it with the DynIbex project.
+==========================================
+==========================================
+==  Initialization of the Affine3 Form with 3 epsilons variables:
+([1, 2] : 1.5 + 0.5 eps_0 + 0[-1,1] ; [1, 3] : 2 + 1 eps_1 + 0[-1,1] ; [1, 2] : 1.5 + 0.5 eps_2 + 0[-1,1])
+==  Affine3Variables is the only way to construct an correct Affine3 Form from an Interval:
+[1, 3] : 2 + 1 eps_0 + 0[-1,1]
+[1, 3] : 2 + 1 eps_0 + 0[-1,1]
+==  Constructor Affine3(Interval& itv) and Constructor Affine3Variables(Affine2& af) is not allowed to avoid misunderstandings or bad use.
+==  Affine3 is used for intermediate result or constant:
+== Constant faa=[1, 3] : [1, 3] : 2 + 1 eps_50 + 0[-1,1]
+== faa=AF[0]+AF[1] : [2, 5] : 3.5 + 0.5 eps_0 + 1 eps_1 + 0[-1,1]
+== faa=faa+2*faa : [6, 15] : 10.5 + 1.5 eps_0 + 3 eps_1 + 0[-1,1]
+== faa = faa*AF[0] : [1.5, 30] : 15.75 + 7.5 eps_0 + 4.5 eps_1 + 2.25 eps_51 + 0[-1,1]
+== Using Eval function : myf:(x[2],y)->(((x(1)*x(2)^2)-exp((x(1)*x(2))))+y)
+== Interval results using interval computation of the function:
+[-401.4287934927352, 17.28171817154096]
+== Affine3 results using Affine3 computation of the function:
+[-392.5569075618581, 276.8379956914853] : -57.8594 + -77.8879 eps_0 + -114.213 eps_1 + 0.5 eps_2 + -40.071 eps_52 + 0.810508 eps_53 + 3.87722e-15 eps_54 + 1.54805 eps_55 + -96.8805 eps_56 + 2.78619 eps_57 + 7.10543e-15 eps_58 + 0[-1,1]
+== Interval results using Affine3 computation of the function:
+[-392.5569075618581, 17.28171817154096]
+== You can get in the same time Interval and Affine3 result with one evaluation :
+[-392.5569075618581, 17.28171817154096]
+[-392.5569075618581, 276.8379956914853] : -57.8594 + -77.8879 eps_0 + -114.213 eps_1 + 0.5 eps_2 + -40.071 eps_66 + 0.810508 eps_67 + 3.87722e-15 eps_68 + 1.54805 eps_69 + -96.8805 eps_70 + 2.78619 eps_71 + 7.10543e-15 eps_72 + 0[-1,1]
+
+==========================================
+==========================================
+TEST 2:
+[1, 2] : 1.5 + 0.5 eps_0 + 0 eps_1 + 0 [-1,1]
+[1, 3] : 2 + 0 eps_0 + 1 eps_1 + 0 [-1,1]
+[-402.4287934927352, 15.28171817154096]
+[-391.4287934927366, 216.5149344057413] : -87.4569 + -64.8214 eps_0 + -94.6071 eps_1 + 144.544 [-1,1]
+[-0, 1] : 0.5 + 0.5 eps_0 + 0 [-1,1]
+[-0.2500000000000005, 1.000000000000001] : 0.375 + 0.5 eps_0 + 0.125001 [-1,1]
+[-inf, inf] : Affine Form is not enabled.
+[-391.4287934927366, 216.5149344057413] : -87.4569 + -64.8214 eps_0 + -94.6071 eps_1 + 144.544 [-1,1]
+[-0, 1] : 0.5 + 0.5 eps_0 + 0 [-1,1]
+([0.5, 1] : 0.75 + 0.25 eps_0 + 0 eps_1 + 0 [-1,1]  ; [2, 3] : 2.5 + 0 eps_0 + 0.5 eps_1 + 0 [-1,1] )
+test add
+[2.5, 4] : 3.25 + 0.25 eps_0 + 0.5 eps_1 + 0 [-1,1]
+test minus
+[-2.5, -1] : -1.75 + 0.25 eps_0 + -0.5 eps_1 + 0 [-1,1]
+test mul
+[0.7499999999999996, 3.000000000000001] : 1.875 + 0.625 eps_0 + 0.375 eps_1 + 0.125001 [-1,1]
+test div
+[0.1123724356957941, 0.5000000000000005] : 0.306187 + 0.102063 eps_0 + -0.0625 eps_1 + 0.0292518 [-1,1]
+==========================================
+test log
+[-0.6931471805599458, 0.05966010114161001] : -0.316743 + 0.346574 eps_0 + 0 eps_1 + 0.0298301 [-1,1]
+test inv
+[0.8284271247461895, 2.000000000000001] : 1.41422 + -0.5 eps_0 + 0 eps_1 + 0.0857865 [-1,1]
+test exp
+[1.582104563562883, 2.718281828459048] : 2.1502 + 0.534781 eps_0 + 0 eps_1 + 0.0333084 [-1,1]
+test sqrt
+[0.7071067811865473, 1.012563132923543] : 0.859835 + 0.146447 eps_0 + 0 eps_1 + 0.00628157 [-1,1]
+test pow 2
+[0.1874999999999998, 1.000000000000001] : 0.59375 + 0.375 eps_0 + 0 eps_1 + 0.0312501 [-1,1]
+test pow 3
+[-0.01562500000000024, 1.000000000000001] : 0.492188 + 0.429688 eps_0 + 0 eps_1 + 0.0781251 [-1,1]
+test pow 0
+<1, 1> : 1 + 0 eps_0 + 0 eps_1 + 0 [-1,1]
+test pow 1
+[0.5, 1] : 0.75 + 0.25 eps_0 + 0 eps_1 + 0 [-1,1]
+==========================================
+test log
+[0.6931471805599449, 1.119115780042374] : 0.906132 + 0 eps_0 + 0.202733 eps_1 + 0.0102518 [-1,1]
+test inv
+[0.3164965809277256, 0.5000000000000004] : 0.408249 + 0 eps_0 + -0.0833333 eps_1 + 0.00841838 [-1,1]
+test exp
+[5.823560187970371, 20.08553692318768] : 12.9546 + 0 eps_0 + 6.34825 eps_1 + 0.782748 [-1,1]
+test sqrt
+[1.414213562373094, 1.740077828072841] : 1.57715 + 0 eps_0 + 0.158919 eps_1 + 0.00401352 [-1,1]
+test pow 2
+[3.749999999999999, 9.000000000000002] : 6.375 + 0 eps_0 + 2.5 eps_1 + 0.125001 [-1,1]
+test pow 3
+[6.124999999999992, 27.00000000000003] : 16.5626 + 0 eps_0 + 9.43751 eps_1 + 1.00001 [-1,1]
+test pow 0
+<1, 1> : 1 + 0 eps_0 + 0 eps_1 + 0 [-1,1]
+test pow 1
+[2, 3] : 2.5 + 0 eps_0 + 0.5 eps_1 + 0 [-1,1]
+==========================================
+==========================================
+==========================================
+TEST 3 Performance : 10000 Evaluations of the Sheckel-5 Function
+double : CPU-time = 3.00001e-06 seconds
+Output : -0.153195
+Interval : CPU-time = 0.0219041 seconds
+Output : [-0.1663975282993113, -0.1415123357615466]
+Affine2 : CPU-time = 0.28383 seconds
+Output : [-0.1611323182907459, -0.1460443472713157] : -0.153588 + -0.000750549 eps_0 + -0.00268127 eps_1 + -0.000750549 eps_2 + -0.00268127 eps_3 + 0.000680337 [-1,1]
+Affine3 : CPU-time = 1.01594 seconds
+Output : [-0.1614737468029863, -0.1457536702041349] : -0.153613 + -0.000751076 eps_0 + -0.00268241 eps_1 + -0.000751076 eps_2 + -0.00268241 eps_3 + 3.83015e-06 eps_540019 + 5.78023e-18 eps_540020 + 7.65888e-06 eps_540021 + 3.83015e-06 eps_540022 + 5.78023e-18 eps_540023 + 7.65888e-06 eps_540024 + 3.83015e-06 eps_540025 + 5.78023e-18 eps_540026 + 7.65888e-06 eps_540027 + 3.83015e-06 eps_540028 + 5.78023e-18 eps_540029 + 7.65888e-06 eps_540030 + 5.44129e-18 eps_540031 + -6.40484e-05 eps_540032 + 1.2157e-06 eps_540033 + 3.45426e-18 eps_540034 + 2.43115e-06 eps_540035 + 1.2157e-06 eps_540036 + 3.45426e-18 eps_540037 + 2.43115e-06 eps_540038 + 1.2157e-06 eps_540039 + 3.45426e-18 eps_540040 + 2.43115e-06 eps_540041 + 1.72731e-18 eps_540042 + 1.2157e-06 eps_540043 + 3.45426e-18 eps_540044 + 2.43115e-06 eps_540045 + 3.45462e-18 eps_540046 + 3.45462e-18 eps_540047 + -2.01278e-05 eps_540048 + 1.87494e-05 eps_540049 + 3.74832e-05 eps_540050 + 1.87494e-05 eps_540051 + 3.74832e-05 eps_540052 + 1.87494e-05 eps_540053 + 3.74832e-05 eps_540054 + 9.98474e-18 eps_540055 + 1.87494e-05 eps_540056 + 3.74832e-05 eps_540057 + 1.66413e-17 eps_540058 + -0.00031525 eps_540059 + 1.21046e-05 eps_540060 + 2.41687e-05 eps_540061 + 1.20746e-05 eps_540062 + 1.82223e-17 eps_540063 + 2.41447e-05 eps_540064 + 1.21046e-05 eps_540065 + 2.41687e-05 eps_540066 + 9.65316e-18 eps_540067 + 1.20746e-05 eps_540068 + 1.82223e-17 eps_540069 + 2.41447e-05 eps_540070 + 8.57686e-18 eps_540071 + -0.000163172 eps_540072 + 6.07154e-17[-1,1]
+Affine3 with compact: CPU-time = 0.941321 seconds
+Output : [-0.1614737468029855, -0.1457536702041357] : -0.153613 + -0.000751076 eps_0 + -0.00268241 eps_1 + -0.000751076 eps_2 + -0.00268241 eps_3 + -0.00031525 eps_1120057 + 0.00036965 eps_1120058 + 0.000308158 eps_1120072 + 0[-1,1]
+
+
+*/
+
+
+
+
+
+
+
+
 

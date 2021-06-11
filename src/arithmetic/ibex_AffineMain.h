@@ -1282,7 +1282,7 @@ inline std::ostream& operator<<(std::ostream& os, const AffineMain<T>& x) {
 			}
 			os << " + " << x.err() << " [-1,1] ";
 		} else {
-			os << "AffineMain form not Activate ";
+			os << "Affine Form is not enabled. ";
 		}
 		return os;
 
