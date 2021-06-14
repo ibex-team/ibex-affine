@@ -1,12 +1,12 @@
 /* ============================================================================
  * I B E X - Definition of the Affine2 class based on fAF version 2
  * ============================================================================
- * Copyright   : Ecole des Mines de Nantes (FRANCE)
+ * Copyright   : ENSTA Bretagne (FRANCE)
  * License     : This program can be distributed under the terms of the GNU LGPL.
- *               See the file COPYING.LESSER.
+ *               See the file LICENCE.
  *
  * Author(s)   : Jordan Ninin
- * Created     : Jul 16, 2013
+ * Created     : June 6, 2020
  * ---------------------------------------------------------------------------- */
 
 #ifndef IBEX_AFFINE2_FAF2_H_
@@ -29,6 +29,18 @@
 
 
 namespace ibex {
+
+class AF_fAF2;
+
+//typedef AF_fAF1  AF_Default;
+typedef AF_fAF2  AF_Default;
+//typedef AF_fAF2_fma  AF_Default;
+//typedef AF_iAF  AF_Default;
+//typedef AF_sAF  AF_Default;
+//typedef AF_No  AF_Default;
+//typedef AF_fAFFullI AF_Default;
+
+
 
 template<class T>  class AffineMain;
 template<class T>  class AffineVarMain;

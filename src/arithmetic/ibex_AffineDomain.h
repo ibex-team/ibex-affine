@@ -1,19 +1,20 @@
 /* ============================================================================
  * I B E X - AffineDomain definition
  * ============================================================================
+ * Copyright   : ENSTA Bretagne (FRANCE)
  * License     : This program can be distributed under the terms of the GNU LGPL.
- *               See the file COPYING.LESSER.
+ *               See the file LICENCE.
  *
  * Author(s)   : Jordan Ninin
- * Bug fixes   :
- * Created     : March 08, 2013
+ * Created     : June 6, 2020
  * ---------------------------------------------------------------------------- */
 
 #ifndef __IBEX_AFFINE_DOMAIN_H__
 #define __IBEX_AFFINE_DOMAIN_H__
 
 #include <stdexcept>
-#include "ibex_Affine.h"
+#include "ibex_TemplateDomain.h"
+#include "ibex_AffineMain.h"
 #include "ibex_AffineVector.h"
 #include "ibex_AffineMatrix.h"
 
@@ -26,80 +27,15 @@ namespace ibex {
  * \brief Affine Domain.
  *
  * An affine domain is either:
- * <ul><li> an affine form (#ibex::Affine2)
- *     <li> a vector of affine forms (#ibex::Affine2Vector)
- *     <li> a matrix of affine forms (#ibex::Affine2Matrix)
+ * <ul><li> an affine form (#ibex::Affine)
+ *     <li> a vector of affine forms (#ibex::AffineVector)
+ *     <li> a matrix of affine forms (#ibex::AffineMatrix)
  * </ul>
  *
  */
 typedef TemplateDomain<AffineMain<AF_Default> > Affine2Domain;
 typedef TemplateDomain<AffineMain<AF_Other>> Affine3Domain;
 
-
-/*
-template<class T>
-Array< TemplateDomain< AffineMain<T> > > convert_to_affinedomain(const Array<Domain>& d) {
-	const Array<const Domain>* d2 =(const Array<const Domain>*) (&d);
-	return convert_to_affinedomain<T>(*d2);
-}
-
-
-template<class T>
-Array< TemplateDomain< AffineMain<T> > > convert_to_affinedomain(const Array<const Domain>& d) {
-	Array< TemplateDomain< AffineMain<T> > > out(d.size());
-
-	int n=0;
-	for (int i =0; i<=d.size(); i++) {
-		n += d[i].dim.size();
-	}
-
-	int var = 1;
-	for (int i =0; i<=d.size(); i++) {
-
-		switch (d[i].dim.type()) {
-		case Dim::SCALAR: {
-			AffineMain<T> tmp(n, var, d[i].i());
-			out.set_ref(i, *new TemplateDomain< AffineMain<T> >(tmp));
-			var++;
-			break;
-		}
-		case Dim::ROW_VECTOR: {
-			AffineMainVector<T> vec(d[i].dim.size());
-			for (int k = 0; k < d[i].dim.size(); k++) {
-				vec[k] = AffineMain<T>(n, var, (d[i].v())[k]);
-				var++;
-			}
-
-			out.set_ref(i, *new TemplateDomain< AffineMain<T> >(vec,true));
-			break;
-		}
-		case Dim::COL_VECTOR: {
-			AffineMainVector<T> vec(d[i].dim.size());
-			for (int k = 0; k < d[i].dim.size(); k++) {
-				vec[k] = AffineMain<T>(n, var, (d[i].v())[k]);
-				var++;
-			}
-			out.set_ref(i, *new TemplateDomain< AffineMain<T> >(vec,false));
-			break;
-		}
-		case Dim::MATRIX: {
-			AffineMainMatrix<T> mat(d[i].dim.nb_rows(),d[i].dim.nb_cols());
-			for (int k = 0; k < d[i].dim.nb_rows(); k++) {
-				for (int p = 0; p < d[i].dim.nb_cols(); p++) {
-					mat[k][p] = AffineMain<T>(n, var, (d[i].m())[k][p]);
-					var++;
-				}
-			}
-			out.set_ref(i, *new TemplateDomain< AffineMain<T> >(mat));
-			break;
-		}
-		}
-	}
-
-	return out;
-
-}
-*/
 
 
 template<>

@@ -1,11 +1,12 @@
 /* ============================================================================
  * I B E X - Matrix of Affine forms
  * ============================================================================
+ * Copyright   : ENSTA Bretagne (FRANCE)
  * License     : This program can be distributed under the terms of the GNU LGPL.
- *               See the file COPYING.LESSER.
+ *               See the file LICENCE.
  *
  * Author(s)   : Jordan Ninin
- * Created     : March 16, 2013
+ * Created     : June 6, 2020
  * ---------------------------------------------------------------------------- */
 
 #ifndef __IBEX_AFFINE_MATRIX_H__

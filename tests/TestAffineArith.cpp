@@ -1186,9 +1186,9 @@ void TestAffineArith<T>::test101()   {
 	double  rho=28.0;
 	double beta = 8.0/3.0;
 
-	Function ydot = Function(yd,Return(sigma*(yd[1]-yd[0]),
-			yd[0]*(rho-yd[2])-yd[1],
-			yd[0]*yd[1]-beta*yd[2]));
+	Function ydot(yd,Return(sigma*(yd[1]-yd[0]),
+							yd[0]*(rho-yd[2])-yd[1],
+							yd[0]*yd[1]-beta*yd[2]));
 
 	IntervalVector v(3);
 	v[0] = Interval(-1, 1);
@@ -1214,9 +1214,9 @@ void TestAffineArith<T>::test102()   {
 	double  rho=28.0;
 	double beta = 8.0/3.0;
 
-	Function ydot = Function(yd,Return(sigma*(yd[1]-yd[0]),
-			yd[0]*(rho-yd[2])-yd[1],
-			yd[0]*yd[1]-beta*yd[2]));
+	Function ydot(yd,Return(sigma*(yd[1]-yd[0]),
+							yd[0]*(rho-yd[2])-yd[1],
+							yd[0]*yd[1]-beta*yd[2]));
 
 	IntervalVector v(3);
 	v[0] = Interval(-1, 1.5);

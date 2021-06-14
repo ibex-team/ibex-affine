@@ -1,12 +1,13 @@
-//============================================================================
-//                                  I B E X                                   
-// File        : ibex_CtcART.cpp
-// Author      : Ignacio Araya, Bertrand Neveu , Gilles Trombettoni
-// Copyright   : Ecole des Mines de Nantes (France)
-// License     : See the LICENSE file
-// Created     : Jul 1, 2012
-// Last Update : Nov 15, 2012
-//============================================================================
+/* ============================================================================
+ * I B E X - Implementation of the Linearizer of Affine2 forms
+ * ============================================================================
+ * Copyright   : ENSTA Bretagne (FRANCE)
+ * License     : This program can be distributed under the terms of the GNU LGPL.
+ *               See the file LICENCE.
+ *
+ * Author(s)   : Jordan Ninin
+ * Created     : June 6, 2020
+ * ---------------------------------------------------------------------------- */
 
 #include <math.h>
 #include "ibex_LinearizerAffine2.h"

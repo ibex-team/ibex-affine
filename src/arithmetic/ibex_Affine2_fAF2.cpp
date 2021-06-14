@@ -3,10 +3,10 @@
  * ============================================================================
  * Copyright   : ENSTA Bretagne (FRANCE)
  * License     : This program can be distributed under the terms of the GNU LGPL.
- *               See the file COPYING.LESSER.
+ *               See the file LICENCE.
  *
  * Author(s)   : Jordan Ninin
- * Created     : Jul 16, 2013
+ * Created     : June 6, 2020
  * ---------------------------------------------------------------------------- */
 
 
@@ -14,7 +14,8 @@
 #define IBEX_AFFINE_AF2_H_
 
 
-#include "ibex_Affine.h"
+#include "ibex_Affine2_fAF2.h"
+#include "ibex_AffineMain.h"
 #include <iostream>
 #include <cassert>
 
@@ -91,8 +92,18 @@ AffineMain<AF_fAF2>::AffineMain(int size, int var, const Interval& itv) :
 			_actif =1;
 			_elt._val[var+1] = itv.rad();
 		}
-	} else {
-		*this = itv;
+	} else if (itv.is_empty()) {
+		_actif = -1;
+		_elt._err = 0.0;
+	} else if (itv.ub()>= POS_INFINITY && itv.lb()<= NEG_INFINITY ) {
+		_actif = -2;
+		_elt._err = 0.0;
+	} else if (itv.ub()>= POS_INFINITY ) {
+		_actif = -3;
+		_elt._err = itv.lb();
+	} else if (itv.lb()<= NEG_INFINITY ) {
+		_actif = -4;
+		_elt._err = itv.ub();
 	}
 }
 
@@ -103,7 +114,7 @@ AffineMain<AF_fAF2>::AffineMain(const AffineMain<AF_fAF2>& x) :
 		_actif	(x._actif),
 		_n		(x.size()),
 		_elt	(NULL	,x._elt._err ) {
-	if (is_actif()) {
+	if (x.is_actif()) {
 		_elt._val =new double[x.size() + 1];
 		for (int i = 0; i <= x.size(); i++){
 			_elt._val[i] = x._elt._val[i];
@@ -118,12 +129,15 @@ AffineMain<AF_fAF2>& AffineMain<AF_fAF2>::operator=(const AffineMain<AF_fAF2>& x
 	if (this != &x) {
 		_elt._err = x._elt._err;
 		_actif = x._actif;
-		_n =x._n;
 		if (x.is_actif()) {
-			if (_elt._val!=NULL) { delete[] _elt._val; }
-			_elt._val = new double[size()+1];
-			int i = 0;
-			for (; i <= x.size(); i++) {
+			if (_n == x.size()) {
+				if (_elt._val==NULL) { _elt._val = new double[x.size()+1]; }
+			} else {
+				_n =x._n;
+				if (_elt._val!=NULL) { delete[] _elt._val; }
+				_elt._val = new double[x.size()+1];
+			}
+			for (int i = 0; i <= x.size(); i++) {
 				_elt._val[i] = x._elt._val[i];
 			}
 		}
@@ -166,6 +180,7 @@ double AffineMain<AF_fAF2>::val(int i) const{
 
 template<>
 double AffineMain<AF_fAF2>::err() const{
+	assert(is_actif() );
 	return _elt._err;
 }
 
@@ -305,7 +320,7 @@ AffineMain<AF_fAF2>& AffineMain<AF_fAF2>::operator*=(double alpha) {
 
 template<>
 AffineMain<AF_fAF2>& AffineMain<AF_fAF2>::operator+=(double beta) {
-
+	if (beta==0) return *this;
 	if ((_actif==1) && (fabs(beta)<POS_INFINITY)) {
 		double temp, ttt, sss, eee;
 		ttt=0.0;
@@ -321,7 +336,7 @@ AffineMain<AF_fAF2>& AffineMain<AF_fAF2>::operator+=(double beta) {
 		//				_elt._err = (1+2*AF_EM)*(_elt._err+ (AF_EE*(AF_EM*ttt)+AF_EE*sss));
 		_elt._err = (1+2*AF_EM)*(_elt._err +	(AF_EE*(ttt)+ AF_EE*sss) );
 
-		if (!(_elt._err<POS_INFINITY && (fabs(_elt._val[0])<POS_INFINITY))) { *this = Interval::ALL_REALS; }
+		if (!(_elt._err<POS_INFINITY && (fabs(_elt._val[0])<POS_INFINITY))) { *this = Interval::all_reals(); }
 
 	} else {
 		*this = itv()+ beta;
@@ -435,12 +450,6 @@ AffineMain<AF_fAF2>& AffineMain<AF_fAF2>::operator+=(const AffineMain<AF_fAF2>& 
 			if (!b) {*this = Interval::all_reals(); }
 
 		}
-	} else if (is_actif()) { // y is not a valid affine form. So we add y.itv() such as an interval
-		*this += y.itv();
-	} else if (y.is_actif()) {// *this is not a valid affine form. We inverse *this and y.
-		Interval tmp = itv();
-		*this = y;
-		*this += tmp;
 	} else {
 		*this = itv() + y.itv();
 	}

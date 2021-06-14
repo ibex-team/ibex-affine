@@ -1,15 +1,15 @@
 /* ============================================================================
- * I B E X - Implementation of the AffineMain<AF_fAF2> class based on fAF version 2
+ * I B E X - Implementation of the AffineVarMain class
  * ============================================================================
  * Copyright   : ENSTA Bretagne (FRANCE)
  * License     : This program can be distributed under the terms of the GNU LGPL.
- *               See the file COPYING.LESSER.
+ *               See the file LICENCE.
  *
  * Author(s)   : Jordan Ninin
- * Created     : Jul 16, 2013
+ * Created     : June 6, 2020
  * ---------------------------------------------------------------------------- */
 #include "ibex_AffineVar.h"
-#include "ibex_Affine.h"
+#include "ibex_AffineMain.h"
 #include <iostream>
 #include <cassert>
 
@@ -32,9 +32,40 @@ namespace ibex {
 
 
 
+template<>
+AffineVarMain<AF_fAF2>& AffineVarMain<AF_fAF2>::operator=(const AffineVarMain<AF_fAF2>& x) {
+	assert(x._n > x._var);
+
+	if (this != &x) {
+		_var = x._var;
+		_elt._err = x._elt._err;
+		_actif = x._actif;
+		bool b = (_n == x.size());
+		if (!b) {
+			_n =x._n;
+		}
+		if (x.is_actif()) {
+			if (b) {
+				if (_elt._val==NULL) { _elt._val = new double[x.size()+1]; }
+			} else {
+				if (_elt._val!=NULL) { delete[] _elt._val; }
+				_elt._val = new double[x.size()+1];
+			}
+			for (int i = 0; i <= x.size(); i++) {
+				_elt._val[i] = x._elt._val[i];
+			}
+		}
+	}
+	return *this;
+}
+
+
+
+
 
 template<>
 AffineVarMain<AF_fAF2>& AffineVarMain<AF_fAF2>::operator=(const Interval& x) {
+	assert(_n > _var);
 
 	if (x.is_empty()) {
 		_actif = -1;
@@ -49,7 +80,7 @@ AffineVarMain<AF_fAF2>& AffineVarMain<AF_fAF2>::operator=(const Interval& x) {
 		_actif = -4;
 		_elt._err = x.ub();
 	} else  {
-		assert((unsigned long int)_n > _var);
+//		assert(_n > _var);
 		_elt._err = 0.0;
 		if (_elt._val==NULL) _elt._val = new double[_n+1];
 		_elt._val[0] = x.mid();
@@ -65,26 +96,6 @@ AffineVarMain<AF_fAF2>& AffineVarMain<AF_fAF2>::operator=(const Interval& x) {
 	}
 	return *this;
 
-}
-
-
-template<>
-AffineVarMain<AF_fAF2>& AffineVarMain<AF_fAF2>::operator=(const AffineVarMain<AF_fAF2>& x) {
-	if (this != &x) {
-		_var = x._var;
-		_elt._err = x._elt._err;
-		_actif = x._actif;
-		_n =x._n;
-		if (x.is_actif()) {
-			if (_elt._val!=NULL) { delete[] _elt._val; }
-			_elt._val = new double[_n+1];
-			int i = 0;
-			for (; i <= x.size(); i++) {
-				_elt._val[i] = x._elt._val[i];
-			}
-		}
-	}
-	return *this;
 }
 
 
@@ -112,8 +123,34 @@ AffineVarMain<AF_fAF2>& AffineVarMain<AF_fAF2>::operator=(const AffineVarMain<AF
 //===========================================================================================
 //===========================================================================================
 
+
+
+template<>
+AffineVarMain<AF_fAFFullI>& AffineVarMain<AF_fAFFullI>::operator=(const AffineVarMain<AF_fAFFullI>& x) {
+	assert(x._n > x._var);
+	if (this != &x) {
+		_var = x._var;
+		_n = x._n;
+		_actif = x._actif;
+		_elt._center = x._elt._center;
+		_elt._garbage = x._elt._garbage;
+		_elt._rays.clear();
+
+		if ((x.is_actif()) && (!x._elt._rays.empty()))	{
+			std::list<std::pair<af3_int,double> >::const_iterator it = x._elt._rays.begin();
+			for (; it != x._elt._rays.end(); ++it) {
+				_elt._rays.push_back(std::pair<af3_int,double>(it->first,it->second));
+			}
+		}
+	}
+	return *this;
+}
+
+
+
 template<>
 AffineVarMain<AF_fAFFullI>& AffineVarMain<AF_fAFFullI>::operator=(const Interval& x) {
+	assert(_n > _var);
 	_elt._garbage = Interval(0.0); //
 	if (x.is_empty()) {
 		_actif = -1;
@@ -154,35 +191,14 @@ AffineVarMain<AF_fAFFullI>& AffineVarMain<AF_fAFFullI>::operator=(const Interval
 			_actif = 0;
 		} else {
 			_actif = 1;
-			std::pair<int,double> p(_var, x.rad());
+			std::pair<af3_int,double> p(_var, x.rad());
 			_elt._rays.push_back(p);
 		}
-		if (AF_fAFFullI::_counter <= _var ) {AF_fAFFullI::_counter = _var+1;}
+		if (AF_fAFFullI::_counter <= (af3_int)_var ) {AF_fAFFullI::_counter = _var+1;}
 
 	}
 	return *this;
 }
-
-template<>
-AffineVarMain<AF_fAFFullI>& AffineVarMain<AF_fAFFullI>::operator=(const AffineVarMain<AF_fAFFullI>& x) {
-	if (this != &x) {
-		_var = x._var;
-		_n = x._n;
-		_actif = x._actif;
-		_elt._center = x._elt._center;
-		_elt._garbage = x._elt._garbage;
-		_elt._rays.clear();
-
-		if ((x.is_actif()) && (!x._elt._rays.empty()))	{
-			std::list<std::pair<int,double> >::const_iterator it = x._elt._rays.begin();
-			for (; it != x._elt._rays.end(); ++it) {
-				_elt._rays.push_back(std::pair<int,double>(it->first,it->second));
-			}
-		}
-	}
-	return *this;
-}
-
 
 //template<>
 //AffineVarMain<AF_fAFFullI>::AffineVarMain(const Interval & itv) :
