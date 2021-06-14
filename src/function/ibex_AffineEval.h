@@ -32,28 +32,31 @@ typedef AffineEval<AF_Other>  Affine3Eval;
  * \brief Evaluate a function with affine form.
  */
 template<class T>
-class AffineEval : public FwdAlgorithm {
+class AffineEval : public Eval {
 
 public:
 	/**
 	 * \brief Build an Affine evaluator for f.
 	 */
-	AffineEval(const Function& f);
+	explicit AffineEval(Function& f);
+	explicit AffineEval(const Function& f);
+	explicit AffineEval(Function& f, bool own_f);
+
 
 	/**
 	 * \brief Delete this.
 	 */
 	~AffineEval();
 
-//	/**
-//	 * \brief Run the forward algorithm with input domains.
-//	 */
-//	Domain& eval(const Array<const Domain>& d);
-//
-//	/**
-//	 * \brief Run the forward algorithm with input domains.
-//	 */
-//	Domain& eval(const Array<Domain>& d);
+	/**
+	 * \brief Run the forward algorithm with input domains.
+	 */
+	Domain& eval(const Array<const Domain>& d);
+
+	/**
+	 * \brief Run the forward algorithm with input domains.
+	 */
+	Domain& eval(const Array<Domain>& d);
 
 	/**
 	 * \brief Run the forward algorithm with an input box.
@@ -80,15 +83,30 @@ public:
 	Domain eval(const IntervalVector& box, const BitSet& rows, const BitSet& cols);
 
 	/**
+	 * \brief Run the forward algorithm with input domains.
+	 */
+	TemplateDomain<AffineMain<T> >& eval(const Array<const TemplateDomain<AffineMain<T> > >& d);
+
+	/**
+	 * \brief Run the forward algorithm with input domains.
+	 */
+	TemplateDomain<AffineMain<T> >& eval(const Array<TemplateDomain<AffineMain<T> > >& d);
+
+
+	/**
+	 * \brief Run the forward algorithm with an input box.
+	 */
+	TemplateDomain<AffineMain<T> >& eval(const AffineMainVector<T>& box);
+	TemplateDomain<AffineMain<T> >& eval(const AffineVarMainVector<T>& box);
+
+	/**
 	 * \brief Run the forward algorithm with input domains, and return the result as an Affine domain.
 	 */
 	TemplateDomain<AffineMain<T> >& eval(const Array<const Domain>& dom, const Array<const TemplateDomain<AffineMain<T> > >& aff);
 
 	/**
-	 * \brief Run the forward algorithm with an input \box and return the result as an Affine domain.
+	 * \brief Run the forward algorithm with two input (Interval and Affine form) and return the result as pair with a Domain and a Affine Domain.
 	 */
-	TemplateDomain<AffineMain<T> >& eval(const AffineMainVector<T>& box);
-	TemplateDomain<AffineMain<T> >& eval(const AffineVarMainVector<T>& box);
 	std::pair<Domain*,TemplateDomain<AffineMain<T> >* > eval(const IntervalVector& box,const AffineMainVector<T>& aff);
 	std::pair<Domain*,TemplateDomain<AffineMain<T> >* > eval(const IntervalVector& box,const AffineVarMainVector<T>& aff);
 
@@ -169,13 +187,15 @@ public:
 	void sub_V_fwd  (int x1, int x2, int y);
 	void sub_M_fwd  (int x1, int x2, int y);
 
-	const Function& f;
-	ExprDomain d;
+//	const Function& f;
+//	ExprDomain d;
+//	Agenda** fwd_agenda;         // one agenda for each vector component/matrix row
+//	Agenda** bwd_agenda;         // one agenda for each vector component/matrix row
+//	Agenda*** matrix_fwd_agenda; // one agenda for each matrix element
+//	Agenda*** matrix_bwd_agenda; // one agenda for each matrix element
+	Function& _af_f;
 	ExprTemplateDomain<AffineMain<T> > af2;
-	Agenda** fwd_agenda;         // one agenda for each vector component/matrix row
-	Agenda** bwd_agenda;         // one agenda for each vector component/matrix row
-	Agenda*** matrix_fwd_agenda; // one agenda for each matrix element
-	Agenda*** matrix_bwd_agenda; // one agenda for each matrix element
+	bool own_f;
 
 protected:
 
@@ -186,14 +206,20 @@ protected:
 	 */
 	NodeMap<AffineEval<T>* > apply_eval;
 
-
-protected:
 	/**
 	 * Class used internally to interrupt the forward procedure
 	 * when an empty domain occurs (<=> the input box is outside
 	 * the definition domain of the function).
 	 */
-	class EmptyBoxException { };
+	//class EmptyBoxException { };
+	
+	/**
+	 * Cast all the Domains into AffineDomains
+	 */
+	AffineMainVector<T> convert(const Array<const Domain>& d);
+	AffineMainVector<T> convert(const Array<Domain>& d);
+	AffineMainVector<T> convert(const Array<const TemplateDomain<AffineMain<T> > >& d);
+	AffineMainVector<T> convert(const Array<TemplateDomain<AffineMain<T> > >& d);
 
 };
 
@@ -201,86 +227,83 @@ protected:
 /* ============================================================================
  	 	 	 	 	 	 	 implementation
   ============================================================================*/
+template<class T>
+AffineEval<T>::AffineEval(const Function& f) : AffineEval(*new Function(f, Function::COPY),true)  { }
 
 template<class T>
-AffineEval<T>::AffineEval(const Function& f) :
-	f(f),
-	d(f),
+AffineEval<T>::AffineEval(Function& f) : AffineEval(f,false) { }
+
+template<class T>
+AffineEval<T>::AffineEval(Function& f, bool own_f) :
+	Eval(f),
+	_af_f( f),
 	af2(f),
-	fwd_agenda(NULL), bwd_agenda(NULL), matrix_fwd_agenda(NULL), matrix_bwd_agenda(NULL) {
-
-	Dim dim=f.expr().dim;
-	int m=dim.vec_size();
-
-	if (m>1) {
-		const ExprVector* vec=dynamic_cast<const ExprVector*>(&f.expr());
-		if (vec && (vec->orient==ExprVector::COL || dim.type()==Dim::ROW_VECTOR) && m==vec->nb_args) {
-			fwd_agenda = new Agenda*[m];
-			bwd_agenda = new Agenda*[m];
-			for (int i=0; i<m; i++) {
-				bwd_agenda[i] = f.cf.agenda(f.nodes.rank(vec->arg(i)));
-				fwd_agenda[i] = new Agenda(*bwd_agenda[i],true); // true<=>swap
-			}
-
-			if (dim.is_matrix()) {
-				int n=dim.nb_cols();
-
-				// check that the matrix is homogeneous (a matrix of scalar expressions)
-				bool homogeneous=true; // by default
-				for (int i=0; i<m; i++) {
-					const ExprVector* fi=dynamic_cast<const ExprVector*>(&vec->arg(i));
-					if (!fi || fi->nb_args<n) {
-						homogeneous=false;
-						break;
-					}
-				}
-
-				if (homogeneous) {
-					matrix_fwd_agenda = new Agenda**[m];
-					matrix_bwd_agenda = new Agenda**[m];
-					for (int i=0; i<m; i++) {
-						const ExprVector& fi=(const ExprVector&) vec->arg(i);
-						matrix_fwd_agenda[i] = new Agenda*[n];
-						matrix_bwd_agenda[i] = new Agenda*[n];
-						for (int j=0; j<n; j++) {
-							matrix_bwd_agenda[i][j] = f.cf.agenda(f.nodes.rank(fi.arg(j)));
-							matrix_fwd_agenda[i][j] = new Agenda(*matrix_bwd_agenda[i][j],true); // true<=>swap
-						}
-					}
-				}
-			}
-		}
-	}
-}
+	own_f(own_f) { }
 
 template<class T>
 AffineEval<T>::~AffineEval() {
-	if (fwd_agenda!=NULL) {
-		for (int i=0; i<f.expr().dim.vec_size(); i++) {
-			delete fwd_agenda[i];
-			delete bwd_agenda[i];
-		}
-		delete[] fwd_agenda;
-		delete[] bwd_agenda;
-
-		if (matrix_fwd_agenda!=NULL) {
-			for (int i=0; i<f.expr().dim.nb_rows(); i++) {
-				for (int j=0; j<f.expr().dim.nb_cols(); j++) {
-					delete matrix_fwd_agenda[i][j];
-					delete matrix_bwd_agenda[i][j];
-				}
-				delete[] matrix_fwd_agenda[i];
-				delete[] matrix_bwd_agenda[i];
-			}
-			delete[] matrix_fwd_agenda;
-			delete[] matrix_bwd_agenda;
-		}
-	}
-
-	for (typename IBEX_NODE_MAP(AffineEval<T>* )::iterator it=apply_eval.begin(); it!=apply_eval.end(); it++) {
-		delete it->second;
-	}
+	if (own_f) delete &_af_f;
 }
+
+
+
+template<class T>
+AffineMainVector<T> AffineEval<T>::convert(const Array<Domain>& y) {
+	return convert((const Array<const Domain >&) y);
+}
+template<class T>
+AffineMainVector<T> AffineEval<T>::convert(const Array<const Domain>& y) {
+
+	int l=0; // the maximum size of the Affine form
+	for (int s=0; s<y.size(); s++) {
+		l += y[s].dim.size();
+	}
+
+	IntervalVector box(l);
+	load(box, y);
+	AffineMainVector<T> out = AffineVarMainVector<T>(box);
+	return out;
+}
+
+template<class T>
+AffineMainVector<T> AffineEval<T>::convert(const Array<TemplateDomain<AffineMain<T> > >& y) {
+	return convert((const Array<const TemplateDomain<AffineMain<T> > >&) y);
+}
+template<class T>
+AffineMainVector<T> AffineEval<T>::convert(const Array<const TemplateDomain<AffineMain<T> > >& y) {
+
+	int l=0; // the maximum size of the Affine form
+	for (int s=0; s<y.size(); s++) {
+		l += y[s].dim.size();
+	}
+
+	AffineMainVector<T> out(l);
+	load(out, y);
+	return out;
+}
+
+
+template<class T>
+Domain& AffineEval<T>::eval(const Array<Domain>& d2) {
+	return this->eval((const Array<const Domain>&) d2 );
+}
+
+
+template<class T>
+Domain& AffineEval<T>::eval(const Array<const Domain>& d2) {
+
+	d.write_arg_domains(d2);
+	af2.write_arg_domains(convert(d2));
+
+	try {
+		_af_f.forward<AffineEval<T> >(*this);
+	} catch(EmptyBoxException&) {
+		d.top->set_empty();
+		af2.top->set_empty();
+	}
+	return *d.top;
+}
+
 
 template<class T>
 Domain& AffineEval<T>::eval(const IntervalVector& box) {
@@ -288,20 +311,59 @@ Domain& AffineEval<T>::eval(const IntervalVector& box) {
 	af2.write_arg_domains(AffineMainVector<T>(AffineVarMainVector<T>(box)));
 
 	try {
-		f.forward<AffineEval<T> >(*this);
+		_af_f.forward<AffineEval<T> >(*this);
 	} catch(EmptyBoxException&) {
 		d.top->set_empty();
 		af2.top->set_empty();
 	}
 	return *d.top;
 }
+
+
+
+template<class T>
+TemplateDomain<AffineMain<T> >& AffineEval<T>::eval(const Array< const TemplateDomain<AffineMain<T> > >& aff) {
+
+	AffineMainVector<T> afbox = convert(aff);
+	d.write_arg_domains(afbox.itv());
+	af2.write_arg_domains(aff);
+
+	try {
+		_af_f.forward<AffineEval<T> >(*this);
+	} catch(EmptyBoxException&) {
+		d.top->set_empty();
+		af2.top->set_empty();
+	}
+	return *af2.top;
+}
+
+template<class T>
+TemplateDomain<AffineMain<T> >& AffineEval<T>::eval(const Array< TemplateDomain<AffineMain<T> > >& aff) {
+
+	AffineMainVector<T> afbox = convert(aff);
+	d.write_arg_domains(afbox.itv());
+	af2.write_arg_domains(aff);
+
+	try {
+		_af_f.forward<AffineEval<T> >(*this);
+	} catch(EmptyBoxException&) {
+		d.top->set_empty();
+		af2.top->set_empty();
+	}
+	return *af2.top;
+}
+
+
+
+
+
 template<class T>
 TemplateDomain<AffineMain<T> >& AffineEval<T>::eval(const AffineMainVector<T>& box) {
 	d.write_arg_domains(box.itv());
 	af2.write_arg_domains(box);
 
 	try {
-		f.forward<AffineEval<T> >(*this);
+		_af_f.forward<AffineEval<T> >(*this);
 	} catch(EmptyBoxException&) {
 		d.top->set_empty();
 		af2.top->set_empty();
@@ -320,7 +382,7 @@ std::pair<Domain*,TemplateDomain<AffineMain<T> >* > AffineEval<T>::eval(const In
 	af2.write_arg_domains(aff);
 
 	try {
-		f.forward<AffineEval<T> >(*this);
+		_af_f.forward<AffineEval<T> >(*this);
 	} catch(EmptyBoxException&) {
 		d.top->set_empty();
 		af2.top->set_empty();
@@ -339,7 +401,7 @@ TemplateDomain<AffineMain<T> >& AffineEval<T>::eval(const Array<const Domain>& b
 	af2.write_arg_domains(aff);
 
 	try {
-		f.forward<AffineEval<T> >(*this);
+		_af_f.forward<AffineEval<T> >(*this);
 	} catch(EmptyBoxException&) {
 		d.top->set_empty();
 		af2.top->set_empty();
@@ -384,11 +446,11 @@ Domain AffineEval<T>::eval(const IntervalVector& box, const BitSet& components) 
 
 
 			AffineEval<T> *func_eval;
-			if (!apply_eval.found(f.nodes[c])) {
-				func_eval=new AffineEval<T>(f[c]);
-				apply_eval.insert(f.nodes[c],func_eval);
+			if (!apply_eval.found(_af_f.nodes[c])) {
+				func_eval=new AffineEval<T>(_af_f[c]);
+				apply_eval.insert(_af_f.nodes[c],func_eval);
 			} else {
-				func_eval=apply_eval[f.nodes[c]];
+				func_eval=apply_eval[_af_f.nodes[c]];
 			}
 
 			res[i++] = func_eval->eval(box);
@@ -405,7 +467,7 @@ Domain AffineEval<T>::eval(const IntervalVector& box, const BitSet& components) 
 	}
 
 	try {
-		f.cf.forward<AffineEval<T> >(*this,a);
+		_af_f.cf.forward<AffineEval<T> >(*this,a);
 		int i=0;
 		for (BitSet::const_iterator c=components.begin(); c!=components.end(); ++c) {
 			res[i++] = d[bwd_agenda[c]->first()];
@@ -462,11 +524,11 @@ Domain AffineEval<T>::eval(const IntervalVector& box, const BitSet& rows, const 
 				for (BitSet::const_iterator c=cols.begin(); c!=cols.end(); ++c, j++) {
 
 					AffineEval<T> *func_eval;
-					if (!apply_eval.found(f.nodes[i][j])) {
-						func_eval=new AffineEval<T>(f[i][j]);
-						apply_eval.insert(f.nodes[i][j],func_eval);
+					if (!apply_eval.found(_af_f.nodes[i][j])) {
+						func_eval=new AffineEval<T>(_af_f[i][j]);
+						apply_eval.insert(_af_f.nodes[i][j],func_eval);
 					} else {
-						func_eval=apply_eval[f.nodes[i][j]];
+						func_eval=apply_eval[_af_f.nodes[i][j]];
 					}
 
 					res[i][j] = func_eval->eval(box);
@@ -480,7 +542,7 @@ Domain AffineEval<T>::eval(const IntervalVector& box, const BitSet& rows, const 
 	}
 
 	// merge all the agendas
-	Agenda a(f.nodes.size()); // the global agenda initialized with the maximal possible value
+	Agenda a(_af_f.nodes.size()); // the global agenda initialized with the maximal possible value
 	for (BitSet::const_iterator r=rows.begin(); r!=rows.end(); ++r) {
 		for (BitSet::const_iterator c=cols.begin(); c!=cols.end(); ++c) {
 			a.push(*(matrix_fwd_agenda[r][c]));
@@ -488,7 +550,7 @@ Domain AffineEval<T>::eval(const IntervalVector& box, const BitSet& rows, const 
 	}
 
 	try {
-		f.cf.forward<AffineEval<T> >(*this,a);
+		_af_f.cf.forward<AffineEval<T> >(*this,a);
 		int i=0;
 		for (BitSet::const_iterator r=rows.begin(); r!=rows.end(); ++r, i++) {
 			int j=0;
@@ -540,11 +602,11 @@ TemplateDomain<AffineMain<T> > AffineEval<T>::eval(const AffineMainVector<T>& af
 
 
 			AffineEval<T> *func_eval;
-			if (!apply_eval.found(f.nodes[c])) {
-				func_eval=new AffineEval<T>(f[c]);
-				apply_eval.insert(f.nodes[c],func_eval);
+			if (!apply_eval.found(_af_f.nodes[c])) {
+				func_eval=new AffineEval<T>(_af_f[c]);
+				apply_eval.insert(_af_f.nodes[c],func_eval);
 			} else {
-				func_eval=apply_eval[f.nodes[c]];
+				func_eval=apply_eval[_af_f.nodes[c]];
 			}
 
 			res[i++] = func_eval->eval(aff);
@@ -555,13 +617,13 @@ TemplateDomain<AffineMain<T> > AffineEval<T>::eval(const AffineMainVector<T>& af
 	}
 
 	// merge all the agendas
-	Agenda a(f.nodes.size()); // the global agenda initialized with the maximal possible value
+	Agenda a(_af_f.nodes.size()); // the global agenda initialized with the maximal possible value
 	for (BitSet::const_iterator c=components.begin(); c!=components.end(); ++c) {
 		a.push(*(fwd_agenda[c]));
 	}
 
 	try {
-		f.cf.forward<AffineEval<T> >(*this,a);
+		_af_f.cf.forward<AffineEval<T> >(*this,a);
 		int i=0;
 		for (BitSet::const_iterator c=components.begin(); c!=components.end(); ++c) {
 			res[i++] = af2[bwd_agenda[c]->first()];
@@ -623,11 +685,11 @@ TemplateDomain<AffineMain<T> > AffineEval<T>::eval(const AffineMainVector<T>& af
 				for (BitSet::const_iterator c=cols.begin(); c!=cols.end(); ++c, j++) {
 
 					AffineEval<T> *func_eval;
-					if (!apply_eval.found(f.nodes[i][j])) {
-						func_eval=new AffineEval<T>(f[i][j]);
-						apply_eval.insert(f.nodes[i][j],func_eval);
+					if (!apply_eval.found(_af_f.nodes[i][j])) {
+						func_eval=new AffineEval<T>(_af_f[i][j]);
+						apply_eval.insert(_af_f.nodes[i][j],func_eval);
 					} else {
-						func_eval=apply_eval[f.nodes[i][j]];
+						func_eval=apply_eval[_af_f.nodes[i][j]];
 					}
 
 					res[i][j] = func_eval->eval(aff);
@@ -641,7 +703,7 @@ TemplateDomain<AffineMain<T> > AffineEval<T>::eval(const AffineMainVector<T>& af
 	}
 
 	// merge all the agendas
-	Agenda a(f.nodes.size()); // the global agenda initialized with the maximal possible value
+	Agenda a(_af_f.nodes.size()); // the global agenda initialized with the maximal possible value
 	for (BitSet::const_iterator r=rows.begin(); r!=rows.end(); ++r) {
 		for (BitSet::const_iterator c=cols.begin(); c!=cols.end(); ++c) {
 			a.push(*(matrix_fwd_agenda[r][c]));
@@ -649,7 +711,7 @@ TemplateDomain<AffineMain<T> > AffineEval<T>::eval(const AffineMainVector<T>& af
 	}
 
 	try {
-		f.cf.forward<AffineEval<T> >(*this,a);
+		_af_f.cf.forward<AffineEval<T> >(*this,a);
 		int i=0;
 		for (BitSet::const_iterator r=rows.begin(); r!=rows.end(); ++r, i++) {
 			int j=0;
@@ -679,9 +741,9 @@ inline void AffineEval<T>::idx_fwd(int, int ) { /* nothing to do */ }
 
 template<class T>
 void AffineEval<T>::idx_cp_fwd(int x, int y) {
-	assert(dynamic_cast<const ExprIndex*> (&f.node(y)));
+	assert(dynamic_cast<const ExprIndex*> (&_af_f.node(y)));
 
-	const ExprIndex& e = (const ExprIndex&) f.node(y);
+	const ExprIndex& e = (const ExprIndex&) _af_f.node(y);
 
 	d[y] = d[x][e.index];
 	af2[y] = af2[x][e.index];
@@ -692,7 +754,7 @@ inline void AffineEval<T>::symbol_fwd(int) { /* nothing to do */ }
 
 template<class T>
 inline void AffineEval<T>::cst_fwd(int y) {
-	const ExprConstant& c = (const ExprConstant&) f.node(y);
+	const ExprConstant& c = (const ExprConstant&) _af_f.node(y);
 	switch (c.type()) {
 	case Dim::SCALAR:      {
 		af2[y].i() = c.get_value();
@@ -714,7 +776,7 @@ inline void AffineEval<T>::cst_fwd(int y) {
 }
 template<class T>
 inline void AffineEval<T>::gen2_fwd(int x1, int x2, int y) {
-	const ExprGenericBinaryOp& e = (const ExprGenericBinaryOp&) f.node(y);
+	const ExprGenericBinaryOp& e = (const ExprGenericBinaryOp&) _af_f.node(y);
 	d[y]=e.eval(d[x1],d[x2]);
 	switch(e.dim.type()) {
 	case Dim::SCALAR :     af2[y].i()= (d[y].i()); break;
@@ -776,7 +838,7 @@ inline void AffineEval<T>::atan2_fwd(int x1, int x2, int y) {
 
 template<class T>
 inline void AffineEval<T>::gen1_fwd(int x, int y) {
-	const ExprGenericUnaryOp& e = (const ExprGenericUnaryOp&) f.node(y);
+	const ExprGenericUnaryOp& e = (const ExprGenericUnaryOp&) _af_f.node(y);
 	d[y]=e.eval(d[x]);
 	switch(e.dim.type()) {
 	case Dim::SCALAR :     af2[y].i()= (d[y].i()); break;
@@ -1025,11 +1087,11 @@ inline void AffineEval<T>::sub_M_fwd(int x1, int x2, int y) {
 
 template<class T>
 inline void AffineEval<T>::apply_fwd(int* x, int y) {
-	assert(dynamic_cast<const ExprApply*> (&f.node(y)));
+	assert(dynamic_cast<const ExprApply*> (&_af_f.node(y)));
 
-	const ExprApply& a = (const ExprApply&) f.node(y);
+	const ExprApply& a = (const ExprApply&) _af_f.node(y);
 
-	assert(&a.func!=&f); // recursive calls not allowed
+	assert(&a.func!=&_af_f); // recursive calls not allowed
 
 	Array<const Domain> d2(a.func.nb_arg());
 	Array<const TemplateDomain<AffineMain<T> > > af22(a.func.nb_arg());
@@ -1055,9 +1117,9 @@ inline void AffineEval<T>::apply_fwd(int* x, int y) {
 
 template<class T>
 inline void AffineEval<T>::vector_fwd(int *x, int y) {
-	assert(dynamic_cast<const ExprVector*>(&(f.node(y))));
+	assert(dynamic_cast<const ExprVector*>(&(_af_f.node(y))));
 
-	const ExprVector& v = (const ExprVector&) f.node(y);
+	const ExprVector& v = (const ExprVector&) _af_f.node(y);
 
 	assert(v.type()!=Dim::SCALAR);
 

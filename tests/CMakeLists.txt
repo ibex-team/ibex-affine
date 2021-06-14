@@ -5,10 +5,10 @@ find_package (CppUnit)
 # Only add the test targets if cppunit was found
 if (CPPUNIT_FOUND)
   # Compile common stuff for the tests
-  add_library (test_common utest.cpp utils.cpp utils.h)
+  add_library (test_common utest.cpp utils.cpp utils.h Ponts30.cpp Ponts30.h)
   target_link_libraries (test_common PUBLIC ibex-affine)
 
-  set (TESTS_LIST TestAffineArith TestAffineBase  TestAffineVector  TestAffineEval TestLinearizerAffine2  )
+  set (TESTS_LIST TestAffineArith TestAffineBase  TestAffineVector  TestAffineEval TestLinearizerAffine2 TestCtcAffineFwdBwd )
 
   foreach (test ${TESTS_LIST})
     # /!\ The test and the target building the executable have the same name

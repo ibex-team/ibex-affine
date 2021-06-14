@@ -11,6 +11,8 @@ list (APPEND SRC 	${CMAKE_CURRENT_SOURCE_DIR}/arithmetic/ibex_Affine2_fAF2.cpp
 	                ${CMAKE_CURRENT_SOURCE_DIR}/arithmetic/ibex_AffineVector.h
 	                ${CMAKE_CURRENT_SOURCE_DIR}/arithmetic/ibex_Affine.h
 	                ${CMAKE_CURRENT_SOURCE_DIR}/function/ibex_AffineEval.h
+	                ${CMAKE_CURRENT_SOURCE_DIR}/contractor/ibex_CtcAffineFwdBwd.cpp
+	                ${CMAKE_CURRENT_SOURCE_DIR}/contractor/ibex_CtcAffineFwdBwd.h
 	                ${CMAKE_CURRENT_SOURCE_DIR}/numeric/ibex_LinearizerAffine2.cpp
 	                ${CMAKE_CURRENT_SOURCE_DIR}/numeric/ibex_LinearizerAffine2.h
                 )
@@ -20,6 +22,7 @@ add_library (ibex-affine ${SRC})
 target_include_directories (ibex-affine PUBLIC
                 "$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/arithmetic>"
                 "$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/function>"
+                "$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/contractor>"
                 "$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/numeric>"
                 "$<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}/ibex-affine>")
 target_link_libraries (ibex-affine PUBLIC Ibex::ibex)
